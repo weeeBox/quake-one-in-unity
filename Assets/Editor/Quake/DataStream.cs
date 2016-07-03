@@ -15,32 +15,12 @@ public class DataStream
     #region Read
 
     /// <summary>
-    /// Read null-terminated string of desired length from the DataStream. Truncates 
-    /// the returned string so that the null byte is not a part of it.
+    /// Read a string of desired length from the DataStream.
     /// </summary>
-    string readCString(int length = -1)
+    string readString(int length)
     {
-//        var blen = this.byteLength - this.position;
-//        var u8 = new Uint8Array(this._buffer, this._byteOffset + this.position);
-//        var len = blen;
-//        if (length != -1)
-//        {
-//            len = Math.min(length, blen);
-//        }
-//        int i = 0;
-//        for (; i < len && u8[i] != 0; i++)
-//            ; // find first zero byte
-//        var s = String.fromCharCode.apply(null, this.mapUint8Array(i));
-//        if (length != null)
-//        {
-//            this.position += len - i;
-//        }
-//        else if (i != blen)
-//        {
-//            this.position += 1; // trailing zero if not at end of buffer
-//        }
-//        return s;
-        throw new NotImplementedException();
+        char[] chars = m_reader.ReadChars(length);
+        return new string(chars);
     }
 
     /// <summary>
@@ -154,6 +134,14 @@ public class DataStream
         if (type == typeof(byte))
         {
             return readUint8();
+        }
+        if (type == typeof(string))
+        {
+            if (size == -1)
+            {
+                throw new Exception("Missing " + typeof(FieldSizeAttribute).Name + " attribute");
+            }
+            return readString(size);
         }
         if (type.IsArray)
         {

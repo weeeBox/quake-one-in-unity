@@ -41,7 +41,7 @@ public class BSP
         var miptex_offsets = ds.readStruct<MIPTEX_DIRECTORY_T>().offsets;
 
         // create entries
-        var miptex_directory = new List<MIPTEX_DIRECTORY_ENTRY_T>();
+        var miptex_directory = new MIPTEX_DIRECTORY_ENTRY_T[miptex_offsets.Length];
         var garbage_entries = 0;
         for (var i = 0; i < miptex_offsets.Length; ++i) {
             var offset = base_offset + miptex_offsets[i];
@@ -69,7 +69,7 @@ public class BSP
             }
         }
 
-        this.miptex_directory = miptex_directory.ToArray();
+        this.miptex_directory = miptex_directory;
     }
 
     void initGeometry(DataStream ds)
