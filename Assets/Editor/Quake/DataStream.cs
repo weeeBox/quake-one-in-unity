@@ -108,58 +108,94 @@ public class DataStream
                 continue;
             }
 
-            FieldSizeAttribute fieldSize = GetFieldAttribute<FieldSizeAttribute>(field);
-            if (fieldSize != null)
+            int fieldSize = -1;
+            FieldSizeAttribute fieldSizeAttr = GetFieldAttribute<FieldSizeAttribute>(field);
+            if (fieldSizeAttr != null)
             {
-                throw new NotImplementedException();
+                if (fieldSizeAttr.name != null)
+                {
+                    fieldSize = GetFieldIntValue(obj, fieldSizeAttr.name);
+                }
+                else
+                {
+                    fieldSize = fieldSizeAttr.size;
+                }
             }
 
-            Type fieldType = field.FieldType;
-            if (fieldType == typeof(Int32))
-            {
-                field.SetValue(obj, readInt32());
-            }
-            else if (fieldType == typeof(UInt32))
-            {
-                field.SetValue(obj, readUint32());
-            }
-            else if (fieldType == typeof(Int16))
-            {
-                field.SetValue(obj, readInt16());
-            }
-            else if (fieldType == typeof(UInt16))
-            {
-                field.SetValue(obj, readUint16());
-            }
-            else if (fieldType == typeof(sbyte))
-            {
-                field.SetValue(obj, readInt8());
-            }
-            else if (fieldType == typeof(byte))
-            {
-                field.SetValue(obj, readUint8());
-            }
-            else if (fieldType.IsArray)
-            {
-                throw new NotSupportedException("Arrays are not supported");
-            }
-            else if (fieldType.IsValueType && !fieldType.IsPrimitive)
-            {
-                field.SetValue(obj, readStruct(fieldType));
-            }
-            else
-            {
-                throw new NotImplementedException("Unexpected type: " + fieldType);
-            }
+            object value = readType(field.FieldType, fieldSize);
+            field.SetValue(obj, value);
         }
 
         return obj;
+    }
+
+    object readType(Type type, int size = -1)
+    {
+        if (type == typeof(Int32))
+        {
+            return readInt32();
+        }
+        if (type == typeof(UInt32))
+        {
+            return readUint32();
+        }
+        if (type == typeof(Int16))
+        {
+            return readInt16();
+        }
+        if (type == typeof(UInt16))
+        {
+            return readUint16();
+        }
+        if (type == typeof(sbyte))
+        {
+            return readInt8();
+        }
+        if (type == typeof(byte))
+        {
+            return readUint8();
+        }
+        if (type.IsArray)
+        {
+            if (size == -1)
+            {
+                throw new Exception("Missing " + typeof(FieldSizeAttribute).Name + " attribute");
+            }
+
+            int rank = type.GetArrayRank();
+            if (rank != 1)
+            {
+                throw new Exception("Unexpected array rank: " + rank);
+            }
+
+            Type elementType = type.GetElementType();
+            Array array = Array.CreateInstance(elementType, size);
+            for (int i = 0; i < size; ++i)
+            {
+                array.SetValue(readType(elementType), i);
+            }
+
+            return array;
+        }
+        if (type.IsValueType && !type.IsPrimitive)
+        {
+            return readStruct(type);
+        }
+
+        throw new NotImplementedException("Unexpected type: " + type);
     }
 
     static T GetFieldAttribute<T>(FieldInfo field) where T : Attribute
     {
         var attributes = field.GetCustomAttributes(typeof(T), false);
         return attributes.Length == 1 ? attributes[0] as T : null;
+    }
+
+    static int GetFieldIntValue(object target, string name)
+    {
+        var type = target.GetType();
+        var field = type.GetField(name);
+        return (int) field.GetValue(target);
     }
 
     public void seek(int pos)
