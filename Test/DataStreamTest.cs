@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.IO;
 
 namespace Test
 {
@@ -9,8 +10,12 @@ namespace Test
         [Test]
         public void TestFoo()
         {
-            DataStream stream = new DataStream();
-            VECTOR3_T v = stream.readStruct<VECTOR3_T>();
+            using (FileStream stream = File.OpenRead("e1m1.bsp"))
+            {
+                DataStream data = new DataStream(stream);
+                var h = data.readStruct<HEADER_T>();
+                int v = h.version;
+            }
 
         }
     }

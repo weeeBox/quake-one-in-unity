@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Reflection;
-
-public enum Endian
-{
-    BigEndian,
-    LittleEndian
-}
+using System.IO;
 
 public class DataStream
 {
+    BinaryReader m_reader;
+
+    public DataStream(Stream stream)
+    {
+        m_reader = new BinaryReader(stream);
+    }
+
     #region Read
 
     /// <summary>
@@ -18,21 +20,26 @@ public class DataStream
     /// </summary>
     string readCString(int length = -1)
     {
-//        var blen = this.byteLength-this.position;
+//        var blen = this.byteLength - this.position;
 //        var u8 = new Uint8Array(this._buffer, this._byteOffset + this.position);
 //        var len = blen;
-//        if (length != null) {
+//        if (length != -1)
+//        {
 //            len = Math.min(length, blen);
 //        }
-//        for (var i = 0; i < len && u8[i] != 0; i++); // find first zero byte
+//        int i = 0;
+//        for (; i < len && u8[i] != 0; i++)
+//            ; // find first zero byte
 //        var s = String.fromCharCode.apply(null, this.mapUint8Array(i));
-//        if (length != null) {
-//            this.position += len-i;
-//        } else if (i != blen) {
+//        if (length != null)
+//        {
+//            this.position += len - i;
+//        }
+//        else if (i != blen)
+//        {
 //            this.position += 1; // trailing zero if not at end of buffer
 //        }
 //        return s;
-
         throw new NotImplementedException();
     }
 
@@ -41,18 +48,7 @@ public class DataStream
     /// </summary>
     Int32 readInt32()
     {
-        return readInt32(this.endianness);
-    }
-
-    /// <summary>
-    /// Reads a 32-bit int from the DataStream with the desired endianness.
-    /// </summary>
-    Int32 readInt32(Endian e)
-    {
-//        var v = this._dataView.getInt32(this.position, e == null ? this.endianness : e);
-//        this.position += 4;
-//        return v;
-        throw new NotImplementedException();
+        return m_reader.ReadInt32();
     }
 
     /// <summary>
@@ -60,18 +56,7 @@ public class DataStream
     /// </summary>
     Int16 readInt16()
     {
-        return readInt16(this.endianness);
-    }
-
-    /// <summary>
-    /// Reads a 16-bit int from the DataStream with the desired endianness.
-    /// </summary>
-    Int16 readInt16(Endian e)
-    {
-//        var v = this._dataView.getInt16(this.position, e == null ? this.endianness : e);
-//        this.position += 2;
-//        return v;
-        throw new NotImplementedException();
+        return m_reader.ReadInt16();
     }
 
     /// <summary>
@@ -79,11 +64,7 @@ public class DataStream
     /// </summary>
     sbyte readInt8()
     {
-//        var v = this._dataView.getInt8(this.position);
-//        this.position += 1;
-//        return v;
-
-        throw new NotImplementedException();
+        return m_reader.ReadSByte();
     }
 
     /// <summary>
@@ -91,19 +72,7 @@ public class DataStream
     /// </summary>
     UInt32 readUint32()
     {
-        return readUint32(this.endianness);
-    }
-
-    /// <summary>
-    /// Reads a 32-bit unsigned int from the DataStream with the desired endianness.
-    /// </summary>
-    UInt32 readUint32(Endian e)
-    {
-//        var v = this._dataView.getUint32(this.position, e == null ? this.endianness : e);
-//        this.position += 4;
-//        return v;
-
-        throw new NotImplementedException();
+        return m_reader.ReadUInt32();
     }
 
     /// <summary>
@@ -111,18 +80,7 @@ public class DataStream
     /// </summary>
     UInt16 readUint16()
     {
-        return readUint16(this.endianness);
-    }
-
-    /// <summary>
-    /// Reads a 16-bit unsigned int from the DataStream with the desired endianness.
-    /// </summary>
-    UInt16 readUint16(Endian e)
-    {
-//        var v = this._dataView.getUint16(this.position, e == null ? this.endianness : e);
-//        this.position += 2;
-//        return v;
-        throw new NotImplementedException();
+        return m_reader.ReadUInt16();
     }
 
     /// <summary>
@@ -130,48 +88,7 @@ public class DataStream
     /// </summary>
     byte readUint8()
     {
-//        var v = this._dataView.getUint8(this.position);
-//        this.position += 1;
-//        return v;
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Reads a 32-bit float from the DataStream.
-    /// </summary>
-    float readFloat32()
-    {
-        return readFloat32(this.endianness);
-    }
-
-    /// <summary>
-    /// Reads a 32-bit float from the DataStream with the desired endianness.
-    /// </summary>
-    float readFloat32(Endian e)
-    {
-//        var v = this._dataView.getFloat32(this.position, e == null ? this.endianness : e);
-//        this.position += 4;
-//        return v;
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Reads a 64-bit float from the DataStream.
-    /// </summary>
-    double readFloat64()
-    {
-        return readFloat64(this.endianness);
-    }
-
-    /// <summary>
-    /// Reads a 64-bit float from the DataStream with the desired endianness.
-    /// </summary>
-    double readFloat64(Endian e)
-    {
-//        var v = this._dataView.getFloat64(this.position, e == null ? this.endianness : e);
-//        this.position += 8;
-//        return v;
-        throw new NotImplementedException();
+        return m_reader.ReadByte();
     }
 
     #endregion
@@ -242,12 +159,16 @@ public class DataStream
 
     #region Properties
 
-    public Endian endianness
+    public int position
     {
-        get;
-        private set;
+        get { return (int) m_reader.BaseStream.Position; }
+        set { m_reader.BaseStream.Position = value; }
+    }
+
+    public int byteLength
+    {
+        get { return (int)m_reader.BaseStream.Length; }
     }
 
     #endregion
-
 }
