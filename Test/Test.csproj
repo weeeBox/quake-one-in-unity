@@ -57,5 +57,9 @@
       <Project>{7BF5E295-0AB9-4778-51B6-6600B27FD7E9}</Project>
       <Name>Assembly-CSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Assembly-CSharp-Editor.csproj">
+      <Project>{905A1EE6-976F-5E91-C29E-08A6AB485FF3}</Project>
+      <Name>Assembly-CSharp-Editor</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
