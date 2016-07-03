@@ -178,8 +178,12 @@ public class DataStream
 
     public T readStruct<T>() where T : struct
     {
-        Object t = new T();
-        Type type = typeof(T);
+        return (T)readStruct(typeof(T));
+    }
+
+    public Object readStruct(Type type)
+    {
+        Object obj = Activator.CreateInstance(type);
         foreach (var field in type.GetFields())
         {
             FieldSizeAttribute fieldSize = GetFieldSizeAttribute(field);
@@ -191,31 +195,39 @@ public class DataStream
             Type fieldType = field.FieldType;
             if (fieldType == typeof(Int32))
             {
-                field.SetValue(t, readInt32());
+                field.SetValue(obj, readInt32());
             }
             else if (fieldType == typeof(UInt32))
             {
-                field.SetValue(t, readUint32());
+                field.SetValue(obj, readUint32());
             }
             else if (fieldType == typeof(Int16))
             {
-                field.SetValue(t, readInt16());
+                field.SetValue(obj, readInt16());
             }
             else if (fieldType == typeof(UInt16))
             {
-                field.SetValue(t, readUint16());
+                field.SetValue(obj, readUint16());
             }
             else if (fieldType == typeof(sbyte))
             {
-                field.SetValue(t, readInt8());
+                field.SetValue(obj, readInt8());
             }
             else if (fieldType == typeof(byte))
             {
-                field.SetValue(t, readUint8());
+                field.SetValue(obj, readUint8());
+            }
+            else if (fieldType.IsArray)
+            {
+                throw new NotSupportedException("Arrays are not supported");
+            }
+            else if (fieldType.IsValueType && !fieldType.IsPrimitive)
+            {
+                field.SetValue(obj, readStruct(fieldType));
             }
         }
 
-        return (T) t;
+        return obj;
     }
 
     static FieldSizeAttribute GetFieldSizeAttribute(FieldInfo field)
