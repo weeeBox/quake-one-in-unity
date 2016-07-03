@@ -225,6 +225,10 @@ public class DataStream
             {
                 field.SetValue(obj, readStruct(fieldType));
             }
+            else
+            {
+                throw new NotImplementedException("Unexpected type: " + fieldType);
+            }
         }
 
         return obj;
