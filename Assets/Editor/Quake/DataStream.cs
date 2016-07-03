@@ -103,7 +103,12 @@ public class DataStream
         Object obj = Activator.CreateInstance(type);
         foreach (var field in type.GetFields())
         {
-            FieldSizeAttribute fieldSize = GetFieldSizeAttribute(field);
+            if (GetFieldAttribute<IgnoreFieldAttribute>(field) != null)
+            {
+                continue;
+            }
+
+            FieldSizeAttribute fieldSize = GetFieldAttribute<FieldSizeAttribute>(field);
             if (fieldSize != null)
             {
                 throw new NotImplementedException();
@@ -151,10 +156,15 @@ public class DataStream
         return obj;
     }
 
-    static FieldSizeAttribute GetFieldSizeAttribute(FieldInfo field)
+    static T GetFieldAttribute<T>(FieldInfo field) where T : Attribute
     {
-        var attributes = field.GetCustomAttributes(typeof(FieldSizeAttribute), false);
-        return attributes.Length == 1 ? attributes[0] as FieldSizeAttribute : null;
+        var attributes = field.GetCustomAttributes(typeof(T), false);
+        return attributes.Length == 1 ? attributes[0] as T : null;
+    }
+
+    public void seek(int pos)
+    {
+        this.position = Math.Max(0, Math.Min(this.byteLength, pos));
     }
 
     #region Properties

@@ -14,6 +14,7 @@ public class FieldSizeAttribute : Attribute
     public FieldSizeAttribute(string name)
     {
         m_name = name;
+        m_size = -1;
     }
 
     public int size
