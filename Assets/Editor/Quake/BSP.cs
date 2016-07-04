@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using face_id_list_t = DynamicArray<int>;
 
+using UnityEngine;
+
 public class BSP
 {
     struct BBOX_T
@@ -139,14 +141,19 @@ public class BSP
         public float y;
         public float z;
 
-        public override string ToString()
-        {
-            return string.Format("({0}, {1}, {2})", x, y, z);
-        }
-
         public static float Dot(VECTOR3_T a, VECTOR3_T b)
         {
             return a.x * b.x + a.y * b.y + a.z * b.z;
+        }
+
+        public static implicit operator Vector3(VECTOR3_T v)
+        {
+            return new Vector3(v.x, v.y, v.z);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("({0}, {1}, {2})", x, y, z);
         }
     }
 
@@ -319,8 +326,8 @@ public class BSP
             num_tris += face.num_edges - 2;
         }
 
-        var verts = new DynamicArray<float>(num_tris * 9); // 3 vertices, xyz per tri
-        var uvs = new DynamicArray<float>(num_tris * 6); // 3 uvs, uv per tri
+        var verts = new Vector3[num_tris * 3]; // 3 vertices, xyz per tri
+        var uvs = new Vector2[num_tris * 3]; // 3 uvs, uv per tri
         var verts_ofs = 0;
 
         for (var i = 0; i < face_ids.length; ++i)
@@ -335,7 +342,7 @@ public class BSP
         return buffer_geometry;
     }
 
-    int addFaceVerts(GEOMETRY_T geometry, FACE_T face, DynamicArray<float> verts, DynamicArray<float> uvs, int verts_ofs, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
+    int addFaceVerts(GEOMETRY_T geometry, FACE_T face, Vector3[] verts, Vector2[] uvs, int verts_ofs, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
     {
         var edge_list = geometry.edge_list;
         var edges = geometry.edges;
@@ -372,28 +379,22 @@ public class BSP
             var b = vert_ids[i + 1];
             var a = vert_ids[i + 2];
 
-            int vi = (verts_ofs + i) * 9;
-            int uvi = (verts_ofs + i) * 6;
+            int vi = (verts_ofs + i) * 3;
+            int uvi = (verts_ofs + i) * 3;
             VECTOR3_T vert = vertices[a];
-            verts[vi] = vert.x;
-            verts[vi + 1] = vert.y;
-            verts[vi + 2] = vert.z;
-            uvs[uvi] = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
-            uvs[uvi + 1] = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+            verts[vi] = vert;
+            uvs[uvi].x = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
+            uvs[uvi].y = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
 
             vert = vertices[b];
-            verts[vi + 3] = vert.x;
-            verts[vi + 4] = vert.y;
-            verts[vi + 5] = vert.z;
-            uvs[uvi + 2] = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
-            uvs[uvi + 3] = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+            verts[vi + 1] = vert;
+            uvs[uvi + 1].x = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
+            uvs[uvi + 1].y = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
 
             vert = vertices[c];
-            verts[vi + 6] = vert.x;
-            verts[vi + 7] = vert.y;
-            verts[vi + 8] = vert.z;
-            uvs[uvi + 4] = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
-            uvs[uvi + 5] = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+            verts[vi + 2] = vert;
+            uvs[uvi + 2].x = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
+            uvs[uvi + 2].y = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
         }
 
         return verts_ofs + i; // next position in verts

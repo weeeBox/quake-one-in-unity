@@ -2,7 +2,7 @@
 using UnityEditor;
 
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 
 public static class Foo
 {
@@ -19,20 +19,39 @@ public static class Foo
 
     static void Generate(BSP bsp)
     {
+        TempBSP tempBSP = GameObject.FindObjectOfType<TempBSP>();
+        MeshFilter filter = tempBSP.GetComponent<MeshFilter>();
+        filter.sharedMesh = GenerateMesh(bsp);
+    }
+
+    static Mesh GenerateMesh(BSP bsp)
+    {
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+
+        int ti = 0;
         foreach (var model in bsp.models)
         {
             foreach (var geometry in model.geometries)
             {
                 var verts = geometry.geometry.verts;
-                for (int i = 0; i < verts.length;)
+                for (int i = 0; i < verts.Length;)
                 {
-                    GameObject obj = new GameObject();
-                    TempTrig trig = obj.AddComponent<TempTrig>();
-                    trig.v1 = new Vector3(verts[i++], verts[i++], verts[i++]);
-                    trig.v2 = new Vector3(verts[i++], verts[i++], verts[i++]);
-                    trig.v3 = new Vector3(verts[i++], verts[i++], verts[i++]);
+                    vertices.Add(verts[i++]);
+                    vertices.Add(verts[i++]);
+                    vertices.Add(verts[i++]);
+
+                    triangles.Add(ti++);
+                    triangles.Add(ti++);
+                    triangles.Add(ti++);
                 }
             }
         }
+
+        Mesh mesh = new Mesh();
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.RecalculateNormals();
+        return mesh;
     }
 }

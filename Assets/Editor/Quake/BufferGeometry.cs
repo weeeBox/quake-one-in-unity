@@ -1,8 +1,9 @@
 ﻿using System;
+using UnityEngine;
 
 public class BufferGeometry
 {
-    public BufferGeometry(DynamicArray<float> verts, DynamicArray<float> uvs)
+    public BufferGeometry(Vector3[] verts, Vector2[] uvs)
     {
         this.verts = verts;
         this.uvs = uvs;
@@ -12,12 +13,12 @@ public class BufferGeometry
     {
     }
 
-    public DynamicArray<float> verts
+    public Vector3[] verts
     {
         get; private set;
     }
 
-    public DynamicArray<float> uvs
+    public Vector2[] uvs
     {
         get; private set;
     }
