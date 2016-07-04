@@ -175,7 +175,8 @@ public class BSP
 
         this.header = h;
 
-        if (h.version != 29) {
+        if (h.version != 29)
+        {
             throw new Exception("ERROR: BSP version " + this.header.version + " is currently unsupported.");
         }
     }
@@ -190,7 +191,8 @@ public class BSP
         // create entries
         var miptex_directory = new MIPTEX_DIRECTORY_ENTRY_T[miptex_offsets.Length];
         var garbage_entries = 0;
-        for (var i = 0; i < miptex_offsets.Length; ++i) {
+        for (var i = 0; i < miptex_offsets.Length; ++i)
+        {
             var offset = base_offset + miptex_offsets[i];
 
             ds.seek(offset);
@@ -203,15 +205,18 @@ public class BSP
             entry.type = "D"[0];
             entry.compression = 0;
             entry.name = FileUtil.trimNullTerminatedString(miptex.name);
-                // additional parameters useful for generating uvs
+            // additional parameters useful for generating uvs
             entry.width = miptex.width;
             entry.height = miptex.height;
 
-            if (entry.name == "") {
+            if (entry.name == "")
+            {
                 garbage_entries += 1;
                 // console.log("Warning: BSP miptex entry at index " + i + " is unreadable. Name: '" +  miptex.name + "'");
                 // console.log(entry);
-            } else {
+            }
+            else
+            {
                 miptex_directory[i - garbage_entries] = entry;
             }
         }
@@ -251,7 +256,8 @@ public class BSP
     {
         var models = new BSPModel[geometry.models.Length];
 
-        for (var i = 0; i < geometry.models.Length; ++i) {
+        for (var i = 0; i < geometry.models.Length; ++i)
+        {
             models[i] = this.expandModel(ref geometry, geometry.models[i]);
         }
 
@@ -307,7 +313,8 @@ public class BSP
 
         // get number of triangles required to build model
         var num_tris = 0;
-        for (var i = 0; i < face_ids.length; ++i) {
+        for (var i = 0; i < face_ids.length; ++i)
+        {
             var face = faces[face_ids[i]];
             num_tris += face.num_edges - 2;
         }
@@ -316,7 +323,8 @@ public class BSP
         var uvs = new DynamicArray<float>(num_tris * 6); // 3 uvs, uv per tri
         var verts_ofs = 0;
 
-        for (var i = 0; i < face_ids.length; ++i) {
+        for (var i = 0; i < face_ids.length; ++i)
+        {
             var face = faces[face_ids[i]];
             verts_ofs = this.addFaceVerts(geometry, face, verts, uvs, verts_ofs, miptex_entry);
         }
@@ -342,65 +350,73 @@ public class BSP
 
 
         int i;
-            for (i = start; i < end; ++i) {
-                var edge_id = edge_list[i];
-                var edge = edges[Math.Abs(edge_id)];
-                if (edge_id > 0) {
-                    vert_ids[vert_ids.length] = edge.v1;
-                } else {
-                    vert_ids[vert_ids.length] = edge.v2;
-                }
+        for (i = start; i < end; ++i)
+        {
+            var edge_id = edge_list[i];
+            var edge = edges[Math.Abs(edge_id)];
+            if (edge_id > 0)
+            {
+                vert_ids[vert_ids.length] = edge.v1;
             }
-
-                var num_tris = vert_ids.length - 2;
-        for (i = 0; i < num_tris; ++i) {
-                // reverse winding order to have correct normals
-                var c = vert_ids[0];
-                var b = vert_ids[i + 1];
-                var a = vert_ids[i + 2];
-
-                int vi = (verts_ofs + i) * 9;
-                int uvi = (verts_ofs + i) * 6;
-                VECTOR3_T vert = vertices[a];
-                verts[vi]     = vert.x;
-                verts[vi + 1] = vert.y;
-                verts[vi + 2] = vert.z;
-                uvs[uvi]     =  (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
-                uvs[uvi + 1] = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
-
-                vert = vertices[b];
-                verts[vi + 3] = vert.x;
-                verts[vi + 4] = vert.y;
-                verts[vi + 5] = vert.z;
-                uvs[uvi + 2] =  (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
-                uvs[uvi + 3] = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
-
-                vert = vertices[c];
-                verts[vi + 6] = vert.x;
-                verts[vi + 7] = vert.y;
-                verts[vi + 8] = vert.z;
-                uvs[uvi + 4] =  (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
-                uvs[uvi + 5] = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+            else
+            {
+                vert_ids[vert_ids.length] = edge.v2;
             }
+        }
 
-            return verts_ofs + i; // next position in verts
+        var num_tris = vert_ids.length - 2;
+        for (i = 0; i < num_tris; ++i)
+        {
+            // reverse winding order to have correct normals
+            var c = vert_ids[0];
+            var b = vert_ids[i + 1];
+            var a = vert_ids[i + 2];
+
+            int vi = (verts_ofs + i) * 9;
+            int uvi = (verts_ofs + i) * 6;
+            VECTOR3_T vert = vertices[a];
+            verts[vi] = vert.x;
+            verts[vi + 1] = vert.y;
+            verts[vi + 2] = vert.z;
+            uvs[uvi] = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
+            uvs[uvi + 1] = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+
+            vert = vertices[b];
+            verts[vi + 3] = vert.x;
+            verts[vi + 4] = vert.y;
+            verts[vi + 5] = vert.z;
+            uvs[uvi + 2] = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
+            uvs[uvi + 3] = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+
+            vert = vertices[c];
+            verts[vi + 6] = vert.x;
+            verts[vi + 7] = vert.y;
+            verts[vi + 8] = vert.z;
+            uvs[uvi + 4] = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
+            uvs[uvi + 5] = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+        }
+
+        return verts_ofs + i; // next position in verts
     }
 
     #region Properties
 
     HEADER_T header
     {
-        get; set;
+        get;
+        set;
     }
 
     MIPTEX_DIRECTORY_ENTRY_T[] miptex_directory
     {
-        get; set;
+        get;
+        set;
     }
 
     BSPModel[] models
     {
-        get; set;
+        get;
+        set;
     }
 
     #endregion
