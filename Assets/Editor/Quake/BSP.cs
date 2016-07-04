@@ -141,6 +141,13 @@ public class BSP
         public float y;
         public float z;
 
+        public VECTOR3_T(float x = 0, float y = 0, float z = 0)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
         public static float Dot(VECTOR3_T a, VECTOR3_T b)
         {
             return a.x * b.x + a.y * b.y + a.z * b.z;
@@ -374,30 +381,34 @@ public class BSP
         var num_tris = vert_ids.length - 2;
         for (i = 0; i < num_tris; ++i)
         {
-            // reverse winding order to have correct normals
-            var c = vert_ids[0];
+            var a = vert_ids[0];
             var b = vert_ids[i + 1];
-            var a = vert_ids[i + 2];
+            var c = vert_ids[i + 2];
 
             int vi = (verts_ofs + i) * 3;
             int uvi = (verts_ofs + i) * 3;
-            VECTOR3_T vert = vertices[a];
+            VECTOR3_T vert = TransformVertex(vertices[a]);
             verts[vi] = vert;
             uvs[uvi].x = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
             uvs[uvi].y = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
 
-            vert = vertices[b];
+            vert = TransformVertex(vertices[b]);
             verts[vi + 1] = vert;
             uvs[uvi + 1].x = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
             uvs[uvi + 1].y = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
 
-            vert = vertices[c];
+            vert = TransformVertex(vertices[c]);
             verts[vi + 2] = vert;
             uvs[uvi + 2].x = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
             uvs[uvi + 2].y = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
         }
 
         return verts_ofs + i; // next position in verts
+    }
+
+    static VECTOR3_T TransformVertex(VECTOR3_T v)
+    {
+        return new VECTOR3_T(v.x, v.z, v.y);
     }
 
     #region Properties
