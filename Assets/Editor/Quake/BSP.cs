@@ -41,12 +41,6 @@ public class BSP
     struct GEOMETRY_T
     {
         public bool expanded;
-        public MODEL_T[] models;
-    }
-
-    struct GEOMETRY_DATA_T
-    {
-        public bool expanded;
         public VECTOR3_T[] vertices;
         public EDGE_T[] edges;
         public FACE_T[] faces;
@@ -227,7 +221,7 @@ public class BSP
 
     void initGeometry(DataStream ds)
     {
-        GEOMETRY_DATA_T geometry;
+        GEOMETRY_T geometry;
         geometry.expanded = false;
 
         var h = this.header;
@@ -250,46 +244,38 @@ public class BSP
         ds.seek(h.ledges.offset);
         geometry.edge_list = ds.readArray<Int32>(h.ledges.count);
 
-        this.geometry = this.expandGeometry(geometry);
+        this.models = this.expandGeometry(geometry);
     }
 
-    GEOMETRY_T expandGeometry(GEOMETRY_DATA_T geometry)
+    BSPModel[] expandGeometry(GEOMETRY_T geometry)
     {
-        var models = new MODEL_T[geometry.models.Length];
+        var models = new BSPModel[geometry.models.Length];
 
         for (var i = 0; i < geometry.models.Length; ++i) {
             models[i] = this.expandModel(ref geometry, geometry.models[i]);
         }
 
-        GEOMETRY_T result;
-        result.expanded = true;
-        result.models = models;
-        return result;
+        return models;
     }
 
-    MODEL_T expandModel(ref GEOMETRY_DATA_T geometry, MODEL_T model)
+    BSPModel expandModel(ref GEOMETRY_T geometry, MODEL_T model)
     {
         var face_id_lists = this.getFaceIdsPerTexture(geometry, model);
         var faces = geometry.faces;
 
-        var geometries = new DynamicArray<object>();
+        var geometries = new DynamicArray<BSPGeometry>();
 
         foreach (var i in face_id_lists)
         {
             var miptex_entry = this.miptex_directory[i];
             var buffer_geometry = this.expandModelFaces(geometry, face_id_lists[i], miptex_entry);
-//            geometries[geometries.length] = {
-//                tex_id: i,
-//                geometry: buffer_geometry
-//            };
-            throw new NotImplementedException();
+            geometries[geometries.length] = new BSPGeometry(i, buffer_geometry);
         }
 
-        // return { geometries: geometries };
-        throw new NotImplementedException();
+        return new BSPModel(geometries.ToArray());
     }
 
-    Hash<UInt32, face_id_list_t> getFaceIdsPerTexture(GEOMETRY_DATA_T geometry, MODEL_T model)
+    Hash<UInt32, face_id_list_t> getFaceIdsPerTexture(GEOMETRY_T geometry, MODEL_T model)
     {
         var texinfos = geometry.texinfos;
         var faces = geometry.faces;
@@ -315,7 +301,7 @@ public class BSP
         return face_id_lists;
     }
 
-    BufferGeometry expandModelFaces(GEOMETRY_DATA_T geometry, face_id_list_t face_ids, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
+    BufferGeometry expandModelFaces(GEOMETRY_T geometry, face_id_list_t face_ids, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
     {
         var faces = geometry.faces;
 
@@ -341,7 +327,7 @@ public class BSP
         return buffer_geometry;
     }
 
-    int addFaceVerts(GEOMETRY_DATA_T geometry, FACE_T face, DynamicArray<float> verts, DynamicArray<float> uvs, int verts_ofs, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
+    int addFaceVerts(GEOMETRY_T geometry, FACE_T face, DynamicArray<float> verts, DynamicArray<float> uvs, int verts_ofs, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
     {
         var edge_list = geometry.edge_list;
         var edges = geometry.edges;
@@ -412,7 +398,7 @@ public class BSP
         get; set;
     }
 
-    GEOMETRY_T geometry
+    BSPModel[] models
     {
         get; set;
     }
@@ -420,3 +406,24 @@ public class BSP
     #endregion
 }
 
+public class BSPModel
+{
+    public readonly BSPGeometry[] geometries;
+
+    public BSPModel(BSPGeometry[] geometries)
+    {
+        this.geometries = geometries;
+    }
+}
+
+public class BSPGeometry
+{
+    public readonly UInt32 tex_id;
+    public readonly BufferGeometry geometry;
+
+    public BSPGeometry(uint tex_id, BufferGeometry geometry)
+    {
+        this.tex_id = tex_id;
+        this.geometry = geometry;
+    }
+}

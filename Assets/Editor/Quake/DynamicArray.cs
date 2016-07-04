@@ -29,6 +29,13 @@ public class DynamicArray<T> : IEnumerable<T>
         }
     }
 
+    public T[] ToArray()
+    {
+        T[] copy = new T[m_data.Length];
+        Array.Copy(m_data, copy, copy.Length);
+        return copy;
+    }
+
     #region IEnumerable implementation
 
     public IEnumerator<T> GetEnumerator()
