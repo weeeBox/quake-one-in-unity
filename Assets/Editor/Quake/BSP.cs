@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using face_id_list_t = DynamicArray<int>;
+
 public class BSP
 {
     public BSP(DataStream ds)
@@ -118,46 +120,138 @@ public class BSP
         var face_id_lists = this.getFaceIdsPerTexture(geometry, model);
         var faces = geometry.faces;
 
-        var geometries = {};
+        var geometries = new DynamicArray<object>();
 
         foreach (var i in face_id_lists)
         {
             var miptex_entry = this.miptex_directory[i];
             var buffer_geometry = this.expandModelFaces(geometry, face_id_lists[i], miptex_entry);
-            geometries[geometries.length] = {
-                tex_id: i,
-                geometry: buffer_geometry
-            };
+//            geometries[geometries.length] = {
+//                tex_id: i,
+//                geometry: buffer_geometry
+//            };
+            throw new NotImplementedException();
         }
 
-        return { geometries: geometries };
+        // return { geometries: geometries };
+        throw new NotImplementedException();
     }
 
-    object getFaceIdsPerTexture(GEOMETRY_T geometry, MODEL_T model)
+    Hash<UInt32, face_id_list_t> getFaceIdsPerTexture(GEOMETRY_T geometry, MODEL_T model)
     {
         var texinfos = geometry.texinfos;
         var faces = geometry.faces;
 
-        // var face_id_lists = {}; // important to note that this is a hash
-        var face_id_lists = new Dictionary<int, List<int>>();
+        var face_id_lists = new Hash<UInt32, face_id_list_t>(); // important to note that this is a hash
 
         var start = model.face_id;
         var end = start + model.num_faces;
-        for (var i = start; i < end; ++i) {
+        for (var i = start; i < end; ++i)
+        {
             var face = faces[i];
             var tex_id = texinfos[face.texinfo_id].tex_id;
-            // var face_ids = face_id_lists[tex_id] || [];
-            List<int> face_ids;
-            if (!face_id_lists.TryGetValue(tex_id, out face_ids))
+            var face_ids = face_id_lists[tex_id];
+            if (face_ids == null)
             {
-                face_ids = new List<int>();
-                face_id_lists[tex_id] = face_ids;
+                face_ids = new face_id_list_t();
             }
-            face_ids.Add(i);
+
+            face_ids[face_ids.length] = i;
             face_id_lists[tex_id] = face_ids;
         }
 
         return face_id_lists;
+    }
+
+    object expandModelFaces(GEOMETRY_T geometry, face_id_list_t face_ids, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
+    {
+        var faces = geometry.faces;
+
+        // get number of triangles required to build model
+        var num_tris = 0;
+        for (var i = 0; i < face_ids.length; ++i) {
+            var face = faces[face_ids[i]];
+            num_tris += face.num_edges - 2;
+        }
+
+        var verts = new DynamicArray<float>(num_tris * 9); // 3 vertices, xyz per tri
+        var uvs = new DynamicArray<float>(num_tris * 6); // 3 uvs, uv per tri
+        var verts_ofs = 0;
+
+        for (var i = 0; i < face_ids.length; ++i) {
+            var face = faces[face_ids[i]];
+            verts_ofs = this.addFaceVerts(geometry, face, verts, uvs, verts_ofs, miptex_entry);
+        }
+
+//        // build and return a three.js BufferGeometry
+//        var buffer_geometry = new THREE.BufferGeometry();
+//        buffer_geometry.attributes = {
+//            position: { itemSize: 3, array: verts },
+//            uv: { itemSize: 2, array: uvs }
+//        };
+//        buffer_geometry.computeBoundingSphere();
+//
+//        return buffer_geometry;
+        throw new NotImplementedException();
+    }
+
+    int addFaceVerts(GEOMETRY_T geometry, FACE_T face, DynamicArray<float> verts, DynamicArray<float> uvs, int verts_ofs, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
+    {
+        var edge_list = geometry.edge_list;
+        var edges = geometry.edges;
+        var vertices = geometry.vertices;
+        var texinfo = geometry.texinfos[face.texinfo_id];
+        var tex_width = miptex_entry.width;
+        var tex_height = miptex_entry.height;
+
+        var vert_ids = new DynamicArray<int>();
+        var start = face.edge_id;
+        var end = start + face.num_edges;
+
+
+        int i;
+            for (i = start; i < end; ++i) {
+                var edge_id = edge_list[i];
+                var edge = edges[Math.Abs(edge_id)];
+                if (edge_id > 0) {
+                    vert_ids[vert_ids.length] = edge.v1;
+                } else {
+                    vert_ids[vert_ids.length] = edge.v2;
+                }
+            }
+
+                var num_tris = vert_ids.length - 2;
+        for (i = 0; i < num_tris; ++i) {
+                // reverse winding order to have correct normals
+                var c = vert_ids[0];
+                var b = vert_ids[i + 1];
+                var a = vert_ids[i + 2];
+
+                int vi = (verts_ofs + i) * 9;
+                int uvi = (verts_ofs + i) * 6;
+                VECTOR3_T vert = vertices[a];
+                verts[vi]     = vert.x;
+                verts[vi + 1] = vert.y;
+                verts[vi + 2] = vert.z;
+                uvs[uvi]     =  (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
+                uvs[uvi + 1] = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+
+                vert = vertices[b];
+                verts[vi + 3] = vert.x;
+                verts[vi + 4] = vert.y;
+                verts[vi + 5] = vert.z;
+                uvs[uvi + 2] =  (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
+                uvs[uvi + 3] = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+
+                vert = vertices[c];
+                verts[vi + 6] = vert.x;
+                verts[vi + 7] = vert.y;
+                verts[vi + 8] = vert.z;
+                uvs[uvi + 4] =  (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
+                uvs[uvi + 5] = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+            }
+
+            return verts_ofs + i; // next position in verts
     }
 
     #region Properties

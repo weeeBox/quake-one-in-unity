@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="DataStreamTest.cs" />
     <Compile Include="BSPTest.cs" />
+    <Compile Include="DynamicArrayTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

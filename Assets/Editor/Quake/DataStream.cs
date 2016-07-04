@@ -71,6 +71,11 @@ public class DataStream
         return m_reader.ReadByte();
     }
 
+    float readFloat32()
+    {
+        return m_reader.ReadSingle();
+    }
+
     #endregion
 
     public T readStruct<T>() where T : struct
@@ -114,7 +119,7 @@ public class DataStream
         return (T[]) readType(typeof(T[]), size);
     }
 
-    object readType(Type type, int size)
+    object readType(Type type, int size = -1)
     {
         if (type == typeof(Int32))
         {
@@ -139,6 +144,10 @@ public class DataStream
         if (type == typeof(byte))
         {
             return readUint8();
+        }
+        if (type == typeof(float))
+        {
+            return readFloat32();
         }
         if (type == typeof(string))
         {
