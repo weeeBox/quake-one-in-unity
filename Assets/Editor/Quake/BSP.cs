@@ -133,6 +133,33 @@ public class BSP
         return { geometries: geometries };
     }
 
+    object getFaceIdsPerTexture(GEOMETRY_T geometry, MODEL_T model)
+    {
+        var texinfos = geometry.texinfos;
+        var faces = geometry.faces;
+
+        // var face_id_lists = {}; // important to note that this is a hash
+        var face_id_lists = new Dictionary<int, List<int>>();
+
+        var start = model.face_id;
+        var end = start + model.num_faces;
+        for (var i = start; i < end; ++i) {
+            var face = faces[i];
+            var tex_id = texinfos[face.texinfo_id].tex_id;
+            // var face_ids = face_id_lists[tex_id] || [];
+            List<int> face_ids;
+            if (!face_id_lists.TryGetValue(tex_id, out face_ids))
+            {
+                face_ids = new List<int>();
+                face_id_lists[tex_id] = face_ids;
+            }
+            face_ids.Add(i);
+            face_id_lists[tex_id] = face_ids;
+        }
+
+        return face_id_lists;
+    }
+
     #region Properties
 
     HEADER_T header
