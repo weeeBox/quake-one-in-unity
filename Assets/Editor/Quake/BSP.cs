@@ -74,7 +74,63 @@ public class BSP
 
     void initGeometry(DataStream ds)
     {
-        throw new NotImplementedException();
+        GEOMETRY_T geometry;
+        geometry.expanded = false;
+
+        var h = this.header;
+
+        ds.seek(h.vertices.offset);
+        geometry.vertices = ds.readArray<VECTOR3_T>(h.vertices.count);
+
+        ds.seek(h.edges.offset);
+        geometry.edges = ds.readArray<EDGE_T>(h.edges.count);
+
+        ds.seek(h.faces.offset);
+        geometry.faces = ds.readArray<FACE_T>(h.faces.count);
+
+        ds.seek(h.texinfos.offset);
+        geometry.texinfos = ds.readArray<TEXINFO_T>(h.texinfos.count);
+
+        ds.seek(h.models.offset);
+        geometry.models = ds.readArray<MODEL_T>(h.models.count);
+
+        ds.seek(h.ledges.offset);
+        geometry.edge_list = ds.readArray<Int32>(h.ledges.count);
+
+        this.geometry = this.expandGeometry(geometry);
+    }
+
+    GEOMETRY_T expandGeometry(GEOMETRY_T geometry)
+    {
+        var models = new MODEL_T[geometry.models.Length];
+
+        for (var i = 0; i < geometry.models.Length; ++i) {
+            models[i] = this.expandModel(ref geometry, geometry.models[i]);
+        }
+
+        geometry.expanded = true;
+        geometry.models = models;
+        return geometry;
+    }
+
+    MODEL_T expandModel(ref GEOMETRY_T geometry, MODEL_T model)
+    {
+        var face_id_lists = this.getFaceIdsPerTexture(geometry, model);
+        var faces = geometry.faces;
+
+        var geometries = {};
+
+        foreach (var i in face_id_lists)
+        {
+            var miptex_entry = this.miptex_directory[i];
+            var buffer_geometry = this.expandModelFaces(geometry, face_id_lists[i], miptex_entry);
+            geometries[geometries.length] = {
+                tex_id: i,
+                geometry: buffer_geometry
+            };
+        }
+
+        return { geometries: geometries };
     }
 
     #region Properties
@@ -85,6 +141,11 @@ public class BSP
     }
 
     MIPTEX_DIRECTORY_ENTRY_T[] miptex_directory
+    {
+        get; set;
+    }
+
+    GEOMETRY_T geometry
     {
         get; set;
     }

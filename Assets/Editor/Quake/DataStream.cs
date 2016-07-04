@@ -109,7 +109,12 @@ public class DataStream
         return obj;
     }
 
-    object readType(Type type, int size = -1)
+    public T[] readArray<T>(int size)
+    {
+        return (T[]) readType(typeof(T[]), size);
+    }
+
+    object readType(Type type, int size)
     {
         if (type == typeof(Int32))
         {
