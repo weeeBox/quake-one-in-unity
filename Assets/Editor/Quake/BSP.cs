@@ -5,6 +5,157 @@ using face_id_list_t = DynamicArray<int>;
 
 public class BSP
 {
+    public struct BBOX_T
+    {
+        public VECTOR3_T min;
+        public VECTOR3_T max;
+    }
+
+    public struct EDGE_T
+    {
+        public UInt16 v1;
+        public UInt16 v2;
+    }
+
+    public struct ENTRY_T
+    {
+        public Int32 offset;
+        public Int32 size;
+
+        [IgnoreField] public int count;
+    }
+
+    public struct FACE_T
+    {
+        public UInt16 plane_id;
+        public UInt16 side;
+        public Int32 edge_id;
+        public UInt16 num_edges;
+        public UInt16 texinfo_id;
+        public byte light_type;
+        public byte light_base;
+        [FieldSize(2)] public byte[] light;
+        public Int32 lightmap;
+    }
+
+    public struct GEOMETRY_T
+    {
+        public bool expanded;
+        public MODEL_T[] models;
+    }
+
+    public struct GEOMETRY_DATA_T
+    {
+        public bool expanded;
+        public VECTOR3_T[] vertices;
+        public EDGE_T[] edges;
+        public FACE_T[] faces;
+        public TEXINFO_T[] texinfos;
+        public MODEL_T[] models;
+        public int[] edge_list;
+    }
+
+    public struct HEADER_T
+    {
+        public Int32 version;
+        public ENTRY_T entities;
+        public ENTRY_T planes;
+        public ENTRY_T miptex;
+        public ENTRY_T vertices;
+        public ENTRY_T visilist;
+        public ENTRY_T nodes;
+        public ENTRY_T texinfos;
+        public ENTRY_T faces;
+        public ENTRY_T lightmaps;
+        public ENTRY_T clipnodes;
+        public ENTRY_T leaves;
+        public ENTRY_T lface;
+        public ENTRY_T edges;
+        public ENTRY_T ledges;
+        public ENTRY_T models;
+    }
+
+    public struct MIPTEX_DIRECTORY_T
+    {
+        public Int32 num_miptex;
+        [FieldSize("num_miptex")] public Int32[] offsets;
+    }
+
+    public struct MIPTEX_DIRECTORY_ENTRY_T
+    {
+        public int offset;
+        public int dsize;
+        public int size;
+        public int type;
+        public int compression;
+        public string name;
+        // additional parameters useful for generating uvs
+        public int width;
+        public int height;
+    }
+
+    public struct MIPTEX_T
+    {
+        [FieldSize(16)] public string name;
+        public Int32 width;
+        public Int32 height;
+        public Int32 ofs1;
+        public Int32 ofs2;
+        public Int32 ofs3;
+        public Int32 ofs4;
+    }
+
+    public struct MODEL_T
+    {
+        public BBOX_T bbox;
+        public VECTOR3_T origin;
+        public Int32 node_id0;
+        public Int32 node_id1;
+        public Int32 node_id2;
+        public Int32 node_id3;
+        public Int32 num_leafs;
+        public Int32 face_id;
+        public Int32 num_faces;
+    }
+
+    public struct TEXINFO_T
+    {
+        public VECTOR3_T vec_s;
+        public float dist_s;
+        public VECTOR3_T vec_t;
+        public float dist_t;
+        public UInt32 tex_id;
+        public UInt32 animated;
+    }
+
+    public struct VECTOR2_T
+    {
+        public float x;
+        public float y;
+
+        public override string ToString()
+        {
+            return string.Format("({0}, {1})", x, y);
+        }
+    }
+
+    public struct VECTOR3_T
+    {
+        public float x;
+        public float y;
+        public float z;
+
+        public override string ToString()
+        {
+            return string.Format("({0}, {1}, {2})", x, y, z);
+        }
+
+        public static float Dot(VECTOR3_T a, VECTOR3_T b)
+        {
+            return a.x * b.x + a.y * b.y + a.z * b.z;
+        }
+    }
+
     public BSP(DataStream ds)
     {
         this.initHeader(ds);
@@ -76,7 +227,7 @@ public class BSP
 
     void initGeometry(DataStream ds)
     {
-        GEOMETRY_T geometry;
+        GEOMETRY_DATA_T geometry;
         geometry.expanded = false;
 
         var h = this.header;
@@ -102,7 +253,7 @@ public class BSP
         this.geometry = this.expandGeometry(geometry);
     }
 
-    GEOMETRY_T expandGeometry(GEOMETRY_T geometry)
+    GEOMETRY_T expandGeometry(GEOMETRY_DATA_T geometry)
     {
         var models = new MODEL_T[geometry.models.Length];
 
@@ -110,12 +261,13 @@ public class BSP
             models[i] = this.expandModel(ref geometry, geometry.models[i]);
         }
 
-        geometry.expanded = true;
-        geometry.models = models;
-        return geometry;
+        GEOMETRY_T result;
+        result.expanded = true;
+        result.models = models;
+        return result;
     }
 
-    MODEL_T expandModel(ref GEOMETRY_T geometry, MODEL_T model)
+    MODEL_T expandModel(ref GEOMETRY_DATA_T geometry, MODEL_T model)
     {
         var face_id_lists = this.getFaceIdsPerTexture(geometry, model);
         var faces = geometry.faces;
@@ -137,7 +289,7 @@ public class BSP
         throw new NotImplementedException();
     }
 
-    Hash<UInt32, face_id_list_t> getFaceIdsPerTexture(GEOMETRY_T geometry, MODEL_T model)
+    Hash<UInt32, face_id_list_t> getFaceIdsPerTexture(GEOMETRY_DATA_T geometry, MODEL_T model)
     {
         var texinfos = geometry.texinfos;
         var faces = geometry.faces;
@@ -163,7 +315,7 @@ public class BSP
         return face_id_lists;
     }
 
-    object expandModelFaces(GEOMETRY_T geometry, face_id_list_t face_ids, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
+    BufferGeometry expandModelFaces(GEOMETRY_DATA_T geometry, face_id_list_t face_ids, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
     {
         var faces = geometry.faces;
 
@@ -183,19 +335,13 @@ public class BSP
             verts_ofs = this.addFaceVerts(geometry, face, verts, uvs, verts_ofs, miptex_entry);
         }
 
-//        // build and return a three.js BufferGeometry
-//        var buffer_geometry = new THREE.BufferGeometry();
-//        buffer_geometry.attributes = {
-//            position: { itemSize: 3, array: verts },
-//            uv: { itemSize: 2, array: uvs }
-//        };
-//        buffer_geometry.computeBoundingSphere();
-//
-//        return buffer_geometry;
-        throw new NotImplementedException();
+        // build and return a three.js BufferGeometry
+        var buffer_geometry = new BufferGeometry(verts, uvs);
+        buffer_geometry.computeBoundingSphere();
+        return buffer_geometry;
     }
 
-    int addFaceVerts(GEOMETRY_T geometry, FACE_T face, DynamicArray<float> verts, DynamicArray<float> uvs, int verts_ofs, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
+    int addFaceVerts(GEOMETRY_DATA_T geometry, FACE_T face, DynamicArray<float> verts, DynamicArray<float> uvs, int verts_ofs, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
     {
         var edge_list = geometry.edge_list;
         var edges = geometry.edges;

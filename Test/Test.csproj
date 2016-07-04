@@ -46,7 +46,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataStreamTest.cs" />
     <Compile Include="BSPTest.cs" />
     <Compile Include="DynamicArrayTest.cs" />
   </ItemGroup>
