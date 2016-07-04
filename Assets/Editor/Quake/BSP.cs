@@ -413,7 +413,7 @@ public class BSP
         set;
     }
 
-    BSPModel[] models
+    public BSPModel[] models
     {
         get;
         set;
