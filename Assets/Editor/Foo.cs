@@ -19,9 +19,14 @@ public static class Foo
 
     static void Generate(BSP bsp)
     {
+        Mesh mesh = GenerateMesh(bsp);
+
         TempBSP tempBSP = GameObject.FindObjectOfType<TempBSP>();
         MeshFilter filter = tempBSP.GetComponent<MeshFilter>();
-        filter.sharedMesh = GenerateMesh(bsp);
+        filter.sharedMesh = mesh;
+
+        MeshCollider collider = tempBSP.GetComponent<MeshCollider>();
+        collider.sharedMesh = mesh;
     }
 
     static Mesh GenerateMesh(BSP bsp)

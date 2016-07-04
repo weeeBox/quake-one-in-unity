@@ -11,6 +11,7 @@ GameObject:
   - 33: {fileID: 3360738}
   - 23: {fileID: 2346742}
   - 114: {fileID: 11442708}
+  - 64: {fileID: 6431020}
   m_Layer: 0
   m_Name: TempBSP
   m_TagString: Untagged
@@ -63,6 +64,18 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 173780}
+  m_Mesh: {fileID: 0}
+--- !u!64 &6431020
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 173780}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Convex: 0
   m_Mesh: {fileID: 0}
 --- !u!114 &11442708
 MonoBehaviour:
