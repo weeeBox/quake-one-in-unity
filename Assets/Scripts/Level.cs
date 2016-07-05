@@ -13,4 +13,13 @@ public class Level : MonoBehaviour
         brush.transform.parent = transform;
         return brush;
     }
+
+    public void Clear()
+    {
+        var brushes = gameObject.GetComponentsInChildren<LevelBrush>();
+        foreach (var brush in brushes)
+        {
+            DestroyImmediate(brush.gameObject);
+        }
+    }
 }

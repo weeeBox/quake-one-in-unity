@@ -250,7 +250,7 @@ public class BSP
             var entry = this.miptex_directory[i];
             var image_data = ImageUtil.getImageData(entry.name, ds, entry);
             var data = ImageUtil.expandImageData(image_data, DEFAULT_PALETTE);
-            textures[i] = new BSPTexture(data, image_data.width, image_data.height);
+            textures[i] = new BSPTexture(entry.name, data, image_data.width, image_data.height);
         }
     }
 
@@ -301,7 +301,7 @@ public class BSP
 
         var geometries = new DynamicArray<BSPGeometry>();
 
-        foreach (var i in face_id_lists)
+        foreach (var i in face_id_lists.sortedKeys)
         {
             var miptex_entry = this.miptex_directory[i];
             var buffer_geometry = this.expandModelFaces(geometry, face_id_lists[i], miptex_entry);
@@ -397,34 +397,30 @@ public class BSP
         var num_tris = vert_ids.length - 2;
         for (i = 0; i < num_tris; ++i)
         {
-            var a = vert_ids[0];
+            // reverse winding order to have correct normals
+            var c = vert_ids[0];
             var b = vert_ids[i + 1];
-            var c = vert_ids[i + 2];
+            var a = vert_ids[i + 2];
 
             int vi = (verts_ofs + i) * 3;
             int uvi = (verts_ofs + i) * 3;
-            VECTOR3_T vert = TransformVertex(vertices[a]);
+            VECTOR3_T vert = vertices[a];
             verts[vi] = vert;
             uvs[uvi].x = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
             uvs[uvi].y = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
 
-            vert = TransformVertex(vertices[b]);
+            vert = vertices[b];
             verts[vi + 1] = vert;
             uvs[uvi + 1].x = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
             uvs[uvi + 1].y = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
 
-            vert = TransformVertex(vertices[c]);
+            vert = vertices[c];
             verts[vi + 2] = vert;
             uvs[uvi + 2].x = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
             uvs[uvi + 2].y = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
         }
 
         return verts_ofs + i; // next position in verts
-    }
-
-    static VECTOR3_T TransformVertex(VECTOR3_T v)
-    {
-        return new VECTOR3_T(v.x, v.z, v.y);
     }
 
     #region Properties
@@ -484,14 +480,21 @@ public class BSPGeometry
 
 public class BSPTexture
 {
+    public readonly string name;
     public readonly byte[] data;
     public readonly int width;
     public readonly int height;
 
-    public BSPTexture(byte[] data, int width, int height)
+    public BSPTexture(string name, byte[] data, int width, int height)
     {
+        this.name = name;
         this.data = data;
         this.width = width;
         this.height = height;
+    }
+
+    public override string ToString()
+    {
+        return string.Format("[BSPTexture] name={0} width={1} height={2}", name, width, height);
     }
 }
