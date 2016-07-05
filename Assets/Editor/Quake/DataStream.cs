@@ -17,7 +17,7 @@ public class DataStream
     /// <summary>
     /// Read a string of desired length from the DataStream.
     /// </summary>
-    string readString(int length)
+    public string readString(int length)
     {
         char[] chars = m_reader.ReadChars(length);
         return new string(chars);
@@ -26,7 +26,7 @@ public class DataStream
     /// <summary>
     /// Reads a 32-bit int from the DataStream.
     /// </summary>
-    Int32 readInt32()
+    public Int32 readInt32()
     {
         return m_reader.ReadInt32();
     }
@@ -34,7 +34,7 @@ public class DataStream
     /// <summary>
     /// Reads a 16-bit int from the DataStream.
     /// </summary>
-    Int16 readInt16()
+    public Int16 readInt16()
     {
         return m_reader.ReadInt16();
     }
@@ -42,7 +42,7 @@ public class DataStream
     /// <summary>
     /// Reads an 8-bit int from the DataStream.
     /// </summary>
-    sbyte readInt8()
+    public sbyte readInt8()
     {
         return m_reader.ReadSByte();
     }
@@ -50,7 +50,7 @@ public class DataStream
     /// <summary>
     /// Reads a 32-bit unsigned int from the DataStream.
     /// </summary>
-    UInt32 readUint32()
+    public UInt32 readUint32()
     {
         return m_reader.ReadUInt32();
     }
@@ -58,7 +58,7 @@ public class DataStream
     /// <summary>
     /// Reads a 16-bit unsigned int from the DataStream.
     /// </summary>
-    UInt16 readUint16()
+    public UInt16 readUint16()
     {
         return m_reader.ReadUInt16();
     }
@@ -66,12 +66,12 @@ public class DataStream
     /// <summary>
     /// Reads an 8-bit unsigned int from the DataStream.
     /// </summary>
-    byte readUint8()
+    public byte readUint8()
     {
         return m_reader.ReadByte();
     }
 
-    float readFloat32()
+    public float readFloat32()
     {
         return m_reader.ReadSingle();
     }
@@ -112,6 +112,13 @@ public class DataStream
         }
 
         return obj;
+    }
+
+    public byte[] readBuffer(int size)
+    {
+        byte[] buffer = new byte[size];
+        m_reader.BaseStream.Read(buffer, 0, buffer.Length);
+        return buffer;
     }
 
     public T[] readArray<T>(int size)

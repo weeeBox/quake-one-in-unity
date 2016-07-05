@@ -7,19 +7,19 @@ using UnityEngine;
 
 public class BSP
 {
-    struct BBOX_T
+    public struct BBOX_T
     {
         public VECTOR3_T min;
         public VECTOR3_T max;
     }
 
-    struct EDGE_T
+    public struct EDGE_T
     {
         public UInt16 v1;
         public UInt16 v2;
     }
 
-    struct ENTRY_T
+    public struct ENTRY_T
     {
         public Int32 offset;
         public Int32 size;
@@ -27,7 +27,7 @@ public class BSP
         [IgnoreField] public int count;
     }
 
-    struct FACE_T
+    public struct FACE_T
     {
         public UInt16 plane_id;
         public UInt16 side;
@@ -40,7 +40,7 @@ public class BSP
         public Int32 lightmap;
     }
 
-    struct GEOMETRY_T
+    public struct GEOMETRY_T
     {
         public bool expanded;
         public VECTOR3_T[] vertices;
@@ -51,7 +51,7 @@ public class BSP
         public int[] edge_list;
     }
 
-    struct HEADER_T
+    public struct HEADER_T
     {
         public Int32 version;
         public ENTRY_T entities;
@@ -71,13 +71,13 @@ public class BSP
         public ENTRY_T models;
     }
 
-    struct MIPTEX_DIRECTORY_T
+    public struct MIPTEX_DIRECTORY_T
     {
         public Int32 num_miptex;
         [FieldSize("num_miptex")] public Int32[] offsets;
     }
 
-    struct MIPTEX_DIRECTORY_ENTRY_T
+    public struct MIPTEX_DIRECTORY_ENTRY_T
     {
         public int offset;
         public int dsize;
@@ -90,7 +90,7 @@ public class BSP
         public int height;
     }
 
-    struct MIPTEX_T
+    public struct MIPTEX_T
     {
         [FieldSize(16)] public string name;
         public Int32 width;
@@ -101,7 +101,7 @@ public class BSP
         public Int32 ofs4;
     }
 
-    struct MODEL_T
+    public struct MODEL_T
     {
         public BBOX_T bbox;
         public VECTOR3_T origin;
@@ -114,7 +114,7 @@ public class BSP
         public Int32 num_faces;
     }
 
-    struct TEXINFO_T
+    public struct TEXINFO_T
     {
         public VECTOR3_T vec_s;
         public float dist_s;
@@ -124,7 +124,7 @@ public class BSP
         public UInt32 animated;
     }
 
-    struct VECTOR2_T
+    public struct VECTOR2_T
     {
         public float x;
         public float y;
@@ -135,7 +135,7 @@ public class BSP
         }
     }
 
-    struct VECTOR3_T
+    public struct VECTOR3_T
     {
         public float x;
         public float y;
@@ -168,8 +168,11 @@ public class BSP
     {
         this.initHeader(ds);
         this.initMiptexDirectory(ds);
+        this.initTextures(ds);
         this.initGeometry(ds);
     }
+
+    PAL DEFAULT_PALETTE = new PAL();
 
     void initHeader(DataStream ds)
     {
@@ -236,6 +239,19 @@ public class BSP
         }
 
         this.miptex_directory = miptex_directory;
+    }
+
+    void initTextures(DataStream ds)
+    {
+        textures = new BSPTexture[miptex_directory.Length];
+
+        for (int i = 0; i < miptex_directory.Length; ++i)
+        {
+            var entry = this.miptex_directory[i];
+            var image_data = ImageUtil.getImageData(entry.name, ds, entry);
+            var data = ImageUtil.expandImageData(image_data, DEFAULT_PALETTE);
+            textures[i] = new BSPTexture(data, image_data.width, image_data.height);
+        }
     }
 
     void initGeometry(DataStream ds)
@@ -413,6 +429,10 @@ public class BSP
 
     #region Properties
 
+    #endregion
+
+    #region Properties
+
     HEADER_T header
     {
         get;
@@ -426,6 +446,12 @@ public class BSP
     }
 
     public BSPModel[] models
+    {
+        get;
+        set;
+    }
+
+    public BSPTexture[] textures
     {
         get;
         set;
@@ -453,5 +479,19 @@ public class BSPGeometry
     {
         this.tex_id = tex_id;
         this.geometry = geometry;
+    }
+}
+
+public class BSPTexture
+{
+    public readonly byte[] data;
+    public readonly int width;
+    public readonly int height;
+
+    public BSPTexture(byte[] data, int width, int height)
+    {
+        this.data = data;
+        this.width = width;
+        this.height = height;
     }
 }
