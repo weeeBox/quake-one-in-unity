@@ -13,47 +13,68 @@ public static class Foo
         {
             DataStream ds = new DataStream(stream);
             BSP bsp = new BSP(ds);
-            Generate(bsp);
+            GenerateLevel(bsp);
         }
     }
 
-    static void Generate(BSP bsp)
+    static void GenerateLevel(BSP bsp)
     {
-        Mesh mesh = GenerateMesh(bsp);
+        Level level = GameObject.FindObjectOfType<Level>();
+        if (level != null)
+        {
+            foreach (Transform child in level.transform)
+            {
+                GameObject.DestroyImmediate(child.gameObject);
+            }
+        }
+        else
+        {
+            GameObject levelObject = new GameObject("Level");
+            level = levelObject.AddComponent<Level>();
+        }
 
-        TempBSP tempBSP = GameObject.FindObjectOfType<TempBSP>();
-        MeshFilter filter = tempBSP.GetComponent<MeshFilter>();
-        filter.sharedMesh = mesh;
+        foreach (var model in bsp.models)
+        {
+            foreach (var geometry in model.geometries)
+            {
+                GenerateBrush(level, geometry);
+            }
+        }
+    }
 
-        MeshCollider collider = tempBSP.GetComponent<MeshCollider>();
+    static void GenerateBrush(Level level, BSPGeometry geometry)
+    {
+        LevelBrush brush = level.CreateBrush();
+        Mesh mesh = GenerateMesh(geometry);
+
+        MeshFilter meshFilter = brush.GetComponent<MeshFilter>();
+        meshFilter.sharedMesh = mesh;
+
+        MeshCollider collider = brush.GetComponent<MeshCollider>();
+        collider.convex = true;
         collider.sharedMesh = mesh;
     }
 
-    static Mesh GenerateMesh(BSP bsp)
+    static Mesh GenerateMesh(BSPGeometry geometry)
     {
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
 
         int ti = 0;
-        foreach (var model in bsp.models)
+        var verts = geometry.geometry.verts;
+        for (int i = 0; i < verts.Length;)
         {
-            foreach (var geometry in model.geometries)
-            {
-                var verts = geometry.geometry.verts;
-                for (int i = 0; i < verts.Length;)
-                {
-                    vertices.Add(verts[i++]);
-                    vertices.Add(verts[i++]);
-                    vertices.Add(verts[i++]);
+            vertices.Add(verts[i++]);
+            vertices.Add(verts[i++]);
+            vertices.Add(verts[i++]);
 
-                    triangles.Add(ti++);
-                    triangles.Add(ti++);
-                    triangles.Add(ti++);
-                }
-            }
+            triangles.Add(ti++);
+            triangles.Add(ti++);
+            triangles.Add(ti++);
         }
 
         Mesh mesh = new Mesh();
+        mesh.name = "Brush Mesh";
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();

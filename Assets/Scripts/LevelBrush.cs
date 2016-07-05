@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TempBSP : MonoBehaviour {
+public class LevelBrush : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
