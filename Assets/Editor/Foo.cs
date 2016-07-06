@@ -67,12 +67,17 @@ public static class Foo
         {
             foreach (var geometry in model.geometries)
             {
-                GenerateBrush(level, geometry);
+                GenerateBrush(bsp, level, geometry);
             }
+        }
+
+        foreach (var entity in bsp.entities)
+        {
+            GenerateEntity(bsp, level, entity);
         }
     }
 
-    static void GenerateBrush(Level level, BSPGeometry geometry)
+    static void GenerateBrush(BSP bsp, Level level, BSPGeometry geometry)
     {
         LevelBrush brush = level.CreateBrush();
         Mesh mesh = GenerateMesh(geometry);
@@ -114,6 +119,17 @@ public static class Foo
         mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
         return mesh;
+    }
+
+    static void GenerateEntity(BSP bsp, Level level, entity_t entity)
+    {
+        if (entity.classname.Contains("door"))
+        {
+            LevelEntity entityObj = level.CreateEntity(entity.classname);
+
+
+            entityObj.transform.position = TransformVertex(entity.origin);
+        }
     }
 
     static Vector3 TransformVertex(Vector3 v)

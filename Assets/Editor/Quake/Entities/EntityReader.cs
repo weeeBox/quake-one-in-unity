@@ -100,6 +100,10 @@ public class EntityReader
                 {
                     name = name.Substring("m_".Length);
                 }
+                else if (name.EndsWith("k__BackingField"))
+                {
+                    name = name.Substring(1, name.Length - ("k__BackingField".Length + 2));
+                }
 
                 fields[name] = field;
             }
