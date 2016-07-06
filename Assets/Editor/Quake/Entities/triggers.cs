@@ -34,6 +34,8 @@ public class trigger_multiple : entity_t
  */
 public class trigger_once : entity_t
 {
+    [EntityFieldPrefix("t")]
+    protected int m_killtarget;
 }
 
 /*
@@ -68,6 +70,7 @@ public class trigger_secret : entity_t
  */
 public class trigger_counter : entity_t
 {
+    protected int m_count;
 }
 
 /*

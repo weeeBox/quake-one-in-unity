@@ -43,13 +43,3 @@ public abstract class entity_t
         get { return m_origin; }
     }
 }
-
-public class worldspawn : entity_t
-{
-    protected int m_worldtype;
-
-    public int worldtype
-    {
-        get { return m_worldtype; }
-    }
-}

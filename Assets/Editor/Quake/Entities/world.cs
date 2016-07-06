@@ -11,4 +11,7 @@ using System;
  * 1: metal
  * 2: base
  */
-public class worldspawn : entity_t {}
+public class worldspawn : entity_t
+{
+    protected int m_worldtype;
+}

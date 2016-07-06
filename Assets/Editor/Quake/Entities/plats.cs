@@ -15,6 +15,7 @@ using System;
  */
 public class func_plat : entity_t
 {
+    protected int m_height;
 }
 
 /*

@@ -1,5 +1,7 @@
 using System;
 
+using UnityEngine;
+
 /*
  * (1 0.5 0.5) (-16 -16 -16) (16 16 16)
  * This is the camera point for the intermission.
@@ -7,6 +9,7 @@ using System;
  */
 public class info_intermission : entity_t
 {
+    protected Vector3 m_mangle;
 }
 
 /*
@@ -15,6 +18,7 @@ public class info_intermission : entity_t
  */
 public class trigger_changelevel : entity_t
 {
+    protected string m_map;
 }
 
 /*
