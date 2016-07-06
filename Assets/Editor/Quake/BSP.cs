@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 using face_id_list_t = DynamicArray<int>;
 
@@ -7,6 +9,8 @@ using UnityEngine;
 
 public class BSP
 {
+    #region Structures
+
     public struct BBOX_T
     {
         public VECTOR3_T min;
@@ -164,15 +168,20 @@ public class BSP
         }
     }
 
+    #endregion
+
+    PAL DEFAULT_PALETTE = new PAL();
+
     public BSP(DataStream ds)
     {
         this.initHeader(ds);
+        this.initEntities(ds);
         this.initMiptexDirectory(ds);
         this.initTextures(ds);
         this.initGeometry(ds);
     }
 
-    PAL DEFAULT_PALETTE = new PAL();
+    #region Header
 
     void initHeader(DataStream ds)
     {
@@ -197,6 +206,23 @@ public class BSP
             throw new Exception("ERROR: BSP version " + this.header.version + " is currently unsupported.");
         }
     }
+
+    #endregion
+
+    #region Entries
+
+    void initEntities(DataStream ds)
+    {
+        var base_offset = this.header.entities.offset;
+        ds.seek(base_offset);
+
+        string data = ds.readString(this.header.entities.size);
+        this.entities = EntityReader.ReadEntities(data);
+    }
+
+    #endregion
+
+    #region MiptexDirectory
 
     void initMiptexDirectory(DataStream ds)
     {
@@ -241,6 +267,10 @@ public class BSP
         this.miptex_directory = miptex_directory;
     }
 
+    #endregion
+
+    #region Textures
+
     void initTextures(DataStream ds)
     {
         textures = new BSPTexture[miptex_directory.Length];
@@ -253,6 +283,10 @@ public class BSP
             textures[i] = new BSPTexture(entry.name, data, image_data.width, image_data.height);
         }
     }
+
+    #endregion
+
+    #region Geometry
 
     void initGeometry(DataStream ds)
     {
@@ -423,8 +457,6 @@ public class BSP
         return verts_ofs + i; // next position in verts
     }
 
-    #region Properties
-
     #endregion
 
     #region Properties
@@ -444,13 +476,19 @@ public class BSP
     public BSPModel[] models
     {
         get;
-        set;
+        private set;
     }
 
     public BSPTexture[] textures
     {
         get;
-        set;
+        private set;
+    }
+
+    public entity_t[] entities
+    {
+        get;
+        private set;
     }
 
     #endregion
