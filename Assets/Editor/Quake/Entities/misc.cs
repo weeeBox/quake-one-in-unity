@@ -25,6 +25,7 @@ public class info_notnull : entity_t
  */
 public class light : entity_t
 {
+    protected int m_light;
 }
 
 /*
@@ -37,6 +38,7 @@ public class light : entity_t
  */
 public class light_fluoro : entity_t
 {
+    protected int m_light;
 }
 
 /*
@@ -48,6 +50,7 @@ public class light_fluoro : entity_t
  */
 public class light_fluorospark : entity_t
 {
+    protected int m_light;
 }
 
 /*
@@ -58,6 +61,7 @@ public class light_fluorospark : entity_t
  */
 public class light_globe : entity_t
 {
+    protected int m_light;
 }
 
 /*
