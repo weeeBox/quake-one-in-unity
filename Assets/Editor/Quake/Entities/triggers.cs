@@ -14,7 +14,9 @@ using System;
  * 4)
  * set "message" to text string
  */
-public class trigger_multiple : entity_t {}
+public class trigger_multiple : entity_t
+{
+}
 
 /*
  * (.5 .5 .5) ? notouch
@@ -30,13 +32,17 @@ public class trigger_multiple : entity_t {}
  * 4)
  * set "message" to text string
  */
-public class trigger_once : entity_t {}
+public class trigger_once : entity_t
+{
+}
 
 /*
  * (.5 .5 .5) (-8 -8 -8) (8 8 8)
  * This fixed size trigger cannot be touched, it can only be fired by other events.  It can contain killtargets, targets, delays, and messages.
  */
-public class trigger_relay : entity_t {}
+public class trigger_relay : entity_t
+{
+}
 
 /*
  * (.5 .5 .5) ?
@@ -48,7 +54,9 @@ public class trigger_relay : entity_t {}
  * 4)
  * set "message" to text string
  */
-public class trigger_secret : entity_t {}
+public class trigger_secret : entity_t
+{
+}
 
 /*
  * (.5 .5 .5) ? nomessage
@@ -58,13 +66,17 @@ public class trigger_secret : entity_t {}
  * 
  * After the counter has been triggered "count" times (default 2), it will fire all of it's targets and remove itself.
  */
-public class trigger_counter : entity_t {}
+public class trigger_counter : entity_t
+{
+}
 
 /*
  * (.5 .5 .5) (-8 -8 -8) (8 8 32)
  * This is the destination marker for a teleporter.  It should have a "targetname" field with the same value as a teleporter's "target" field.
  */
-public class info_teleport_destination : entity_t {}
+public class info_teleport_destination : entity_t
+{
+}
 
 /*
  * (.5 .5 .5) ? PLAYER_ONLY SILENT
@@ -72,20 +84,26 @@ public class info_teleport_destination : entity_t {}
  * 
  * If the trigger_teleport has a targetname, it will only teleport entities when it has been fired.
  */
-public class trigger_teleport : entity_t {}
+public class trigger_teleport : entity_t
+{
+}
 
 /*
  * (.5 .5 .5) ?
  * sets skill level to the value of "message".
  * Only used on start map.
  */
-public class trigger_setskill : entity_t {}
+public class trigger_setskill : entity_t
+{
+}
 
 /*
  * (.5 .5 .5) ?
  * Only fires if playing the registered version, otherwise prints the message
  */
-public class trigger_onlyregistered : entity_t {}
+public class trigger_onlyregistered : entity_t
+{
+}
 
 /*
  * (.5 .5 .5) ?
@@ -93,13 +111,17 @@ public class trigger_onlyregistered : entity_t {}
  * set dmg to damage amount
  * defalt dmg = 5
  */
-public class trigger_hurt : entity_t {}
+public class trigger_hurt : entity_t
+{
+}
 
 /*
  * (.5 .5 .5) ? PUSH_ONCE
  * Pushes the player
  */
-public class trigger_push : entity_t {}
+public class trigger_push : entity_t
+{
+}
 
 /*
  * (.5 .5 .5) ?
@@ -107,4 +129,6 @@ public class trigger_push : entity_t {}
  * "speed" default to 200, the speed thrown forward
  * "height" default to 200, the speed thrown upwards
  */
-public class trigger_monsterjump : entity_t {}
+public class trigger_monsterjump : entity_t
+{
+}

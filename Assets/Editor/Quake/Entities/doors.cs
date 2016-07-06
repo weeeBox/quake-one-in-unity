@@ -25,7 +25,9 @@ using System;
  * 3)      stone chain
  * 4)      screechy metal
  */
-public class func_door : entity_t {}
+public class func_door : entity_t
+{
+}
 
 /*
  * (0 .5 .8) ? open_once 1st_left 1st_down no_shoot always_shoot
@@ -44,4 +46,6 @@ public class func_door : entity_t {}
  * 2) metal
  * 3) base
  */
-public class func_door_secret : entity_t {}
+public class func_door_secret : entity_t
+{
+}

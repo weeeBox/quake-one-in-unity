@@ -13,7 +13,9 @@ using System;
  * 1) base fast
  * 2) chain slow
  */
-public class func_plat : entity_t {}
+public class func_plat : entity_t
+{
+}
 
 /*
  * (0 .5 .8) ?
@@ -27,10 +29,14 @@ public class func_plat : entity_t {}
  * 1) ratchet metal
  * 
  */
-public class func_train : entity_t {}
+public class func_train : entity_t
+{
+}
 
 /*
  * (0 .5 .8) (-8 -8 -8) (8 8 8)
  * This is used for the final bos
  */
-public class misc_teleporttrain : entity_t {}
+public class misc_teleporttrain : entity_t
+{
+}
