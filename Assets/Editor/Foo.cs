@@ -14,15 +14,17 @@ public static class Foo
             DataStream ds = new DataStream(stream);
             BSP bsp = new BSP(ds);
 
-            // GenerateMaterials(bsp);
-
-            GenerateLevel(bsp);
+            var materials = GenerateMaterials(bsp);
+            GenerateLevel(bsp, materials);
         }
     }
 
-    static void GenerateMaterials(BSP bsp)
+    static IList<Material> GenerateMaterials(BSP bsp)
     {
         string textureDir = Directory.GetParent(Application.dataPath).ToString();
+
+        List<string> textures = new List<string>();
+        List<Material> materials = new List<Material>();
 
         int tex_id = 0;
         foreach (var t in bsp.textures)
@@ -33,24 +35,40 @@ public static class Foo
             {
                 pixels[i] = new Color32(t.data[j++], t.data[j++], t.data[j++], t.data[j++]);
             }
-            string assetPath = string.Format("Assets/Textures/e1m1/[{0}] {1}.png", tex_id++, FileUtil.FixFilename(t.name));
-            string textureFile = Path.Combine(textureDir, assetPath);
-            tex.SetPixels32(pixels);
-            File.WriteAllBytes(textureFile, tex.EncodeToPNG());
 
-//            TextureImporter importer = TextureImporter.GetAtPath(assetPath) as TextureImporter;
-//            importer.textureType = TextureImporterType.Image;
-//            importer.wrapMode = TextureWrapMode.Repeat;
-//            importer.filterMode = FilterMode.Point;
-//            importer.maxTextureSize = 2048;
-//            importer.textureFormat = TextureImporterFormat.DXT1;
-//            importer.SaveAndReimport();
+            string texturePath = string.Format("Assets/Textures/[{0}] {1}.png", tex_id++, FileUtil.FixFilename(t.name));
+            tex.SetPixels32(pixels);
+            File.WriteAllBytes(Path.Combine(textureDir, texturePath), tex.EncodeToPNG());
+
+            textures.Add(texturePath);
+        }
+        AssetDatabase.Refresh();
+
+        foreach (var texture in textures)
+        {
+            TextureImporter importer = TextureImporter.GetAtPath(texture) as TextureImporter;
+            importer.textureType = TextureImporterType.Image;
+            importer.wrapMode = TextureWrapMode.Repeat;
+            importer.filterMode = FilterMode.Point;
+            importer.maxTextureSize = 2048;
+            importer.textureFormat = TextureImporterFormat.DXT1;
+            importer.SaveAndReimport();
+
+            var material = new Material(Shader.Find("Standard"));
+            material.mainTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(texture);
+            material.SetFloat("_Glossiness", 0.0f);
+
+            int index = texture.LastIndexOf('.');
+            string materialPath = texture.Substring(0, index) + ".mat";
+            AssetDatabase.CreateAsset(material, materialPath);
+
+            materials.Add(AssetDatabase.LoadAssetAtPath<Material>(materialPath));
         }
 
-        AssetDatabase.Refresh();
+        return materials;
     }
 
-    static void GenerateLevel(BSP bsp)
+    static void GenerateLevel(BSP bsp, IList<Material> materials)
     {
         Level level = GameObject.FindObjectOfType<Level>();
         if (level != null)
@@ -67,7 +85,7 @@ public static class Foo
         {
             foreach (var geometry in model.geometries)
             {
-                GenerateBrush(bsp, level, geometry);
+                GenerateBrush(bsp, level, geometry, materials);
             }
         }
 
@@ -77,7 +95,7 @@ public static class Foo
         }
     }
 
-    static void GenerateBrush(BSP bsp, Level level, BSPGeometry geometry)
+    static void GenerateBrush(BSP bsp, Level level, BSPGeometry geometry, IList<Material> materials)
     {
         LevelBrush brush = level.CreateBrush();
         Mesh mesh = GenerateMesh(geometry);
@@ -85,9 +103,8 @@ public static class Foo
         MeshFilter meshFilter = brush.GetComponent<MeshFilter>();
         meshFilter.sharedMesh = mesh;
 
-//        MeshCollider collider = brush.GetComponent<MeshCollider>();
-//        collider.convex = true;
-//        collider.sharedMesh = mesh;
+        MeshRenderer meshRenderer = brush.GetComponent<MeshRenderer>();
+        meshRenderer.material = materials[(int) geometry.tex_id];
     }
 
     static Mesh GenerateMesh(BSPGeometry geometry)
