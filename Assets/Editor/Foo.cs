@@ -36,6 +36,18 @@ public static class Foo
                 pixels[i] = new Color32(t.data[j++], t.data[j++], t.data[j++], t.data[j++]);
             }
 
+            for (int x = 0; x < t.width; ++x)
+            {
+                for (int y = 0; y < t.height / 2; ++y)
+                {
+                    int from = y * t.width + x;
+                    int to = (t.height - y - 1) * t.width + x;
+                    var temp = pixels[to];
+                    pixels[to] = pixels[from];
+                    pixels[from] = temp;
+                }
+            }
+
             string texturePath = string.Format("Assets/Textures/[{0}] {1}.png", tex_id++, FileUtil.FixFilename(t.name));
             tex.SetPixels32(pixels);
             File.WriteAllBytes(Path.Combine(textureDir, texturePath), tex.EncodeToPNG());
