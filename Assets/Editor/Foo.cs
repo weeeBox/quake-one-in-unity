@@ -9,7 +9,7 @@ public static class Foo
     [MenuItem("Test/Load BSP")]
     static void LoadBSP()
     {
-        using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, "e1m1.bsp")))
+        using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, "Maps/start.bsp")))
         {
             DataStream ds = new DataStream(stream);
             BSP bsp = new BSP(ds);
@@ -169,6 +169,6 @@ public static class Foo
 
     static Vector3 TransformVertex(Vector3 v)
     {
-        return new Vector3(v.x, v.z, v.y);
+        return new Vector3(v.x, v.z, v.y) * 0.02f;
     }
 }

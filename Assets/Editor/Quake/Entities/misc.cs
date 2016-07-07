@@ -16,6 +16,11 @@ public class info_notnull : entity_t
 {
 }
 
+public abstract class light_entity_t : entity_t
+{
+    protected int m_light;
+}
+
 /*
  * (0 1 0) (-8 -8 -8) (8 8 8) START_OFF
  * Non-displayed light.
@@ -23,9 +28,8 @@ public class info_notnull : entity_t
  * Default style is 0
  * If targeted, it will toggle between on or off.
  */
-public class light : entity_t
+public class light : light_entity_t
 {
-    protected int m_light;
 }
 
 /*
@@ -36,9 +40,8 @@ public class light : entity_t
  * If targeted, it will toggle between on or off.
  * Makes steady fluorescent humming sound
  */
-public class light_fluoro : entity_t
+public class light_fluoro : light_entity_t
 {
-    protected int m_light;
 }
 
 /*
@@ -48,9 +51,8 @@ public class light_fluoro : entity_t
  * Default style is 10
  * Makes sparking, broken fluorescent sound
  */
-public class light_fluorospark : entity_t
+public class light_fluorospark : light_entity_t
 {
-    protected int m_light;
 }
 
 /*
@@ -59,9 +61,8 @@ public class light_fluorospark : entity_t
  * Default light value is 300
  * Default style is 0
  */
-public class light_globe : entity_t
+public class light_globe : light_entity_t
 {
-    protected int m_light;
 }
 
 /*
@@ -70,7 +71,7 @@ public class light_globe : entity_t
  * Default light value is 200
  * Default style is 0
  */
-public class light_torch_small_walltorch : entity_t
+public class light_torch_small_walltorch : light_entity_t
 {
 }
 
@@ -78,7 +79,7 @@ public class light_torch_small_walltorch : entity_t
  * (0 1 0) (-10 -10 -12) (12 12 18)
  * Large yellow flame ball
  */
-public class light_flame_large_yellow : entity_t
+public class light_flame_large_yellow : light_entity_t
 {
 }
 
@@ -86,7 +87,7 @@ public class light_flame_large_yellow : entity_t
  * (0 1 0) (-8 -8 -8) (8 8 8) START_OFF
  * Small yellow flame ball
  */
-public class light_flame_small_yellow : entity_t
+public class light_flame_small_yellow : light_entity_t
 {
 }
 
@@ -94,7 +95,7 @@ public class light_flame_small_yellow : entity_t
  * (0 1 0) (-10 -10 -40) (10 10 40) START_OFF
  * Small white flame ball
  */
-public class light_flame_small_white : entity_t
+public class light_flame_small_white : light_entity_t
 {
 }
 
