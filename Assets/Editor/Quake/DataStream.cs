@@ -3,6 +3,8 @@ using System.Collections;
 using System.Reflection;
 using System.IO;
 
+using UnityEngine;
+
 public class DataStream
 {
     BinaryReader m_reader;
@@ -83,9 +85,9 @@ public class DataStream
         return (T)readStruct(typeof(T));
     }
 
-    public Object readStruct(Type type)
+    public object readStruct(Type type)
     {
-        Object obj = Activator.CreateInstance(type);
+        object obj = Activator.CreateInstance(type);
         foreach (var field in type.GetFields())
         {
             if (GetFieldAttribute<IgnoreFieldAttribute>(field) != null)
@@ -164,6 +166,14 @@ public class DataStream
             }
             return readString(size);
         }
+        if (type == typeof(Vector3))
+        {
+            return readVector3();
+        }
+        if (type == typeof(Vector2))
+        {
+            return readVector2();
+        }
         if (type.IsArray)
         {
             if (size == -1)
@@ -192,6 +202,23 @@ public class DataStream
         }
 
         throw new NotImplementedException("Unexpected type: " + type);
+    }
+
+    public Vector2 readVector2()
+    {
+        float x = readFloat32();
+        float y = readFloat32();
+
+        return new Vector2(x, y);
+    }
+
+    public Vector3 readVector3()
+    {
+        float x = readFloat32();
+        float y = readFloat32();
+        float z = readFloat32();
+
+        return new Vector3(x, y, z);
     }
 
     static T GetFieldAttribute<T>(FieldInfo field) where T : Attribute

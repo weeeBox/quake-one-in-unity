@@ -126,9 +126,15 @@ public static class Foo
         if (entity.classname.Contains("door"))
         {
             LevelEntity entityObj = level.CreateEntity(entity.classname);
-
-
-            entityObj.transform.position = TransformVertex(entity.origin);
+            if (entity.model != -1)
+            {
+                var model = bsp.FindModel(entity.model);
+                entityObj.transform.position = TransformVertex(model.origin);
+            }
+            else
+            {
+                entityObj.transform.position = TransformVertex(entity.origin);
+            }
         }
     }
 

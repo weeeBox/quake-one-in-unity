@@ -29,5 +29,20 @@ public static class FileUtil
         }
         return str;
     }
+
+    public static string getFilenameNoExtension(string path)
+    {
+        var index = path.LastIndexOf(".");
+        if (index != -1) {
+            path = path.Substring(0, index);
+        }
+
+        index = path.LastIndexOf("/");
+        if (index != -1) {
+            path = path.Substring(index + 1);
+        }
+
+        return path;
+    }
 }
 

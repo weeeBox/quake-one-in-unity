@@ -178,11 +178,11 @@ public class ImageData
     public byte[] pixels4;
     public int pixel_type;
 
-    public ImageData(string name)
+    public ImageData(string name, int width = 0, int height = 0)
     {
         this.name = name;
-        this.width = 0;
-        this.height = 0;
+        this.width = width;
+        this.height = height;
         this.pixels = null;
         this.pixels2 = null;
         this.pixels3 = null;

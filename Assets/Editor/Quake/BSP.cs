@@ -13,8 +13,8 @@ public class BSP
 
     public struct BBOX_T
     {
-        public VECTOR3_T min;
-        public VECTOR3_T max;
+        public Vector3 min;
+        public Vector3 max;
     }
 
     public struct EDGE_T
@@ -47,7 +47,7 @@ public class BSP
     public struct GEOMETRY_T
     {
         public bool expanded;
-        public VECTOR3_T[] vertices;
+        public Vector3[] vertices;
         public EDGE_T[] edges;
         public FACE_T[] faces;
         public TEXINFO_T[] texinfos;
@@ -108,7 +108,7 @@ public class BSP
     public struct MODEL_T
     {
         public BBOX_T bbox;
-        public VECTOR3_T origin;
+        public Vector3 origin;
         public Int32 node_id0;
         public Int32 node_id1;
         public Int32 node_id2;
@@ -120,52 +120,12 @@ public class BSP
 
     public struct TEXINFO_T
     {
-        public VECTOR3_T vec_s;
+        public Vector3 vec_s;
         public float dist_s;
-        public VECTOR3_T vec_t;
+        public Vector3 vec_t;
         public float dist_t;
         public UInt32 tex_id;
         public UInt32 animated;
-    }
-
-    public struct VECTOR2_T
-    {
-        public float x;
-        public float y;
-
-        public override string ToString()
-        {
-            return string.Format("({0}, {1})", x, y);
-        }
-    }
-
-    public struct VECTOR3_T
-    {
-        public float x;
-        public float y;
-        public float z;
-
-        public VECTOR3_T(float x = 0, float y = 0, float z = 0)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public static float Dot(VECTOR3_T a, VECTOR3_T b)
-        {
-            return a.x * b.x + a.y * b.y + a.z * b.z;
-        }
-
-        public static implicit operator Vector3(VECTOR3_T v)
-        {
-            return new Vector3(v.x, v.y, v.z);
-        }
-
-        public override string ToString()
-        {
-            return string.Format("({0}, {1}, {2})", x, y, z);
-        }
     }
 
     #endregion
@@ -296,7 +256,7 @@ public class BSP
         var h = this.header;
 
         ds.seek(h.vertices.offset);
-        geometry.vertices = ds.readArray<VECTOR3_T>(h.vertices.count);
+        geometry.vertices = ds.readArray<Vector3>(h.vertices.count);
 
         ds.seek(h.edges.offset);
         geometry.edges = ds.readArray<EDGE_T>(h.edges.count);
@@ -342,7 +302,7 @@ public class BSP
             geometries[geometries.length] = new BSPGeometry(i, buffer_geometry);
         }
 
-        return new BSPModel(geometries.ToArray());
+        return new BSPModel(model, geometries.ToArray());
     }
 
     Hash<UInt32, face_id_list_t> getFaceIdsPerTexture(GEOMETRY_T geometry, MODEL_T model)
@@ -438,26 +398,31 @@ public class BSP
 
             int vi = (verts_ofs + i) * 3;
             int uvi = (verts_ofs + i) * 3;
-            VECTOR3_T vert = vertices[a];
+            Vector3 vert = vertices[a];
             verts[vi] = vert;
-            uvs[uvi].x = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
-            uvs[uvi].y = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+            uvs[uvi].x = (Vector3.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
+            uvs[uvi].y = -(Vector3.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
 
             vert = vertices[b];
             verts[vi + 1] = vert;
-            uvs[uvi + 1].x = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
-            uvs[uvi + 1].y = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+            uvs[uvi + 1].x = (Vector3.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
+            uvs[uvi + 1].y = -(Vector3.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
 
             vert = vertices[c];
             verts[vi + 2] = vert;
-            uvs[uvi + 2].x = (VECTOR3_T.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
-            uvs[uvi + 2].y = -(VECTOR3_T.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
+            uvs[uvi + 2].x = (Vector3.Dot(vert, texinfo.vec_s) + texinfo.dist_s) / tex_width;
+            uvs[uvi + 2].y = -(Vector3.Dot(vert, texinfo.vec_t) + texinfo.dist_t) / tex_height;
         }
 
         return verts_ofs + i; // next position in verts
     }
 
     #endregion
+
+    public BSPModel FindModel(int id)
+    {
+        return this.models[id];
+    }
 
     #region Properties
 
@@ -496,11 +461,18 @@ public class BSP
 
 public class BSPModel
 {
+    public readonly BSP.MODEL_T model;
     public readonly BSPGeometry[] geometries;
 
-    public BSPModel(BSPGeometry[] geometries)
+    public BSPModel(BSP.MODEL_T model, BSPGeometry[] geometries)
     {
+        this.model = model;
         this.geometries = geometries;
+    }
+
+    public Vector3 origin
+    {
+        get { return model.origin; }
     }
 }
 
