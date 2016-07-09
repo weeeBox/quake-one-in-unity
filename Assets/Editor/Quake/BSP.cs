@@ -57,7 +57,7 @@ public class BSP
         public bool expanded;
         public Vector3[] vertices;
         public dedge_t[] edges;
-        public short[] edge_list;
+        public int[] edge_list;
         public dface_t[] faces;
         public ushort[] face_list;
         public texinfo_t[] texinfos;
@@ -375,7 +375,7 @@ public class BSP
 
         geometry.vertices = readLump<Vector3>(ds, h.vertices);
         geometry.edges = readLump<dedge_t>(ds, h.edges);
-        geometry.edge_list = readLump<short>(ds, h.ledges);
+        geometry.edge_list = readLump<int>(ds, h.ledges);
         geometry.faces = readLump<dface_t>(ds, h.faces);
         geometry.face_list = readLump<ushort>(ds, h.lfaces);
         geometry.texinfos = readLump<texinfo_t>(ds, h.texinfos);
