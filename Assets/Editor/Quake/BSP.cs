@@ -57,10 +57,11 @@ public class BSP
         public bool expanded;
         public Vector3[] vertices;
         public dedge_t[] edges;
+        public short[] edge_list;
         public dface_t[] faces;
+        public ushort[] face_list;
         public texinfo_t[] texinfos;
         public dmodel_t[] models;
-        public int[] edge_list;
     }
 
     public struct dheader_t
@@ -100,8 +101,8 @@ public class BSP
         [LumpTarget(typeof(dleaf_t))]
         public lump_t leaves;
 
-        [LumpTarget(typeof(short))]
-        public lump_t lface;
+        [LumpTarget(typeof(ushort))]
+        public lump_t lfaces;
 
         [LumpTarget(typeof(dedge_t))]
         public lump_t edges;
@@ -372,25 +373,21 @@ public class BSP
 
         var h = this.header;
 
-        ds.seek(h.vertices.fileofs);
-        geometry.vertices = ds.readArray<Vector3>(h.vertices.count);
-
-        ds.seek(h.edges.fileofs);
-        geometry.edges = ds.readArray<dedge_t>(h.edges.count);
-
-        ds.seek(h.faces.fileofs);
-        geometry.faces = ds.readArray<dface_t>(h.faces.count);
-
-        ds.seek(h.texinfos.fileofs);
-        geometry.texinfos = ds.readArray<texinfo_t>(h.texinfos.count);
-
-        ds.seek(h.models.fileofs);
-        geometry.models = ds.readArray<dmodel_t>(h.models.count);
-
-        ds.seek(h.ledges.fileofs);
-        geometry.edge_list = ds.readArray<Int32>(h.ledges.count);
+        geometry.vertices = readLump<Vector3>(ds, h.vertices);
+        geometry.edges = readLump<dedge_t>(ds, h.edges);
+        geometry.edge_list = readLump<short>(ds, h.ledges);
+        geometry.faces = readLump<dface_t>(ds, h.faces);
+        geometry.face_list = readLump<ushort>(ds, h.lfaces);
+        geometry.texinfos = readLump<texinfo_t>(ds, h.texinfos);
+        geometry.models = readLump<dmodel_t>(ds, h.models);
 
         this.models = this.expandGeometry(geometry);
+    }
+
+    T[] readLump<T>(DataStream ds, lump_t lump)
+    {
+        ds.seek(lump.fileofs);
+        return ds.readArray<T>(lump.count);
     }
 
     BSPModel[] expandGeometry(GEOMETRY_T geometry)
