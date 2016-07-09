@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 public static class Extension
 {
@@ -19,6 +20,16 @@ public static class Extension
             return value;
         }
         return defaultValue;
+    }
+
+    #endregion
+
+    #region FieldInfo
+
+    public static T GetCustomAttribute<T>(this FieldInfo field) where T : Attribute
+    {
+        var attributes = field.GetCustomAttributes(typeof(T), false);
+        return attributes.Length == 1 ? attributes[0] as T : null;
     }
 
     #endregion

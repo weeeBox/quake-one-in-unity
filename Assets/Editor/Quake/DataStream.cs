@@ -88,15 +88,15 @@ public class DataStream
     public object readStruct(Type type)
     {
         object obj = Activator.CreateInstance(type);
-        foreach (var field in type.GetFields())
+        foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
         {
-            if (GetFieldAttribute<IgnoreFieldAttribute>(field) != null)
+            if (field.GetCustomAttribute<IgnoreFieldAttribute>() != null)
             {
                 continue;
             }
 
             int fieldSize = -1;
-            FieldSizeAttribute fieldSizeAttr = GetFieldAttribute<FieldSizeAttribute>(field);
+            FieldSizeAttribute fieldSizeAttr = field.GetCustomAttribute<FieldSizeAttribute>();
             if (fieldSizeAttr != null)
             {
                 if (fieldSizeAttr.name != null)
@@ -219,12 +219,6 @@ public class DataStream
         float z = readFloat32();
 
         return new Vector3(x, y, z);
-    }
-
-    static T GetFieldAttribute<T>(FieldInfo field) where T : Attribute
-    {
-        var attributes = field.GetCustomAttributes(typeof(T), false);
-        return attributes.Length == 1 ? attributes[0] as T : null;
     }
 
     static int GetFieldIntValue(object target, string name)

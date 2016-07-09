@@ -13,7 +13,7 @@ namespace Test
             using (FileStream stream = File.OpenRead("e1m1.bsp"))
             {
                 DataStream data = new DataStream(stream);
-                BSP bsp = new BSP(data);
+                new BSP(data);
             }
         }
     }

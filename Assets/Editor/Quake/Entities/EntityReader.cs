@@ -115,7 +115,7 @@ public class EntityReader
 
     static void SetFieldValue(FieldInfo field, object target, string value)
     {
-        EntityFieldPrefixAttribute prefixAttribute = GetFieldAttribute<EntityFieldPrefixAttribute>(field);
+        EntityFieldPrefixAttribute prefixAttribute = field.GetCustomAttribute<EntityFieldPrefixAttribute>();
         if (prefixAttribute != null && value.StartsWith(prefixAttribute.prefix))
         {
             value = value.Substring(prefixAttribute.prefix.Length);
@@ -138,12 +138,6 @@ public class EntityReader
         {
             throw new NotImplementedException("Unsupported field type: " + type);
         }
-    }
-
-    static T GetFieldAttribute<T>(FieldInfo field) where T : Attribute
-    {
-        var attributes = field.GetCustomAttributes(typeof(T), false);
-        return attributes.Length == 1 ? attributes[0] as T : null;
     }
 
     static Vector3 ParseVector3(string value)

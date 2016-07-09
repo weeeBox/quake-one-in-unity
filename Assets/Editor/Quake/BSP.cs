@@ -2,36 +2,44 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-
-using face_id_list_t = DynamicArray<int>;
+using System.Reflection;
 
 using UnityEngine;
+
+using scalar_t = System.Single;
+using face_id_list_t = DynamicArray<int>;
 
 public class BSP
 {
     #region Structures
 
-    public struct BBOX_T
+    public struct boundbox_t
     {
         public Vector3 min;
         public Vector3 max;
     }
 
-    public struct EDGE_T
+    public struct bboxshort_t
+    {
+        public short min;
+        public short max;
+    }
+
+    public struct dedge_t
     {
         public UInt16 v1;
         public UInt16 v2;
     }
 
-    public struct ENTRY_T
+    public struct lump_t
     {
-        public Int32 offset;
-        public Int32 size;
+        public Int32 fileofs;
+        public Int32 filelen;
 
         [IgnoreField] public int count;
     }
 
-    public struct FACE_T
+    public struct dface_t
     {
         public UInt16 plane_id;
         public UInt16 side;
@@ -48,31 +56,61 @@ public class BSP
     {
         public bool expanded;
         public Vector3[] vertices;
-        public EDGE_T[] edges;
-        public FACE_T[] faces;
-        public TEXINFO_T[] texinfos;
-        public MODEL_T[] models;
+        public dedge_t[] edges;
+        public dface_t[] faces;
+        public texinfo_t[] texinfos;
+        public dmodel_t[] models;
         public int[] edge_list;
     }
 
-    public struct HEADER_T
+    public struct dheader_t
     {
         public Int32 version;
-        public ENTRY_T entities;
-        public ENTRY_T planes;
-        public ENTRY_T miptex;
-        public ENTRY_T vertices;
-        public ENTRY_T visilist;
-        public ENTRY_T nodes;
-        public ENTRY_T texinfos;
-        public ENTRY_T faces;
-        public ENTRY_T lightmaps;
-        public ENTRY_T clipnodes;
-        public ENTRY_T leaves;
-        public ENTRY_T lface;
-        public ENTRY_T edges;
-        public ENTRY_T ledges;
-        public ENTRY_T models;
+
+        // not used
+        public lump_t entities;
+
+        [LumpTarget(typeof(dplane_t))]
+        public lump_t planes;
+
+        [LumpTarget(typeof(miptex_t))]
+        public lump_t miptex;
+
+        [LumpTarget(typeof(Vector3))]
+        public lump_t vertices;
+
+        // TODO: add target
+        public lump_t visilist;
+
+        [LumpTarget(typeof(dnode_t))]
+        public lump_t nodes;
+
+        [LumpTarget(typeof(texinfo_t))]
+        public lump_t texinfos;
+
+        [LumpTarget(typeof(dface_t))]
+        public lump_t faces;
+
+        // TODO: add target
+        public lump_t lightmaps;
+
+        [LumpTarget(typeof(clipnode_t))]
+        public lump_t clipnodes;
+
+        [LumpTarget(typeof(dleaf_t))]
+        public lump_t leaves;
+
+        [LumpTarget(typeof(short))]
+        public lump_t lface;
+
+        [LumpTarget(typeof(dedge_t))]
+        public lump_t edges;
+
+        [LumpTarget(typeof(short))]
+        public lump_t ledges;
+
+        [LumpTarget(typeof(dmodel_t))]
+        public lump_t models;
     }
 
     public struct MIPTEX_DIRECTORY_T
@@ -94,7 +132,7 @@ public class BSP
         public int height;
     }
 
-    public struct MIPTEX_T
+    public struct miptex_t
     {
         [FieldSize(16)] public string name;
         public Int32 width;
@@ -105,9 +143,9 @@ public class BSP
         public Int32 ofs4;
     }
 
-    public struct MODEL_T
+    public struct dmodel_t
     {
-        public BBOX_T bbox;
+        public boundbox_t bbox;
         public Vector3 origin;
         public Int32 node_id0;
         public Int32 node_id1;
@@ -118,7 +156,7 @@ public class BSP
         public Int32 num_faces;
     }
 
-    public struct TEXINFO_T
+    public struct texinfo_t
     {
         public Vector3 vec_s;
         public float dist_s;
@@ -128,55 +166,134 @@ public class BSP
         public UInt32 animated;
     }
 
+    // 0-2 are axial planes
+    const int PLANE_X = 0;
+    const int PLANE_Y = 1;
+    const int PLANE_Z = 2;
+
+    // 3-5 are non-axial planes snapped to the nearest
+    const int PLANE_ANYX = 3;
+    const int PLANE_ANYY = 4;
+    const int PLANE_ANYZ = 5;
+
+    public struct dplane_t
+    {
+        public Vector3 normal;
+        public float dist;
+        public int type;
+    }
+
+    public struct dnode_t
+    {
+        public int planenum;
+        public ushort front;        // If bit15==0, index of Front child node
+                                    // If bit15==1, ~front = index of child leaf
+        public ushort back;         // If bit15==0, id of Back child node
+                                    // If bit15==1, ~back =  id of child leaf
+        public boundbox_t bounds;   // for sphere culling
+        public ushort firstface;
+        public ushort numfaces;     // counting both sides
+    }
+
+    public struct dleaf_t
+    {
+        public int type;            // Special type of leaf
+        public int vislist;         // Beginning of visibility lists
+        public bboxshort_t bound;   // Bounding box of the leaf
+        public ushort lface_id;     // First item of the list of faces
+        public ushort lface_num;    // Number of faces in the leaf  
+        public byte sndwater;       // level of the four ambient sounds:
+        public byte sndsky;         //   0    is no sound
+        public byte sndslime;       //   0xFF is maximum volume
+        public byte sndlava;        //
+    }
+
+    public struct clipnode_t
+    {
+        uint planenum;             // The plane which splits the node
+        short front;               // If positive, id of Front child node
+        // If -2, the Front part is inside the model
+        // If -1, the Front part is outside the model
+        short back;                  // If positive, id of Back child node
+        // If -2, the Back part is inside the model
+        // If -1, the Back part is outside the model
+    }
+
     #endregion
 
     PAL DEFAULT_PALETTE = new PAL();
 
     public BSP(DataStream ds)
     {
-        this.initHeader(ds);
-        this.initEntities(ds);
-        this.initMiptexDirectory(ds);
-        this.initTextures(ds);
-        this.initGeometry(ds);
+        this.ReadHeader(ds);
+        this.ReadLeaves(ds);
+        this.ReadEntities(ds);
+        this.ReadMiptexDirectory(ds);
+        this.ReadTextures(ds);
+        this.ReadGeometry(ds);
     }
 
     #region Header
 
-    void initHeader(DataStream ds)
+    void ReadHeader(DataStream ds)
     {
-        var h = ds.readStruct<HEADER_T>();
-
-        // get the number of each element. This used total_size / sizeof(type) in C.
-        h.vertices.count = h.vertices.size / 12;
-        h.edges.count = h.edges.size / 4;
-        h.ledges.count = h.ledges.size / 4;
-        h.faces.count = h.faces.size / 20;
-        h.texinfos.count = h.texinfos.size / 40;
-        h.models.count = h.models.size / 64;
-        //h.planes.count
-        //h.nodes.count
-        //h.leaves.count
-        //h.clipnodes.count
-
-        this.header = h;
-
+        var h = ds.readStruct<dheader_t>();
         if (h.version != 29)
         {
             throw new Exception("ERROR: BSP version " + this.header.version + " is currently unsupported.");
         }
+
+        object boxed = h;
+
+        // set count for marked lumps
+        Type headerType = h.GetType();
+        var fields = headerType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        foreach (var field in fields)
+        {
+            if (field.FieldType != typeof(lump_t))
+            {
+                continue;
+            }
+
+            var targetAttribute = field.GetCustomAttribute<LumpTargetAttribute>();
+            if (targetAttribute == null)
+            {
+                continue;
+            }
+
+            Type targetType = targetAttribute.target;
+
+            lump_t lump = (lump_t) field.GetValue(boxed);
+            lump.count = lump.filelen / SizeOf(targetType);
+            field.SetValue(boxed, lump);
+        }
+
+        this.header = (dheader_t) boxed;
+    }
+
+    #endregion
+
+    #region Leaves
+
+    void ReadLeaves(DataStream ds)
+    {
+        var base_offset = this.header.leaves.fileofs;
+        ds.seek(base_offset);
+
+        dleaf_t[] leaves = ds.readArray<dleaf_t>(this.header.leaves.count);
+        int count = leaves.Length;
     }
 
     #endregion
 
     #region Entries
 
-    void initEntities(DataStream ds)
+    void ReadEntities(DataStream ds)
     {
-        var base_offset = this.header.entities.offset;
+        var base_offset = this.header.entities.fileofs;
         ds.seek(base_offset);
 
-        string data = ds.readString(this.header.entities.size);
+        string data = ds.readString(this.header.entities.filelen);
         this.entities = EntityReader.ReadEntities(data);
     }
 
@@ -184,10 +301,10 @@ public class BSP
 
     #region MiptexDirectory
 
-    void initMiptexDirectory(DataStream ds)
+    void ReadMiptexDirectory(DataStream ds)
     {
         // get offsets to each texture
-        var base_offset = this.header.miptex.offset;
+        var base_offset = this.header.miptex.fileofs;
         ds.seek(base_offset);
         var miptex_offsets = ds.readStruct<MIPTEX_DIRECTORY_T>().offsets;
 
@@ -199,7 +316,7 @@ public class BSP
             var offset = base_offset + miptex_offsets[i];
 
             ds.seek(offset);
-            var miptex = ds.readStruct<MIPTEX_T>();
+            var miptex = ds.readStruct<miptex_t>();
 
             MIPTEX_DIRECTORY_ENTRY_T entry;
             entry.offset = offset;
@@ -231,7 +348,7 @@ public class BSP
 
     #region Textures
 
-    void initTextures(DataStream ds)
+    void ReadTextures(DataStream ds)
     {
         textures = new BSPTexture[miptex_directory.Length];
 
@@ -248,29 +365,29 @@ public class BSP
 
     #region Geometry
 
-    void initGeometry(DataStream ds)
+    void ReadGeometry(DataStream ds)
     {
         GEOMETRY_T geometry;
         geometry.expanded = false;
 
         var h = this.header;
 
-        ds.seek(h.vertices.offset);
+        ds.seek(h.vertices.fileofs);
         geometry.vertices = ds.readArray<Vector3>(h.vertices.count);
 
-        ds.seek(h.edges.offset);
-        geometry.edges = ds.readArray<EDGE_T>(h.edges.count);
+        ds.seek(h.edges.fileofs);
+        geometry.edges = ds.readArray<dedge_t>(h.edges.count);
 
-        ds.seek(h.faces.offset);
-        geometry.faces = ds.readArray<FACE_T>(h.faces.count);
+        ds.seek(h.faces.fileofs);
+        geometry.faces = ds.readArray<dface_t>(h.faces.count);
 
-        ds.seek(h.texinfos.offset);
-        geometry.texinfos = ds.readArray<TEXINFO_T>(h.texinfos.count);
+        ds.seek(h.texinfos.fileofs);
+        geometry.texinfos = ds.readArray<texinfo_t>(h.texinfos.count);
 
-        ds.seek(h.models.offset);
-        geometry.models = ds.readArray<MODEL_T>(h.models.count);
+        ds.seek(h.models.fileofs);
+        geometry.models = ds.readArray<dmodel_t>(h.models.count);
 
-        ds.seek(h.ledges.offset);
+        ds.seek(h.ledges.fileofs);
         geometry.edge_list = ds.readArray<Int32>(h.ledges.count);
 
         this.models = this.expandGeometry(geometry);
@@ -288,7 +405,7 @@ public class BSP
         return models;
     }
 
-    BSPModel expandModel(ref GEOMETRY_T geometry, MODEL_T model)
+    BSPModel expandModel(ref GEOMETRY_T geometry, dmodel_t model)
     {
         var face_id_lists = this.getFaceIdsPerTexture(geometry, model);
         var faces = geometry.faces;
@@ -305,7 +422,7 @@ public class BSP
         return new BSPModel(model, geometries.ToArray());
     }
 
-    Hash<UInt32, face_id_list_t> getFaceIdsPerTexture(GEOMETRY_T geometry, MODEL_T model)
+    Hash<UInt32, face_id_list_t> getFaceIdsPerTexture(GEOMETRY_T geometry, dmodel_t model)
     {
         var texinfos = geometry.texinfos;
         var faces = geometry.faces;
@@ -359,7 +476,7 @@ public class BSP
         return buffer_geometry;
     }
 
-    int addFaceVerts(GEOMETRY_T geometry, FACE_T face, Vector3[] verts, Vector2[] uvs, int verts_ofs, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
+    int addFaceVerts(GEOMETRY_T geometry, dface_t face, Vector3[] verts, Vector2[] uvs, int verts_ofs, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
     {
         var edge_list = geometry.edge_list;
         var edges = geometry.edges;
@@ -424,9 +541,119 @@ public class BSP
         return this.models[id];
     }
 
+    #region Helpers
+
+    static int SizeOf<T>()
+    {
+        Type t = typeof(T);
+        return SizeOf(t);
+    }
+
+    static int SizeOf(Type type, int size = -1)
+    {
+        if (type == typeof(Int32))
+        {
+            return sizeof(Int32);
+        }
+        if (type == typeof(UInt32))
+        {
+            return sizeof(UInt32);
+        }
+        if (type == typeof(Int16))
+        {
+            return sizeof(Int16);
+        }
+        if (type == typeof(UInt16))
+        {
+            return sizeof(UInt16);
+        }
+        if (type == typeof(sbyte))
+        {
+            return sizeof(sbyte);
+        }
+        if (type == typeof(byte))
+        {
+            return sizeof(byte);
+        }
+        if (type == typeof(float))
+        {
+            return sizeof(float);
+        }
+        if (type == typeof(string))
+        {
+            if (size == -1)
+            {
+                throw new Exception("Missing " + typeof(FieldSizeAttribute).Name + " attribute");
+            }
+            return size;
+        }
+        if (type == typeof(Vector3))
+        {
+            return 3 * sizeof(float);
+        }
+        if (type == typeof(Vector2))
+        {
+            return 2 * sizeof(float);
+        }
+        if (type.IsArray)
+        {
+            if (size == -1)
+            {
+                throw new Exception("Missing " + typeof(FieldSizeAttribute).Name + " attribute");
+            }
+
+            int rank = type.GetArrayRank();
+            if (rank != 1)
+            {
+                throw new Exception("Unexpected array rank: " + rank);
+            }
+
+            Type elementType = type.GetElementType();
+            return size * SizeOf(elementType);
+        }
+        if (type.IsValueType && !type.IsPrimitive)
+        {
+            return SizeOfStruct(type);
+        }
+
+        throw new NotImplementedException("Unexpected type: " + type);
+    }
+
+    static int SizeOfStruct(Type type)
+    {
+        int totalSize = 0;
+        foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+        {
+            if (field.GetCustomAttribute<IgnoreFieldAttribute>() != null)
+            {
+                continue;
+            }
+
+            int fieldSize = -1;
+            FieldSizeAttribute fieldSizeAttr = field.GetCustomAttribute<FieldSizeAttribute>();
+            if (fieldSizeAttr != null)
+            {
+                if (fieldSizeAttr.size <= 0)
+                {
+                    throw new Exception("Invalid size: " + field);
+                }
+                else
+                {
+                    fieldSize = fieldSizeAttr.size;
+                }
+            }
+
+            totalSize += SizeOf(field.FieldType, fieldSize);
+        }
+
+        return totalSize;
+    }
+
+    #endregion
+
     #region Properties
 
-    HEADER_T header
+    dheader_t header
     {
         get;
         set;
@@ -461,10 +688,10 @@ public class BSP
 
 public class BSPModel
 {
-    public readonly BSP.MODEL_T model;
+    public readonly BSP.dmodel_t model;
     public readonly BSPGeometry[] geometries;
 
-    public BSPModel(BSP.MODEL_T model, BSPGeometry[] geometries)
+    public BSPModel(BSP.dmodel_t model, BSPGeometry[] geometries)
     {
         this.model = model;
         this.geometries = geometries;
