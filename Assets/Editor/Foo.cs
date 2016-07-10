@@ -95,21 +95,37 @@ public static class Foo
 
         foreach (var model in bsp.models)
         {
-            foreach (var geometry in model.geometries)
-            {
-                GenerateBrush(bsp, level, geometry, materials);
-            }
+            GenerateBrush(bsp, level, model, materials);
         }
 
-        foreach (var entity in bsp.entities)
+        foreach (var verts in bsp.collision)
         {
-            GenerateEntity(bsp, level, entity);
+            GenerateCollision(bsp, level.gameObject, verts);
         }
+
+//        foreach (var entity in bsp.entities)
+//        {
+//            GenerateEntity(bsp, level, entity);
+//        }
     }
 
-    static void GenerateBrush(BSP bsp, Level level, BSPGeometry geometry, IList<Material> materials)
+    static void GenerateBrush(BSP bsp, Level level, BSPModel model, IList<Material> materials)
     {
-        LevelBrush brush = level.CreateBrush();
+        GameObject modelObj = new GameObject("Model");
+        modelObj.transform.parent = level.transform;
+
+        foreach (var geometry in model.geometries)
+        {
+            LevelBrush brush = level.CreateBrush();
+            brush.transform.parent = modelObj.transform;
+            GenerateBrush(bsp, brush, geometry, materials);
+        }
+
+//        GenerateCollision(bsp, modelObj, model);
+    }
+
+    static void GenerateBrush(BSP bsp, LevelBrush brush, BSPModelGeometry geometry, IList<Material> materials)
+    {
         Mesh mesh = GenerateMesh(geometry);
 
         MeshFilter meshFilter = brush.GetComponent<MeshFilter>();
@@ -119,18 +135,18 @@ public static class Foo
         meshRenderer.material = materials[(int) geometry.tex_id];
     }
 
-    static Mesh GenerateMesh(BSPGeometry geometry)
+    static Mesh GenerateMesh(BSPModelGeometry geometry)
     {
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
         List<Vector2> uvs = new List<Vector2>();
 
-        BufferGeometry g = geometry.geometry;
-        for (int vi = 0, ti = 0; vi < g.verts.Length; vi +=3, ti += 3)
+        var g = geometry.mesh;
+        for (int vi = 0, ti = 0; vi < g.vertices.Length; vi +=3, ti += 3)
         {
-            vertices.Add(TransformVertex(g.verts[vi + 0]));
-            vertices.Add(TransformVertex(g.verts[vi + 1]));
-            vertices.Add(TransformVertex(g.verts[vi + 2]));
+            vertices.Add(TransformVertex(g.vertices[vi + 0]));
+            vertices.Add(TransformVertex(g.vertices[vi + 1]));
+            vertices.Add(TransformVertex(g.vertices[vi + 2]));
 
             uvs.Add(g.uvs[vi + 0]);
             uvs.Add(g.uvs[vi + 1]);
@@ -148,6 +164,44 @@ public static class Foo
         mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
         return mesh;
+    }
+
+    static void GenerateCollision(BSP bsp, GameObject parent, BSPModel model)
+    {
+        foreach (var collision in model.collision)
+        {
+            GenerateCollision(bsp, parent, collision);
+        }
+    }
+
+    static void GenerateCollision(BSP bsp, GameObject parent, Vector3[] verts)
+    {
+        GameObject obj = new GameObject("Collision");
+        obj.transform.parent = parent.transform;
+
+        var collider = obj.AddComponent<MeshCollider>();
+
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+
+        for (int vi = 0, ti = 0; vi < verts.Length; vi +=3, ti += 3)
+        {
+            vertices.Add(TransformVertex(verts[vi + 0]));
+            vertices.Add(TransformVertex(verts[vi + 1]));
+            vertices.Add(TransformVertex(verts[vi + 2]));
+
+            triangles.Add(ti + 2);
+            triangles.Add(ti + 1);
+            triangles.Add(ti + 0);
+        }
+
+        Mesh mesh = new Mesh();
+        mesh.name = "Collision Mesh";
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.RecalculateNormals();
+
+        collider.sharedMesh = mesh;
     }
 
     static void GenerateEntity(BSP bsp, Level level, entity_t entity)

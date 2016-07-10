@@ -13,7 +13,6 @@ public class Level : MonoBehaviour
     {
         LevelBrush brush = Instantiate(m_brushPrefab) as LevelBrush;
         brush.name = "Brush";
-        brush.transform.parent = transform;
         return brush;
     }
 

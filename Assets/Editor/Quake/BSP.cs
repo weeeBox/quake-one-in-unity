@@ -62,6 +62,8 @@ public class BSP
         public ushort[] face_list;
         public texinfo_t[] texinfos;
         public dmodel_t[] models;
+        public dleaf_t[] leaves;
+        public dnode_t[] nodes;
     }
 
     public struct dheader_t
@@ -200,7 +202,8 @@ public class BSP
     {
         public int type;            // Special type of leaf
         public int vislist;         // Beginning of visibility lists
-        public bboxshort_t bound;   // Bounding box of the leaf
+        [FieldSize(3)] public short[] mins;            // for frustum culling
+        [FieldSize(3)] public short[] maxs;
         public ushort lface_id;     // First item of the list of faces
         public ushort lface_num;    // Number of faces in the leaf  
         public byte sndwater;       // level of the four ambient sounds:
@@ -227,7 +230,6 @@ public class BSP
     public BSP(DataStream ds)
     {
         this.ReadHeader(ds);
-        this.ReadLeaves(ds);
         this.ReadEntities(ds);
         this.ReadMiptexDirectory(ds);
         this.ReadTextures(ds);
@@ -270,19 +272,6 @@ public class BSP
         }
 
         this.header = (dheader_t) boxed;
-    }
-
-    #endregion
-
-    #region Leaves
-
-    void ReadLeaves(DataStream ds)
-    {
-        var base_offset = this.header.leaves.fileofs;
-        ds.seek(base_offset);
-
-        dleaf_t[] leaves = ds.readArray<dleaf_t>(this.header.leaves.count);
-        int count = leaves.Length;
     }
 
     #endregion
@@ -380,8 +369,11 @@ public class BSP
         geometry.face_list = readLump<ushort>(ds, h.lfaces);
         geometry.texinfos = readLump<texinfo_t>(ds, h.texinfos);
         geometry.models = readLump<dmodel_t>(ds, h.models);
+        geometry.leaves = readLump<dleaf_t>(ds, h.leaves);
+        geometry.nodes = readLump<dnode_t>(ds, h.nodes);
 
-        this.models = this.expandGeometry(geometry);
+        this.models = this.CreateModels(geometry);
+        this.collision = this.CreateCollision(geometry);
     }
 
     T[] readLump<T>(DataStream ds, lump_t lump)
@@ -390,30 +382,26 @@ public class BSP
         return ds.readArray<T>(lump.count);
     }
 
-    BSPModel[] expandGeometry(GEOMETRY_T geometry)
+    BSPModel[] CreateModels(GEOMETRY_T geometry)
     {
         var models = new BSPModel[geometry.models.Length];
-
         for (var i = 0; i < geometry.models.Length; ++i)
         {
-            models[i] = this.expandModel(ref geometry, geometry.models[i]);
+            models[i] = this.CreateModel(ref geometry, geometry.models[i]);
         }
-
         return models;
     }
 
-    BSPModel expandModel(ref GEOMETRY_T geometry, dmodel_t model)
+    BSPModel CreateModel(ref GEOMETRY_T geometry, dmodel_t model)
     {
         var face_id_lists = this.getFaceIdsPerTexture(geometry, model);
-        var faces = geometry.faces;
-
-        var geometries = new DynamicArray<BSPGeometry>();
+        var geometries = new DynamicArray<BSPModelGeometry>();
 
         foreach (var i in face_id_lists.sortedKeys)
         {
             var miptex_entry = this.miptex_directory[i];
-            var buffer_geometry = this.expandModelFaces(geometry, face_id_lists[i], miptex_entry);
-            geometries[geometries.length] = new BSPGeometry(i, buffer_geometry);
+            var mesh = this.CreateMesh(geometry, face_id_lists[i], miptex_entry);
+            geometries[geometries.length] = new BSPModelGeometry(i, mesh);
         }
 
         return new BSPModel(model, geometries.ToArray());
@@ -445,7 +433,7 @@ public class BSP
         return face_id_lists;
     }
 
-    BufferGeometry expandModelFaces(GEOMETRY_T geometry, face_id_list_t face_ids, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
+    BSPMesh CreateMesh(GEOMETRY_T geometry, face_id_list_t face_ids, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
     {
         var faces = geometry.faces;
 
@@ -467,10 +455,20 @@ public class BSP
             verts_ofs = this.addFaceVerts(geometry, face, verts, uvs, verts_ofs, miptex_entry);
         }
 
-        // build and return a three.js BufferGeometry
-        var buffer_geometry = new BufferGeometry(verts, uvs);
-        buffer_geometry.computeBoundingSphere();
-        return buffer_geometry;
+        return new BSPMesh(verts, uvs);
+    }
+
+    BSPCollision CreateCollision(GEOMETRY_T geometry)
+    {
+        var faces = geometry.faces;
+
+        var collision = new BSPCollision();
+        foreach (var face in faces)
+        {
+            var vertices = getVertices(geometry, face);
+            collision.Add(vertices);
+        }
+        return collision;
     }
 
     int addFaceVerts(GEOMETRY_T geometry, dface_t face, Vector3[] verts, Vector2[] uvs, int verts_ofs, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
@@ -529,6 +527,63 @@ public class BSP
         }
 
         return verts_ofs + i; // next position in verts
+    }
+
+    Vector3[] getVertices(GEOMETRY_T geometry, dface_t face)
+    {
+        // get number of triangles required to build model
+        var num_tris = face.num_edges - 2;
+
+        var verts = new Vector3[num_tris * 3]; // 3 vertices, xyz per tri
+        this.getVertices(geometry, face, verts);
+
+        return verts;
+    }
+
+    void getVertices(GEOMETRY_T geometry, dface_t face, Vector3[] verts)
+    {
+        var edge_list = geometry.edge_list;
+        var edges = geometry.edges;
+        var vertices = geometry.vertices;
+
+        var vert_ids = new DynamicArray<int>();
+        var start = face.edge_id;
+        var end = start + face.num_edges;
+
+        int i;
+        for (i = start; i < end; ++i)
+        {
+            var edge_id = edge_list[i];
+            var edge = edges[Math.Abs(edge_id)];
+            if (edge_id > 0)
+            {
+                vert_ids[vert_ids.length] = edge.v1;
+            }
+            else
+            {
+                vert_ids[vert_ids.length] = edge.v2;
+            }
+        }
+
+        var num_tris = vert_ids.length - 2;
+        for (i = 0; i < num_tris; ++i)
+        {
+            // reverse winding order to have correct normals
+            var c = vert_ids[0];
+            var b = vert_ids[i + 1];
+            var a = vert_ids[i + 2];
+
+            int vi = i * 3;
+            int uvi = i * 3;
+            Vector3 vert = vertices[a];
+            verts[vi] = vert;
+
+            vert = vertices[b];
+            verts[vi + 1] = vert;
+
+            vert = vertices[c];
+            verts[vi + 2] = vert;
+        }
     }
 
     #endregion
@@ -668,6 +723,12 @@ public class BSP
         private set;
     }
 
+    public BSPCollision collision
+    {
+        get;
+        private set;
+    }
+
     public BSPTexture[] textures
     {
         get;
@@ -686,9 +747,10 @@ public class BSP
 public class BSPModel
 {
     public readonly BSP.dmodel_t model;
-    public readonly BSPGeometry[] geometries;
+    public readonly BSPModelGeometry[] geometries;
+    public readonly BSPCollision collision;
 
-    public BSPModel(BSP.dmodel_t model, BSPGeometry[] geometries)
+    public BSPModel(BSP.dmodel_t model, BSPModelGeometry[] geometries)
     {
         this.model = model;
         this.geometries = geometries;
@@ -700,15 +762,65 @@ public class BSPModel
     }
 }
 
-public class BSPGeometry
+public class BSPModelGeometry
 {
     public readonly UInt32 tex_id;
-    public readonly BufferGeometry geometry;
+    public readonly BSPMesh mesh;
 
-    public BSPGeometry(uint tex_id, BufferGeometry geometry)
+    public BSPModelGeometry(uint tex_id, BSPMesh mesh)
     {
         this.tex_id = tex_id;
-        this.geometry = geometry;
+        this.mesh = mesh;
+    }
+}
+
+public class BSPMesh
+{
+    public readonly Vector3[] vertices;
+    public readonly Vector2[] uvs;
+
+    public BSPMesh(Vector3[] vertices, Vector2[] uvs)
+    {
+        this.vertices = vertices;
+        this.uvs = uvs;
+    }
+}
+
+public class BSPCollision : IEnumerable<Vector3[]>
+{
+    readonly List<Vector3[]> list;
+
+    public BSPCollision()
+    {
+        list = new List<Vector3[]>();
+    }
+
+    public void Add(Vector3[] v)
+    {
+        list.Add(v);
+    }
+
+    #region IEnumerable implementation
+
+    public IEnumerator<Vector3[]> GetEnumerator()
+    {
+        return list.GetEnumerator();
+    }
+
+    #endregion
+
+    #region IEnumerable implementation
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+        return list.GetEnumerator();
+    }
+
+    #endregion
+
+    public int length
+    {
+        get { return list.Count; }
     }
 }
 
