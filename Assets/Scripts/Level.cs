@@ -32,7 +32,7 @@ public class Level : MonoBehaviour
 
     public void Clear()
     {
-        string[] names = { "Collision", "Model" };
+        string[] names = { "Collision", "Model", "light" };
         foreach (var obj in GameObject.FindObjectsOfType<GameObject>())
         {
             if (Array.IndexOf(names, obj.name) != -1)
