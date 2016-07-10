@@ -225,15 +225,17 @@ public class BSP
 
     #endregion
 
-    PAL DEFAULT_PALETTE = new PAL();
+    readonly PAL DEFAULT_PALETTE = new PAL();
+
+    entity_t[] m_modelEntityLookup;
 
     public BSP(DataStream ds)
     {
         this.ReadHeader(ds);
-        this.ReadEntities(ds);
         this.ReadMiptexDirectory(ds);
         this.ReadTextures(ds);
         this.ReadGeometry(ds);
+        this.ReadEntities(ds);
     }
 
     #region Header
@@ -285,6 +287,19 @@ public class BSP
 
         string data = ds.readString(this.header.entities.filelen);
         this.entities = EntityReader.ReadEntities(data);
+
+        m_modelEntityLookup = new entity_t[this.models.Length];
+        foreach (var entity in this.entities)
+        {
+            if (entity.model != -1)
+            {
+                if (m_modelEntityLookup[entity.model] != null)
+                {
+                    throw new Exception("Already occupied by " + m_modelEntityLookup[entity.model]);
+                }
+                m_modelEntityLookup[entity.model] = entity;
+            }
+        }
     }
 
     #endregion

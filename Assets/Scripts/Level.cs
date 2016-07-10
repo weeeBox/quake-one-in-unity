@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class Level : MonoBehaviour
@@ -26,6 +27,15 @@ public class Level : MonoBehaviour
 
     public void Clear()
     {
+        string[] names = { "Collision", "Model" };
+        foreach (var obj in GameObject.FindObjectsOfType<GameObject>())
+        {
+            if (Array.IndexOf(names, obj.name) != -1)
+            {
+                DestroyImmediate(obj.gameObject);
+            }
+        }
+
         var brushes = gameObject.GetComponentsInChildren<LevelBrush>();
         foreach (var brush in brushes)
         {
