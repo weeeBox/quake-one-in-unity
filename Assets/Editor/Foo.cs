@@ -103,10 +103,10 @@ public static class Foo
             GenerateCollision(bsp, level.gameObject, verts);
         }
 
-//        foreach (var entity in bsp.entities)
-//        {
-//            GenerateEntity(bsp, level, entity);
-//        }
+        foreach (var entity in bsp.entities)
+        {
+            GenerateEntity(bsp, level, entity);
+        }
     }
 
     static void GenerateBrush(BSP bsp, Level level, BSPModel model, IList<Material> materials)
@@ -206,17 +206,18 @@ public static class Foo
 
     static void GenerateEntity(BSP bsp, Level level, entity_t entity)
     {
-        if (entity.classname.Contains("door"))
+        if (entity.classname.Contains("light"))
         {
-            LevelEntity entityObj = level.CreateEntity(entity.classname);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Lights/light.prefab");
+            GameObject light = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
             if (entity.model != -1)
             {
                 var model = bsp.FindModel(entity.model);
-                entityObj.transform.position = TransformVertex(model.origin);
+                light.transform.position = TransformVertex(model.origin);
             }
             else
             {
-                entityObj.transform.position = TransformVertex(entity.origin);
+                light.transform.position = TransformVertex(entity.origin);
             }
         }
     }

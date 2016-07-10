@@ -2,6 +2,11 @@
 using System;
 using System.Collections;
 
+[Serializable]
+public class LevelEntities
+{
+}
+
 public class Level : MonoBehaviour
 {
     [SerializeField]
