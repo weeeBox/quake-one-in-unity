@@ -22,7 +22,7 @@ public abstract class entity_t
 
     #region Game Object
 
-    public virtual void SetupInstance(GameObject obj)
+    public virtual void SetupInstance(BSP bsp, GameObject obj)
     {   
     }
 
@@ -123,16 +123,4 @@ public abstract class entity_t
     }
 
     #endregion
-}
-
-public abstract class entity_t<T> : entity_t where T : entity
-{
-    public override void SetupInstance(GameObject obj)
-    {
-        SetupInstance(obj.GetComponent<T>());
-    }
-
-    protected virtual void SetupInstance(T t)
-    {
-    }
 }

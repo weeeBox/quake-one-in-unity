@@ -153,9 +153,9 @@ public static class Foo
         var g = geometry.mesh;
         for (int vi = 0, ti = 0; vi < g.vertices.Length; vi +=3, ti += 3)
         {
-            vertices.Add(BSP.TransformVertex(g.vertices[vi + 0]));
-            vertices.Add(BSP.TransformVertex(g.vertices[vi + 1]));
-            vertices.Add(BSP.TransformVertex(g.vertices[vi + 2]));
+            vertices.Add(BSP.TransformVector(g.vertices[vi + 0]));
+            vertices.Add(BSP.TransformVector(g.vertices[vi + 1]));
+            vertices.Add(BSP.TransformVector(g.vertices[vi + 2]));
 
             uvs.Add(g.uvs[vi + 0]);
             uvs.Add(g.uvs[vi + 1]);
@@ -195,9 +195,9 @@ public static class Foo
 
         for (int vi = 0, ti = 0; vi < verts.Length; vi +=3, ti += 3)
         {
-            vertices.Add(BSP.TransformVertex(verts[vi + 0]));
-            vertices.Add(BSP.TransformVertex(verts[vi + 1]));
-            vertices.Add(BSP.TransformVertex(verts[vi + 2]));
+            vertices.Add(BSP.TransformVector(verts[vi + 0]));
+            vertices.Add(BSP.TransformVector(verts[vi + 1]));
+            vertices.Add(BSP.TransformVector(verts[vi + 2]));
 
             triangles.Add(ti + 2);
             triangles.Add(ti + 1);
@@ -232,14 +232,14 @@ public static class Foo
         if (entity.model != -1)
         {
             var model = bsp.FindModel(entity.model);
-            entityInstance.transform.position = BSP.TransformVertex(model.origin);
+            entityInstance.transform.position = BSP.TransformVector(model.boundbox.center);
         }
         else
         {
-            entityInstance.transform.position = BSP.TransformVertex(entity.origin);
+            entityInstance.transform.position = BSP.TransformVector(entity.origin);
         }
 
-        entity.SetupInstance(entityInstance);
+        entity.SetupInstance(bsp, entityInstance);
 
         return entityInstance;
     }

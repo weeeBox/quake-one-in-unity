@@ -1,9 +1,18 @@
 using System;
+using UnityEngine;
 
 public abstract class trigger_entity_t : entity_t
 {
     [EntityFieldPrefix("t")]
     protected int m_killtarget;
+
+    public override void SetupInstance(BSP bsp, GameObject obj)
+    {
+        var model = bsp.FindModel(this.model);
+
+        var collider = obj.GetComponent<BoxCollider>();
+        collider.size = BSP.TransformVector(model.boundbox.size);
+    }
 }
 
 /*

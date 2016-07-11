@@ -618,7 +618,7 @@ public class BSP
         return this.models[id];
     }
 
-    public static Vector3 TransformVertex(Vector3 v)
+    public static Vector3 TransformVector(Vector3 v)
     {
         return new Vector3(v.x, v.z, v.y) * 0.02f;
     }
