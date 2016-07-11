@@ -78,10 +78,16 @@ public static class Bar
             var path = "Assets/Prefabs/Entities/" + name + ".prefab";
 
             GameObject obj = new GameObject(name);
+
+            // add required components
             foreach (var attribute in attributes)
             {
                 obj.AddComponent(attribute.m_Type0);
             }
+
+            // add entity component
+            obj.AddComponent(t);
+
             PrefabUtility.CreatePrefab(path, obj);
             GameObject.DestroyImmediate(obj);
         }
