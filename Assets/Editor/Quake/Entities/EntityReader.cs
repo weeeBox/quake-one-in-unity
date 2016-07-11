@@ -49,7 +49,7 @@ public class EntityReader
         }
 
         Assembly assembly = typeof(entity_t).Assembly;
-        Type type = assembly.GetType(classname);
+        Type type = assembly.GetType(classname + "_t");
         if (type == null)
         {
             throw new ArgumentException("Can't find class: " + classname);

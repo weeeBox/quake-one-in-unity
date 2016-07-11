@@ -6,6 +6,8 @@ using System.Collections.Generic;
 
 public static class Foo
 {
+    private const string TYPE_PREFIX = "_t";
+
     [MenuItem("Test/Load BSP")]
     static void LoadBSP()
     {
@@ -103,9 +105,16 @@ public static class Foo
             GenerateCollision(bsp, level.gameObject, verts);
         }
 
+        GameObject entities = new GameObject("Entities");
+        entities.transform.parent = level.transform;
+
         foreach (var entity in bsp.entities)
         {
-            GenerateEntity(bsp, level, entity);
+            var entityInstance = GenerateEntity(bsp, entity);
+            if (entityInstance != null)
+            {
+                entityInstance.transform.parent = entities.transform;
+            }
         }
     }
 
@@ -204,32 +213,34 @@ public static class Foo
         collider.sharedMesh = mesh;
     }
 
-    static void GenerateEntity(BSP bsp, Level level, entity_t entity)
+    static GameObject GenerateEntity(BSP bsp, entity_t entity)
     {
-        entity entityObject = entity.CreateGameObject(bsp);
-
-        //if (entity is trigger_entity_t)
-        //{
-        //    var model = bsp.FindModel(entity.model);
-
-        //    GameObject obj = new GameObject(entity.classname);
-        //    var trigger = obj.AddComponent<Trigger>();
-        //    trigger.center = model.boundbox.center;
-        //    trigger.size = model.boundbox.size;
-        //}
-        if (entity.classname.Contains("light"))
+        var name = entity.GetType().Name;
+        if (name.EndsWith(TYPE_PREFIX))
         {
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Lights/light.prefab");
-            GameObject light = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-            if (entity.model != -1)
-            {
-                var model = bsp.FindModel(entity.model);
-                light.transform.position = BSP.TransformVertex(model.origin);
-            }
-            else
-            {
-                light.transform.position = BSP.TransformVertex(entity.origin);
-            }
+            name = name.Substring(0, name.Length - TYPE_PREFIX.Length);
         }
+
+        var prefab = PrefabCache.FindPrefab(name);
+        if (prefab == null)
+        {
+            Debug.LogWarning("Can't load prefab: " + name);
+            return null;
+        }
+
+        var entityInstance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+        if (entity.model != -1)
+        {
+            var model = bsp.FindModel(entity.model);
+            entityInstance.transform.position = BSP.TransformVertex(model.origin);
+        }
+        else
+        {
+            entityInstance.transform.position = BSP.TransformVertex(entity.origin);
+        }
+
+        entity.SetupInstance(entityInstance);
+
+        return entityInstance;
     }
 }

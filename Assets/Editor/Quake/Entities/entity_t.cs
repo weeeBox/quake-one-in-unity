@@ -22,10 +22,8 @@ public abstract class entity_t
 
     #region Game Object
 
-    public virtual entity CreateGameObject(BSP bsp)
-    {
-        Debug.LogWarning("Can't create entity: " + this.classname);
-        return null;
+    public virtual void SetupInstance(GameObject obj)
+    {   
     }
 
     #endregion
@@ -129,28 +127,12 @@ public abstract class entity_t
 
 public abstract class entity_t<T> : entity_t where T : entity
 {
-    public override entity CreateGameObject(BSP bsp)
+    public override void SetupInstance(GameObject obj)
     {
-        GameObject obj = new GameObject(this.classname);
-        T entity = obj.AddComponent<T>();
-        SetupEntity(bsp, entity);
-
-        Vector3 position;
-        if (this.model != -1)
-        {
-            var model = bsp.FindModel(this.model);
-            position = model.origin;
-        }
-        else
-        {
-            position = this.origin;
-        }
-        entity.transform.position = BSP.TransformVertex(position);
-
-        return entity;
+        SetupInstance(obj.GetComponent<T>());
     }
 
-    protected virtual void SetupEntity(BSP bsp, T entity)
+    protected virtual void SetupInstance(T t)
     {
     }
 }
