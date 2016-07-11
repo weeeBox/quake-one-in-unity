@@ -20,7 +20,7 @@ public abstract class trigger_entity_t : entity_t
  * 4)
  * set "message" to text string
  */
-public class trigger_multiple : trigger_entity_t
+public class trigger_multiple_t : trigger_entity_t
 {
 }
 
@@ -38,7 +38,7 @@ public class trigger_multiple : trigger_entity_t
  * 4)
  * set "message" to text string
  */
-public class trigger_once : trigger_entity_t
+public class trigger_once_t : trigger_entity_t
 {
 }
 
@@ -46,7 +46,7 @@ public class trigger_once : trigger_entity_t
  * (.5 .5 .5) (-8 -8 -8) (8 8 8)
  * This fixed size trigger cannot be touched, it can only be fired by other events.  It can contain killtargets, targets, delays, and messages.
  */
-public class trigger_relay : trigger_entity_t
+public class trigger_relay_t : trigger_entity_t
 {
 }
 
@@ -60,7 +60,7 @@ public class trigger_relay : trigger_entity_t
  * 4)
  * set "message" to text string
  */
-public class trigger_secret : trigger_entity_t
+public class trigger_secret_t : trigger_entity_t
 {
 }
 
@@ -72,7 +72,7 @@ public class trigger_secret : trigger_entity_t
  * 
  * After the counter has been triggered "count" times (default 2), it will fire all of it's targets and remove itself.
  */
-public class trigger_counter : trigger_entity_t
+public class trigger_counter_t : trigger_entity_t
 {
     protected int m_count;
 }
@@ -81,7 +81,7 @@ public class trigger_counter : trigger_entity_t
  * (.5 .5 .5) (-8 -8 -8) (8 8 32)
  * This is the destination marker for a teleporter.  It should have a "targetname" field with the same value as a teleporter's "target" field.
  */
-public class info_teleport_destination : trigger_entity_t
+public class info_teleport_destination_t : trigger_entity_t
 {
 }
 
@@ -91,7 +91,7 @@ public class info_teleport_destination : trigger_entity_t
  * 
  * If the trigger_teleport has a targetname, it will only teleport entities when it has been fired.
  */
-public class trigger_teleport : trigger_entity_t
+public class trigger_teleport_t : trigger_entity_t
 {
 }
 
@@ -100,7 +100,7 @@ public class trigger_teleport : trigger_entity_t
  * sets skill level to the value of "message".
  * Only used on start map.
  */
-public class trigger_setskill : trigger_entity_t
+public class trigger_setskill_t : trigger_entity_t
 {
 }
 
@@ -108,7 +108,7 @@ public class trigger_setskill : trigger_entity_t
  * (.5 .5 .5) ?
  * Only fires if playing the registered version, otherwise prints the message
  */
-public class trigger_onlyregistered : trigger_entity_t
+public class trigger_onlyregistered_t : trigger_entity_t
 {
 }
 
@@ -118,7 +118,7 @@ public class trigger_onlyregistered : trigger_entity_t
  * set dmg to damage amount
  * defalt dmg = 5
  */
-public class trigger_hurt : trigger_entity_t
+public class trigger_hurt_t : trigger_entity_t
 {
 }
 
@@ -126,7 +126,7 @@ public class trigger_hurt : trigger_entity_t
  * (.5 .5 .5) ? PUSH_ONCE
  * Pushes the player
  */
-public class trigger_push : trigger_entity_t
+public class trigger_push_t : trigger_entity_t
 {
 }
 
@@ -136,6 +136,6 @@ public class trigger_push : trigger_entity_t
  * "speed" default to 200, the speed thrown forward
  * "height" default to 200, the speed thrown upwards
  */
-public class trigger_monsterjump : trigger_entity_t
+public class trigger_monsterjump_t : trigger_entity_t
 {
 }

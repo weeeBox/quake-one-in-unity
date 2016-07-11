@@ -9,15 +9,25 @@ using UnityEngine;
 using scalar_t = System.Single;
 using face_id_list_t = DynamicArray<int>;
 
+public struct boundbox_t
+{
+    public Vector3 min;
+    public Vector3 max;
+
+    public Vector3 center
+    {
+        get { return 0.5f * (min + max); }
+    }
+
+    public Vector3 size
+    {
+        get { return max - min; }
+    }
+}
+
 public class BSP
 {
     #region Structures
-
-    public struct boundbox_t
-    {
-        public Vector3 min;
-        public Vector3 max;
-    }
 
     public struct bboxshort_t
     {
@@ -608,6 +618,11 @@ public class BSP
         return this.models[id];
     }
 
+    public static Vector3 TransformVertex(Vector3 v)
+    {
+        return new Vector3(v.x, v.z, v.y) * 0.02f;
+    }
+
     #region Helpers
 
     static int SizeOf<T>()
@@ -770,6 +785,12 @@ public class BSPModel
         this.model = model;
         this.geometries = geometries;
     }
+
+    public boundbox_t boundbox
+    {
+        get { return model.bbox; }
+    }
+
 
     public Vector3 origin
     {

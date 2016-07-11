@@ -144,9 +144,9 @@ public static class Foo
         var g = geometry.mesh;
         for (int vi = 0, ti = 0; vi < g.vertices.Length; vi +=3, ti += 3)
         {
-            vertices.Add(TransformVertex(g.vertices[vi + 0]));
-            vertices.Add(TransformVertex(g.vertices[vi + 1]));
-            vertices.Add(TransformVertex(g.vertices[vi + 2]));
+            vertices.Add(BSP.TransformVertex(g.vertices[vi + 0]));
+            vertices.Add(BSP.TransformVertex(g.vertices[vi + 1]));
+            vertices.Add(BSP.TransformVertex(g.vertices[vi + 2]));
 
             uvs.Add(g.uvs[vi + 0]);
             uvs.Add(g.uvs[vi + 1]);
@@ -186,9 +186,9 @@ public static class Foo
 
         for (int vi = 0, ti = 0; vi < verts.Length; vi +=3, ti += 3)
         {
-            vertices.Add(TransformVertex(verts[vi + 0]));
-            vertices.Add(TransformVertex(verts[vi + 1]));
-            vertices.Add(TransformVertex(verts[vi + 2]));
+            vertices.Add(BSP.TransformVertex(verts[vi + 0]));
+            vertices.Add(BSP.TransformVertex(verts[vi + 1]));
+            vertices.Add(BSP.TransformVertex(verts[vi + 2]));
 
             triangles.Add(ti + 2);
             triangles.Add(ti + 1);
@@ -206,6 +206,17 @@ public static class Foo
 
     static void GenerateEntity(BSP bsp, Level level, entity_t entity)
     {
+        entity entityObject = entity.CreateGameObject(bsp);
+
+        //if (entity is trigger_entity_t)
+        //{
+        //    var model = bsp.FindModel(entity.model);
+
+        //    GameObject obj = new GameObject(entity.classname);
+        //    var trigger = obj.AddComponent<Trigger>();
+        //    trigger.center = model.boundbox.center;
+        //    trigger.size = model.boundbox.size;
+        //}
         if (entity.classname.Contains("light"))
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Lights/light.prefab");
@@ -213,17 +224,12 @@ public static class Foo
             if (entity.model != -1)
             {
                 var model = bsp.FindModel(entity.model);
-                light.transform.position = TransformVertex(model.origin);
+                light.transform.position = BSP.TransformVertex(model.origin);
             }
             else
             {
-                light.transform.position = TransformVertex(entity.origin);
+                light.transform.position = BSP.TransformVertex(entity.origin);
             }
         }
-    }
-
-    static Vector3 TransformVertex(Vector3 v)
-    {
-        return new Vector3(v.x, v.z, v.y) * 0.02f;
     }
 }

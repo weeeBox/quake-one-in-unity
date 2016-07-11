@@ -20,10 +20,26 @@ public abstract class entity_t
         this.classname = GetType().Name;
     }
 
+    #region Game Object
+
+    public virtual entity CreateGameObject(BSP bsp)
+    {
+        Debug.LogWarning("Can't create entity: " + this.classname);
+        return null;
+    }
+
+    #endregion
+
+    #region String representation
+
     public override string ToString()
     {
         return string.Format("[entity_t \"classname\"=\"{0}\" \"origin\"={1} {2}]", this.classname);
     }
+
+    #endregion
+
+    #region Properties
 
     public string classname
     {
@@ -106,5 +122,35 @@ public abstract class entity_t
     public int health
     {
         get; protected set;
+    }
+
+    #endregion
+}
+
+public abstract class entity_t<T> : entity_t where T : entity
+{
+    public override entity CreateGameObject(BSP bsp)
+    {
+        GameObject obj = new GameObject(this.classname);
+        T entity = obj.AddComponent<T>();
+        SetupEntity(bsp, entity);
+
+        Vector3 position;
+        if (this.model != -1)
+        {
+            var model = bsp.FindModel(this.model);
+            position = model.origin;
+        }
+        else
+        {
+            position = this.origin;
+        }
+        entity.transform.position = BSP.TransformVertex(position);
+
+        return entity;
+    }
+
+    protected virtual void SetupEntity(BSP bsp, T entity)
+    {
     }
 }

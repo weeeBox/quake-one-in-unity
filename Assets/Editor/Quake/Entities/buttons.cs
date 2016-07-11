@@ -16,4 +16,4 @@ using System;
  * 2) metallic click
  * 3) in-out
  */
-public class func_button : entity_t {}
+public class func_button_t : entity_t {}
