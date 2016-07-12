@@ -6,6 +6,20 @@ public abstract class trigger : entity
 {
     BoxCollider m_collider;
 
+    #region Collision
+
+    void OnTriggerEnter(Collider other)
+    {   
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+    }
+
+    #endregion
+
+    #region Gizmos
+
     void OnDrawGizmos()
     {
         OnDrawGizmos(false);
@@ -23,7 +37,9 @@ public abstract class trigger : entity
             m_collider = GetComponent<BoxCollider>();
         }
 
-        Gizmos.color = selected ? Color.white : Color.green;
+        Gizmos.color = selected ? Color.yellow : Color.green;
         Gizmos.DrawCube(transform.position, m_collider.size);
     }
+
+    #endregion
 }

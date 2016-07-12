@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 443058}
   - 65: {fileID: 6539772}
   - 114: {fileID: 11407082}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: trigger_relay
   m_TagString: Untagged
   m_Icon: {fileID: 0}

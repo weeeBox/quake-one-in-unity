@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 450248}
   - 65: {fileID: 6531806}
   - 114: {fileID: 11406134}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: trigger_setskill
   m_TagString: Untagged
   m_Icon: {fileID: 0}

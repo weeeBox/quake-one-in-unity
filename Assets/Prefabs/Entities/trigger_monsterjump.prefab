@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 497942}
   - 65: {fileID: 6522278}
   - 114: {fileID: 11408536}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: trigger_monsterjump
   m_TagString: Untagged
   m_Icon: {fileID: 0}

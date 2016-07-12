@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 453406}
   - 65: {fileID: 6580838}
   - 114: {fileID: 11411050}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: trigger_changelevel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
