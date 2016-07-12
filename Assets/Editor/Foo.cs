@@ -95,14 +95,10 @@ public static class Foo
             level = levelObject.AddComponent<Level>();
         }
 
+        bool[] used = new bool[bsp.faces.Length];
         foreach (var model in bsp.models)
         {
-            GenerateBrush(bsp, level, model, materials);
-        }
-
-        foreach (var verts in bsp.collisions)
-        {
-            GenerateCollision(bsp, level.gameObject, verts);
+            GenerateBrush(bsp, level, model, materials, used);
         }
 
         GameObject entities = new GameObject("Entities");
@@ -118,7 +114,7 @@ public static class Foo
         }
     }
 
-    static void GenerateBrush(BSP bsp, Level level, BSPModel model, IList<Material> materials)
+    static void GenerateBrush(BSP bsp, Level level, BSPModel model, IList<Material> materials, bool[] used)
     {
         GameObject modelObj = new GameObject("Model");
         modelObj.transform.parent = level.transform;
@@ -130,6 +126,15 @@ public static class Foo
                 LevelBrush brush = level.CreateBrush();
                 brush.transform.parent = modelObj.transform;
                 GenerateBrush(bsp, brush, geometry, materials);
+
+                foreach (var face in model.faces)
+                {
+                    if (!used[face.id])
+                    {
+                        used[face.id] = true;
+                        GenerateCollision(bsp, brush.gameObject, face);
+                    }
+                }
             }
         }
     }
@@ -176,12 +181,12 @@ public static class Foo
         return mesh;
     }
     
-    static void GenerateCollision(BSP bsp, GameObject parent, BSPCollision collision)
+    static void GenerateCollision(BSP bsp, GameObject parent, BSPFace face)
     {
         GameObject obj = new GameObject("Collision");
         obj.transform.parent = parent.transform;
 
-        var verts = collision.vertices;
+        var verts = face.vertices;
 
         var collider = obj.AddComponent<MeshCollider>();
 

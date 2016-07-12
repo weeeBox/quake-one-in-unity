@@ -391,8 +391,8 @@ public class BSP
         geometry.leaves = readLump<dleaf_t>(ds, h.leaves);
         geometry.nodes = readLump<dnode_t>(ds, h.nodes);
 
+        this.faces = this.CreateFaces(geometry);
         this.models = this.CreateModels(geometry);
-        this.collisions = this.CreateCollisions(geometry);
     }
 
     T[] readLump<T>(DataStream ds, lump_t lump)
@@ -414,16 +414,24 @@ public class BSP
     BSPModel CreateModel(ref GEOMETRY_T geometry, dmodel_t model)
     {
         var face_id_lists = this.getFaceIdsPerTexture(geometry, model);
-        var geometries = new DynamicArray<BSPModelGeometry>();
+        var geometries = new List<BSPModelGeometry>();
+        var faces = new List<BSPFace>();
 
         foreach (var i in face_id_lists.sortedKeys)
         {
             var miptex_entry = this.miptex_directory[i];
-            var mesh = this.CreateMesh(geometry, face_id_lists[i], miptex_entry);
-            geometries[geometries.length] = new BSPModelGeometry(i, mesh);
+            var face_ids = face_id_lists[i];
+
+            var mesh = this.CreateMesh(geometry, face_ids, miptex_entry);
+            geometries.Add(new BSPModelGeometry(i, mesh));
+
+            foreach (var face_id in face_ids)
+            {
+                faces.Add(this.faces[face_id]);
+            }
         }
 
-        return new BSPModel(model, geometries.ToArray());
+        return new BSPModel(model, geometries.ToArray(), faces.ToArray());
     }
 
     Hash<UInt32, face_id_list_t> getFaceIdsPerTexture(GEOMETRY_T geometry, dmodel_t model)
@@ -477,15 +485,15 @@ public class BSP
         return new BSPMesh(verts, uvs);
     }
 
-    BSPCollision[] CreateCollisions(GEOMETRY_T geometry)
+    BSPFace[] CreateFaces(GEOMETRY_T geometry)
     {
         var faces = geometry.faces;
 
-        var collisions = new BSPCollision[faces.Length];
+        var collisions = new BSPFace[faces.Length];
         for (int i = 0; i < faces.Length; ++i)
         {
             var vertices = getVertices(geometry, faces[i]);
-            collisions[i] = new BSPCollision(i, vertices);
+            collisions[i] = new BSPFace(i, vertices);
         }
         return collisions;
     }
@@ -747,7 +755,7 @@ public class BSP
         private set;
     }
 
-    public BSPCollision[] collisions
+    public BSPFace[] faces
     {
         get;
         private set;
@@ -772,11 +780,13 @@ public class BSPModel
 {
     public readonly BSP.dmodel_t model;
     public readonly BSPModelGeometry[] geometries;
+    public readonly BSPFace[] faces;
 
-    public BSPModel(BSP.dmodel_t model, BSPModelGeometry[] geometries)
+    public BSPModel(BSP.dmodel_t model, BSPModelGeometry[] geometries, BSPFace[] faces)
     {
         this.model = model;
         this.geometries = geometries;
+        this.faces = faces;
     }
 
     public boundbox_t boundbox
@@ -819,12 +829,12 @@ public class BSPMesh
     }
 }
 
-public class BSPCollision
+public class BSPFace
 {
     public readonly int id;
     public readonly Vector3[] vertices;
 
-    public BSPCollision(int id, Vector3[] vertices)
+    public BSPFace(int id, Vector3[] vertices)
     {
         this.id = id;
         this.vertices = vertices;
