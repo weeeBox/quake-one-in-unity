@@ -17,6 +17,7 @@ public class info_notnull_t : entity_t
 {
 }
 
+[EntityGroup("Lights")]
 public abstract class light_entity_t : entity_t
 {
     protected int m_light;

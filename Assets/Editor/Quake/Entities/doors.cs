@@ -1,5 +1,10 @@
 using System;
 
+[EntityGroup("Doors")]
+public abstract class door_entity_t : solid_entity_t
+{
+}
+
 /*
  * (0 .5 .8) ? START_OPEN x DOOR_DONT_LINK GOLD_KEY SILVER_KEY TOGGLE
  * if two doors touch, they are assumed to be connected and operate as a unit.
@@ -25,7 +30,7 @@ using System;
  * 3)      stone chain
  * 4)      screechy metal
  */
-public class func_door_t : solid_entity_t
+public class func_door_t : door_entity_t
 {
 }
 
@@ -46,6 +51,6 @@ public class func_door_t : solid_entity_t
  * 2) metal
  * 3) base
  */
-public class func_door_secret_t : solid_entity_t
+public class func_door_secret_t : door_entity_t
 {
 }

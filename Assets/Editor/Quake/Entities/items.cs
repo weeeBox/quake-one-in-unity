@@ -1,5 +1,15 @@
 using System;
 
+[EntityGroup("Items")]
+public abstract class item_entity_t : entity_t
+{
+}
+
+[EntityGroup("Weapons")]
+public abstract class weapon_entity_t : entity_t
+{
+}
+
 /*
  * (0 0 0) (-8 -8 -8) (8 8 8)
  * prints a warning message when spawned
@@ -16,70 +26,70 @@ public class noclass_t : entity_t
  * rot you down to your maximum health limit, 
  * one point per second.
  */
-public class item_health_t : entity_t
+public class item_health_t : item_entity_t
 {
 }
 
 /*
  * (0 .5 .8) (-16 -16 0) (16 16 32)
  */
-public class item_armor1_t : entity_t
+public class item_armor1_t : item_entity_t
 {
 }
 
 /*
  * (0 .5 .8) (-16 -16 0) (16 16 32)
  */
-public class item_armor2_t : entity_t
+public class item_armor2_t : item_entity_t
 {
 }
 
 /*
  * (0 .5 .8) (-16 -16 0) (16 16 32)
  */
-public class item_armorInv_t : entity_t
+public class item_armorInv_t : item_entity_t
 {
 }
 
 /*
  * (0 .5 .8) (-16 -16 0) (16 16 32)
  */
-public class weapon_supershotgun_t : entity_t
+public class weapon_supershotgun_t : weapon_entity_t
 {
 }
 
 /*
  * (0 .5 .8) (-16 -16 0) (16 16 32)
  */
-public class weapon_nailgun_t : entity_t
+public class weapon_nailgun_t : weapon_entity_t
 {
 }
 
 /*
  * (0 .5 .8) (-16 -16 0) (16 16 32)
  */
-public class weapon_supernailgun_t : entity_t
+public class weapon_supernailgun_t : weapon_entity_t
 {
 }
 
 /*
  * (0 .5 .8) (-16 -16 0) (16 16 32)
  */
-public class weapon_grenadelauncher_t : entity_t
+public class weapon_grenadelauncher_t : weapon_entity_t
 {
 }
 
 /*
  * (0 .5 .8) (-16 -16 0) (16 16 32)
  */
-public class weapon_rocketlauncher_t : entity_t
+public class weapon_rocketlauncher_t : weapon_entity_t
 {
 }
 
 /*
  * (0 .5 .8) (-16 -16 0) (16 16 32)
  */
-public class weapon_lightning_t : entity_t
+public class weapon_lightning_t : weapon_entity_t
 {
 }
 

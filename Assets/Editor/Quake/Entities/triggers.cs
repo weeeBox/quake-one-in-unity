@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+[EntityGroup("Triggers")]
 public abstract class trigger_entity_t : entity_t
 {
     [EntityFieldPrefix("t")]

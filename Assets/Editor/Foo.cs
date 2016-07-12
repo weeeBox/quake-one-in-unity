@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
+using System;
 using System.IO;
 using System.Collections.Generic;
 
@@ -104,6 +105,7 @@ public static class Foo
         GameObject entitiesParent = new GameObject("Entities");
         entitiesParent.transform.parent = level.transform;
 
+        var groupParentLookup = new Dictionary<string, GameObject>();
         var entityList = new SceneEntities();
 
         for (int i = 0; i < bsp.entities.Length; ++i)
@@ -115,7 +117,24 @@ public static class Foo
 
             if (entityInstance != null)
             {
-                entityInstance.transform.parent = entitiesParent.transform;
+                Type entityType = entity.GetType();
+                var groupAttribute = entityType.GetCustomAttribute<EntityGroupAttribute>(true);
+                if (groupAttribute != null)
+                {
+                    var groupName = groupAttribute.group;
+                    GameObject groupParent;
+                    if (!groupParentLookup.TryGetValue(groupName, out groupParent))
+                    {
+                        groupParent = new GameObject(groupName);
+                        groupParent.transform.parent = entitiesParent.transform;
+                        groupParentLookup[groupName] = groupParent;
+                    }
+                    entityInstance.transform.parent = groupParent.transform;
+                }
+                else
+                {
+                    entityInstance.transform.parent = entitiesParent.transform;
+                }
             }
         }
 
