@@ -165,7 +165,7 @@ public class viewthing_t : entity_t
  * (0 .5 .8) ?
  * This is just a solid wall if not inhibitted
  */
-public class func_wall_t : entity_t
+public class func_wall_t : solid_entity_t
 {
 }
 

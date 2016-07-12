@@ -122,5 +122,18 @@ public abstract class entity_t
         get; protected set;
     }
 
+    public bool solid
+    {
+        get; protected set;
+    }
+
     #endregion
+}
+
+public abstract class solid_entity_t : entity_t
+{
+    public solid_entity_t()
+    {
+        this.solid = true;
+    }
 }

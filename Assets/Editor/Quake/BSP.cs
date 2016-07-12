@@ -237,8 +237,6 @@ public class BSP
 
     readonly PAL DEFAULT_PALETTE = new PAL();
 
-    entity_t[] m_modelEntityLookup;
-
     public BSP(DataStream ds)
     {
         this.ReadHeader(ds);
@@ -298,16 +296,12 @@ public class BSP
         string data = ds.readString(this.header.entities.filelen);
         this.entities = EntityReader.ReadEntities(data);
 
-        m_modelEntityLookup = new entity_t[this.models.Length];
         foreach (var entity in this.entities)
         {
             if (entity.model != -1)
             {
-                if (m_modelEntityLookup[entity.model] != null)
-                {
-                    throw new Exception("Already occupied by " + m_modelEntityLookup[entity.model]);
-                }
-                m_modelEntityLookup[entity.model] = entity;
+                var model = FindModel(entity.model);
+                model.entity = entity;
             }
         }
     }
@@ -398,7 +392,7 @@ public class BSP
         geometry.nodes = readLump<dnode_t>(ds, h.nodes);
 
         this.models = this.CreateModels(geometry);
-        this.collision = this.CreateCollision(geometry);
+        this.collisions = this.CreateCollisions(geometry);
     }
 
     T[] readLump<T>(DataStream ds, lump_t lump)
@@ -483,17 +477,17 @@ public class BSP
         return new BSPMesh(verts, uvs);
     }
 
-    BSPCollision CreateCollision(GEOMETRY_T geometry)
+    BSPCollision[] CreateCollisions(GEOMETRY_T geometry)
     {
         var faces = geometry.faces;
 
-        var collision = new BSPCollision();
-        foreach (var face in faces)
+        var collisions = new BSPCollision[faces.Length];
+        for (int i = 0; i < faces.Length; ++i)
         {
-            var vertices = getVertices(geometry, face);
-            collision.Add(vertices);
+            var vertices = getVertices(geometry, faces[i]);
+            collisions[i] = new BSPCollision(i, vertices);
         }
-        return collision;
+        return collisions;
     }
 
     int addFaceVerts(GEOMETRY_T geometry, dface_t face, Vector3[] verts, Vector2[] uvs, int verts_ofs, MIPTEX_DIRECTORY_ENTRY_T miptex_entry)
@@ -753,7 +747,7 @@ public class BSP
         private set;
     }
 
-    public BSPCollision collision
+    public BSPCollision[] collisions
     {
         get;
         private set;
@@ -778,7 +772,6 @@ public class BSPModel
 {
     public readonly BSP.dmodel_t model;
     public readonly BSPModelGeometry[] geometries;
-    public readonly BSPCollision collision;
 
     public BSPModel(BSP.dmodel_t model, BSPModelGeometry[] geometries)
     {
@@ -791,6 +784,10 @@ public class BSPModel
         get { return model.bbox; }
     }
 
+    public entity_t entity
+    {
+        get; set;
+    }
 
     public Vector3 origin
     {
@@ -822,41 +819,15 @@ public class BSPMesh
     }
 }
 
-public class BSPCollision : IEnumerable<Vector3[]>
+public class BSPCollision
 {
-    readonly List<Vector3[]> list;
+    public readonly int id;
+    public readonly Vector3[] vertices;
 
-    public BSPCollision()
+    public BSPCollision(int id, Vector3[] vertices)
     {
-        list = new List<Vector3[]>();
-    }
-
-    public void Add(Vector3[] v)
-    {
-        list.Add(v);
-    }
-
-    #region IEnumerable implementation
-
-    public IEnumerator<Vector3[]> GetEnumerator()
-    {
-        return list.GetEnumerator();
-    }
-
-    #endregion
-
-    #region IEnumerable implementation
-
-    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-    {
-        return list.GetEnumerator();
-    }
-
-    #endregion
-
-    public int length
-    {
-        get { return list.Count; }
+        this.id = id;
+        this.vertices = vertices;
     }
 }
 

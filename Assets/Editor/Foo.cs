@@ -100,7 +100,7 @@ public static class Foo
             GenerateBrush(bsp, level, model, materials);
         }
 
-        foreach (var verts in bsp.collision)
+        foreach (var verts in bsp.collisions)
         {
             GenerateCollision(bsp, level.gameObject, verts);
         }
@@ -125,12 +125,13 @@ public static class Foo
 
         foreach (var geometry in model.geometries)
         {
-            LevelBrush brush = level.CreateBrush();
-            brush.transform.parent = modelObj.transform;
-            GenerateBrush(bsp, brush, geometry, materials);
+            if (model.entity == null)
+            {
+                LevelBrush brush = level.CreateBrush();
+                brush.transform.parent = modelObj.transform;
+                GenerateBrush(bsp, brush, geometry, materials);
+            }
         }
-
-//        GenerateCollision(bsp, modelObj, model);
     }
 
     static void GenerateBrush(BSP bsp, LevelBrush brush, BSPModelGeometry geometry, IList<Material> materials)
@@ -174,19 +175,13 @@ public static class Foo
         mesh.RecalculateNormals();
         return mesh;
     }
-
-    static void GenerateCollision(BSP bsp, GameObject parent, BSPModel model)
-    {
-        foreach (var collision in model.collision)
-        {
-            GenerateCollision(bsp, parent, collision);
-        }
-    }
-
-    static void GenerateCollision(BSP bsp, GameObject parent, Vector3[] verts)
+    
+    static void GenerateCollision(BSP bsp, GameObject parent, BSPCollision collision)
     {
         GameObject obj = new GameObject("Collision");
         obj.transform.parent = parent.transform;
+
+        var verts = collision.vertices;
 
         var collider = obj.AddComponent<MeshCollider>();
 
