@@ -17,6 +17,17 @@ public class trigger_teleport : trigger
         rigidbody.WakeUp();
     }
 
+    protected override void DrawGizmos(bool selected)
+    {
+        base.DrawGizmos(selected);
+
+        if (selected && m_destination != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(transform.position, m_destination.transform.position);
+        }
+    }
+
     public info_teleport_destination destination
     {
         get { return m_destination; }

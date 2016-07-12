@@ -11,7 +11,7 @@ public static class Bar
 {
     private const string TYPE_SUFFIX = "_t";
 
-    [MenuItem("Test/Generate classes")]
+    // [MenuItem("Test/Generate classes")]
     static void GenerateClasses()
     {
         Type entityType = typeof(entity_t);
@@ -50,7 +50,7 @@ public static class Bar
         }
     }
 
-    [MenuItem("Test/Generate prefabs")]
+    // [MenuItem("Test/Generate prefabs")]
     static void GeneratePrefabs()
     {
         Type entityType = typeof(entity);

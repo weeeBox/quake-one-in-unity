@@ -6,4 +6,21 @@ using System.Collections;
 /// </summary>
 public abstract class entity : MonoBehaviour
 {
+    #region Gizmos
+
+    void OnDrawGizmos()
+    {
+        DrawGizmos(false);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        DrawGizmos(true);
+    }
+
+    protected virtual void DrawGizmos(bool selected)
+    {   
+    }
+
+    #endregion
 }

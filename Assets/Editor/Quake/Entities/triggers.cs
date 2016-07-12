@@ -125,6 +125,13 @@ public class trigger_teleport_t : trigger_entity_t
  */
 public class trigger_setskill_t : trigger_entity_t
 {
+    public override void SetupInstance(BSP bsp, GameObject obj, SceneEntities entities)
+    {
+        base.SetupInstance(bsp, obj, entities);
+
+        var trigger = obj.GetComponent<trigger_setskill>();
+        trigger.message = this.message;
+    }
 }
 
 /*

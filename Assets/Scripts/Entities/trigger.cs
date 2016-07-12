@@ -38,17 +38,7 @@ public abstract class trigger : entity
 
     #region Gizmos
 
-    void OnDrawGizmos()
-    {
-        OnDrawGizmos(false);
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        OnDrawGizmos(true);
-    }
-
-    void OnDrawGizmos(bool selected)
+    protected override void DrawGizmos(bool selected)
     {
         if (m_collider == null)
         {
