@@ -8,10 +8,13 @@ public abstract class trigger_entity_t : entity_t
 
     public override void SetupInstance(BSP bsp, GameObject obj)
     {
-        var model = bsp.FindModel(this.model);
+        if (this.model != -1)
+        {
+            var model = bsp.FindModel(this.model);
 
-        var collider = obj.GetComponent<BoxCollider>();
-        collider.size = BSP.TransformVector(model.boundbox.size);
+            var collider = obj.GetComponent<BoxCollider>();
+            collider.size = BSP.TransformVector(model.boundbox.size);
+        }
     }
 }
 
