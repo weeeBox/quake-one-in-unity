@@ -67,19 +67,14 @@ public static class Bar
             {
                 continue;
             }
-
-            var attributes = t.GetCustomAttributes<RequireComponent>(true);
-            if (attributes.Length == 0)
-            {
-                continue;
-            }
-
+            
             var name = t.Name;
             var path = "Assets/Prefabs/Entities/" + name + ".prefab";
 
             GameObject obj = new GameObject(name);
 
             // add required components
+            var attributes = t.GetCustomAttributes<RequireComponent>(true);
             foreach (var attribute in attributes)
             {
                 obj.AddComponent(attribute.m_Type0);
