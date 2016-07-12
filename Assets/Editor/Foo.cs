@@ -101,15 +101,31 @@ public static class Foo
             GenerateBrush(bsp, level, model, materials, used);
         }
 
-        GameObject entities = new GameObject("Entities");
-        entities.transform.parent = level.transform;
+        GameObject entitiesParent = new GameObject("Entities");
+        entitiesParent.transform.parent = level.transform;
 
-        foreach (var entity in bsp.entities)
+        var entityList = new SceneEntities();
+
+        for (int i = 0; i < bsp.entities.Length; ++i)
         {
+            var entity = bsp.entities[i];
+
             var entityInstance = GenerateEntity(bsp, entity);
+            entityList.Add(entity, entityInstance);
+
             if (entityInstance != null)
             {
-                entityInstance.transform.parent = entities.transform;
+                entityInstance.transform.parent = entitiesParent.transform;
+            }
+        }
+
+        for (int i = 0; i < bsp.entities.Length; ++i)
+        {   
+            var entityInstance = entityList[i];
+            if (entityInstance != null)
+            {
+                var entity = bsp.entities[i];
+                entity.SetupInstance(bsp, entityInstance, entityList);
             }
         }
     }
@@ -238,8 +254,6 @@ public static class Foo
         {
             entityInstance.transform.position = BSP.TransformVector(entity.origin);
         }
-
-        entity.SetupInstance(bsp, entityInstance);
 
         return entityInstance;
     }

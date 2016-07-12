@@ -16,4 +16,11 @@ public class trigger_teleport : trigger
         character.transform.position = m_destination.transform.position + 0.5f * character.height * Vector3.up;
         rigidbody.WakeUp();
     }
+
+    public info_teleport_destination destination
+    {
+        get { return m_destination; }
+        set { m_destination = value;  }
+    }
+
 }

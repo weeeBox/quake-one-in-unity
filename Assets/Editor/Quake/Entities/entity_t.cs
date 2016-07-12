@@ -22,7 +22,7 @@ public abstract class entity_t
 
     #region Game Object
 
-    public virtual void SetupInstance(BSP bsp, GameObject obj)
+    public virtual void SetupInstance(BSP bsp, GameObject obj, SceneEntities entities)
     {   
     }
 

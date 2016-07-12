@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+
 using UnityEngine;
 
 public abstract class trigger_entity_t : entity_t
@@ -6,7 +8,7 @@ public abstract class trigger_entity_t : entity_t
     [EntityFieldPrefix("t")]
     protected int m_killtarget;
 
-    public override void SetupInstance(BSP bsp, GameObject obj)
+    public override void SetupInstance(BSP bsp, GameObject obj, SceneEntities entities)
     {
         if (this.model != -1)
         {
@@ -105,6 +107,15 @@ public class info_teleport_destination_t : trigger_entity_t
  */
 public class trigger_teleport_t : trigger_entity_t
 {
+    public override void SetupInstance(BSP bsp, GameObject obj, SceneEntities entities)
+    {
+        base.SetupInstance(bsp, obj, entities);
+
+        var targetObj = entities.FindTarget(this.target);
+        var destination = targetObj.GetComponent<info_teleport_destination>();
+        var trigger = obj.GetComponent<trigger_teleport>();
+        trigger.destination = destination;
+    }
 }
 
 /*
