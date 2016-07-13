@@ -9,17 +9,7 @@ public class LevelEntities
 
 public class Level : MonoBehaviour
 {
-    [SerializeField]
-    LevelBrush m_brushPrefab;
-
-    public LevelBrush CreateBrush()
-    {
-        LevelBrush brush = Instantiate(m_brushPrefab) as LevelBrush;
-        brush.name = "Brush";
-        return brush;
-    }
-
-   public void Clear()
+    public void Clear()
     {
         string[] names = { "Collision", "Model", "Entities" };
         foreach (var obj in GameObject.FindObjectsOfType<GameObject>())

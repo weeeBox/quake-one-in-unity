@@ -112,7 +112,7 @@ public static class Foo
         {
             var entity = bsp.entities[i];
 
-            var entityInstance = GenerateEntity(bsp, entity);
+            var entityInstance = GenerateEntity(bsp, entity, materials, used);
             entityList.Add(entity, entityInstance);
 
             if (entityInstance != null)
@@ -158,7 +158,7 @@ public static class Foo
         {
             if (model.entity == null)
             {
-                LevelBrush brush = level.CreateBrush();
+                GameObject brush = new GameObject("Brush");
                 brush.transform.parent = modelObj.transform;
                 GenerateBrush(bsp, brush, geometry, materials);
 
@@ -174,14 +174,14 @@ public static class Foo
         }
     }
 
-    static void GenerateBrush(BSP bsp, LevelBrush brush, BSPModelGeometry geometry, IList<Material> materials)
+    static void GenerateBrush(BSP bsp, GameObject brush, BSPModelGeometry geometry, IList<Material> materials)
     {
         Mesh mesh = GenerateMesh(geometry);
 
-        MeshFilter meshFilter = brush.GetComponent<MeshFilter>();
+        MeshFilter meshFilter = brush.AddComponent<MeshFilter>();
         meshFilter.sharedMesh = mesh;
 
-        MeshRenderer meshRenderer = brush.GetComponent<MeshRenderer>();
+        MeshRenderer meshRenderer = brush.AddComponent<MeshRenderer>();
         meshRenderer.material = materials[(int) geometry.tex_id];
     }
 
@@ -248,7 +248,7 @@ public static class Foo
         collider.sharedMesh = mesh;
     }
 
-    static GameObject GenerateEntity(BSP bsp, entity_t entity)
+    static GameObject GenerateEntity(BSP bsp, entity_t entity, IList<Material> materials, bool[] used)
     {
         var name = entity.GetType().Name;
         if (name.EndsWith(TYPE_PREFIX))
@@ -268,6 +268,25 @@ public static class Foo
         {
             var model = bsp.FindModel(entity.model);
             entityInstance.transform.position = BSP.TransformVector(model.boundbox.center);
+
+            if (entity.solid)
+            {
+                foreach (var geometry in model.geometries)
+                {
+                    GameObject brush = new GameObject("Brush");
+                    brush.transform.parent = entityInstance.transform;
+                    GenerateBrush(bsp, brush, geometry, materials);
+
+                    foreach (var face in model.faces)
+                    {
+                        if (!used[face.id])
+                        {
+                            used[face.id] = true;
+                            GenerateCollision(bsp, brush.gameObject, face);
+                        }
+                    }
+                }
+            }
         }
         else
         {
