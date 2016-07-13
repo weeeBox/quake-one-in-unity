@@ -190,7 +190,7 @@ public class func_episodegate_t : entity_t
  * (0 .5 .8) ?
  * This bmodel appears unless players have all of the episode sigils.
  */
-public class func_bossgate_t : entity_t
+public class func_bossgate_t : solid_entity_t
 {
 }
 
