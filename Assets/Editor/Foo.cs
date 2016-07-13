@@ -151,27 +151,15 @@ public static class Foo
 
     static void GenerateBrush(BSP bsp, Level level, BSPModel model, IList<Material> materials, bool[] used)
     {
+        if (model.entity != null)
+        {
+            return;
+        }
+
         GameObject modelObj = new GameObject("Model");
         modelObj.transform.parent = level.transform;
 
-        foreach (var geometry in model.geometries)
-        {
-            if (model.entity == null)
-            {
-                GameObject brush = new GameObject("Brush");
-                brush.transform.parent = modelObj.transform;
-                GenerateBrush(bsp, brush, geometry, materials);
-
-                foreach (var face in model.faces)
-                {
-                    if (!used[face.id])
-                    {
-                        used[face.id] = true;
-                        GenerateCollision(bsp, brush.gameObject, face);
-                    }
-                }
-            }
-        }
+        GenerateGeometries(bsp, model, modelObj, materials, used);
     }
 
     static void GenerateBrush(BSP bsp, GameObject brush, BSPModelGeometry geometry, IList<Material> materials)
@@ -271,21 +259,7 @@ public static class Foo
 
             if (entity.solid)
             {
-                foreach (var geometry in model.geometries)
-                {
-                    GameObject brush = new GameObject("Brush");
-                    brush.transform.parent = entityInstance.transform;
-                    GenerateBrush(bsp, brush, geometry, materials);
-
-                    foreach (var face in model.faces)
-                    {
-                        if (!used[face.id])
-                        {
-                            used[face.id] = true;
-                            GenerateCollision(bsp, brush.gameObject, face);
-                        }
-                    }
-                }
+                GenerateGeometries(bsp, model, entityInstance, materials, used);
             }
         }
         else
@@ -294,5 +268,24 @@ public static class Foo
         }
 
         return entityInstance;
+    }
+
+    private static void GenerateGeometries(BSP bsp, BSPModel model, GameObject parent, IList<Material> materials, bool[] used)
+    {
+        foreach (var geometry in model.geometries)
+        {
+            GameObject brush = new GameObject("Brush");
+            brush.transform.parent = parent.transform;
+            GenerateBrush(bsp, brush, geometry, materials);
+
+            foreach (var face in model.faces)
+            {
+                if (!used[face.id])
+                {
+                    used[face.id] = true;
+                    GenerateCollision(bsp, brush.gameObject, face);
+                }
+            }
+        }
     }
 }
