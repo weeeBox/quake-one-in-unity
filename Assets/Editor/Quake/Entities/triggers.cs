@@ -9,13 +9,13 @@ public abstract class trigger_entity_t : entity_t
     [EntityFieldPrefix("t")]
     protected int m_killtarget;
 
-    public override void SetupInstance(BSP bsp, GameObject obj, SceneEntities entities)
+    public override void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
     {
         if (this.model != -1)
         {
             var model = bsp.FindModel(this.model);
 
-            var collider = obj.GetComponent<BoxCollider>();
+            var collider = entity.GetComponent<BoxCollider>();
             collider.size = BSP.TransformVector(model.boundbox.size);
         }
     }
@@ -108,13 +108,13 @@ public class info_teleport_destination_t : trigger_entity_t
  */
 public class trigger_teleport_t : trigger_entity_t
 {
-    public override void SetupInstance(BSP bsp, GameObject obj, SceneEntities entities)
+    public override void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
     {
-        base.SetupInstance(bsp, obj, entities);
+        base.SetupInstance(bsp, entity, entities);
 
         var targetObj = entities.FindTarget(this.target);
         var destination = targetObj.GetComponent<info_teleport_destination>();
-        var trigger = obj.GetComponent<trigger_teleport>();
+        var trigger = entity.GetComponent<trigger_teleport>();
         trigger.destination = destination;
     }
 }
@@ -126,11 +126,11 @@ public class trigger_teleport_t : trigger_entity_t
  */
 public class trigger_setskill_t : trigger_entity_t
 {
-    public override void SetupInstance(BSP bsp, GameObject obj, SceneEntities entities)
+    public override void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
     {
-        base.SetupInstance(bsp, obj, entities);
+        base.SetupInstance(bsp, entity, entities);
 
-        var trigger = obj.GetComponent<trigger_setskill>();
+        var trigger = entity.GetComponent<trigger_setskill>();
         trigger.message = this.message;
     }
 }

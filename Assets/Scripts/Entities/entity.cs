@@ -6,6 +6,9 @@ using System.Collections;
 /// </summary>
 public abstract class entity : MonoBehaviour
 {
+    [HideInInspector]
+    public string data;
+
     #region Gizmos
 
     void OnDrawGizmos()

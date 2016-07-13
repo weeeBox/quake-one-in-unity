@@ -144,7 +144,9 @@ public static class Foo
             if (entityInstance != null)
             {
                 var entity = bsp.entities[i];
-                entity.SetupInstance(bsp, entityInstance, entityList);
+                var entityObj = entityInstance.GetSubclassComponent<entity>();
+
+                entity.SetupInstance(bsp, entityObj, entityList);
             }
         }
     }

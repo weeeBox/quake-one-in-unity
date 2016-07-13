@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 using UnityEngine;
 
@@ -15,16 +16,19 @@ public class EntityReader
 
         Dictionary<string, string> dict = null;
         StringReader reader = new StringReader(data);
+        StringBuilder entityData = new StringBuilder();
         string line;
         while ((line = reader.ReadLine()) != null)
         {
             if (line == "{")
             {
                 dict = new Dictionary<string, string>();
+                entityData.Length = 0;
             }
             else if (line == "}")
             {
                 entity_t entity = CreateEntity(dict);
+                entity.data = entityData.ToString();
                 entities.Add(entity);
                 dict = null;
             }
@@ -34,6 +38,8 @@ public class EntityReader
                 string key = line.Substring(1, index - 2);
                 string value = line.Substring(index + 2, line.Length - (index + 2) - 1);
                 dict[key] = value;
+
+                entityData.AppendLine(line);
             }
         }
 

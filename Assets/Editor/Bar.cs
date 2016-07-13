@@ -89,4 +89,41 @@ public static class Bar
 
         AssetDatabase.Refresh();
     }
+
+    // [MenuItem("Test/Generate editors")]
+    static void GenerateEditors()
+    {
+        Type entityType = typeof(entity);
+        Assembly assembly = entityType.Assembly;
+
+        var template = "\n"+
+        "[CustomEditor(typeof(${name}))]\n" +
+        "class ${name}_editor : EntityEditor<${name}>\n" +
+        "{\n" +
+        "}";
+
+        StringBuilder code = new StringBuilder();
+        code.AppendLine("using UnityEngine;");
+        code.AppendLine("using UnityEditor;");
+
+        foreach (Type t in assembly.GetTypes())
+        {
+            if (!t.IsSubclassOf(entityType))
+            {
+                continue;
+            }
+
+            if (t.IsAbstract)
+            {
+                continue;
+            }
+
+            code.AppendLine(template.Replace("${name}", t.Name));
+        }
+
+        var path = Application.dataPath + "/Editor/CustomEditors/entity_editors.cs";
+        File.WriteAllText(path, code.ToString());
+
+        AssetDatabase.Refresh();
+    }
 }

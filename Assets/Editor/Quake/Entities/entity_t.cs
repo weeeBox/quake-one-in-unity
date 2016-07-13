@@ -22,8 +22,9 @@ public abstract class entity_t
 
     #region Game Object
 
-    public virtual void SetupInstance(BSP bsp, GameObject obj, SceneEntities entities)
-    {   
+    public virtual void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
+    {
+        entity.data = data;
     }
 
     #endregion
@@ -127,7 +128,12 @@ public abstract class entity_t
         get; protected set;
     }
 
-    #endregion
+    public string data
+    {
+        get; set;
+    }
+
+#endregion
 }
 
 public abstract class solid_entity_t : entity_t

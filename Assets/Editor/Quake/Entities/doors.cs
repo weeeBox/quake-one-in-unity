@@ -1,8 +1,14 @@
 using System;
+using UnityEngine;
 
 [EntityGroup("Doors")]
 public abstract class door_entity_t : solid_entity_t
 {
+    protected const int DOOR_START_OPEN = 1;
+    protected const int DOOR_DONT_LINK = 4;
+    protected const int DOOR_GOLD_KEY = 8;
+    protected const int DOOR_SILVER_KEY = 16;
+    protected const int DOOR_TOGGLE = 32;
 }
 
 /*
@@ -32,6 +38,35 @@ public abstract class door_entity_t : solid_entity_t
  */
 public class func_door_t : door_entity_t
 {
+    public func_door_t()
+    {
+        this.speed = 100;
+        this.wait = 3;
+        this.lip = 8;
+        this.dmg = 2;
+    }
+
+    public override void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
+    {
+        base.SetupInstance(bsp, entity, entities);
+
+        var door = entity.GetComponent<func_door>();
+
+        if ((spawnflags & DOOR_SILVER_KEY) != 0)
+            door.items = door_items.IT_KEY1;
+        if ((spawnflags & DOOR_GOLD_KEY) != 0)
+            door.items = door_items.IT_KEY2;
+
+        Vector3 movedir = Quaternion.AngleAxis(angle, Vector3.up) * Vector3.forward;
+
+        door.pos1 = BSP.TransformVector(origin);
+        door.pos2 = BSP.TransformVector(origin);
+    }
+
+    public Vector3 movedir
+    {
+        get; protected set;
+    }
 }
 
 /*
