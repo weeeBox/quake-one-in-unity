@@ -23,6 +23,11 @@ public class func_door : entity
     [HideInInspector]
     public float speed;
 
+    protected override void OnSignal()
+    {
+        Open();   
+    }
+
     void OnTriggerEnter(Collider other)
     {
         Open();

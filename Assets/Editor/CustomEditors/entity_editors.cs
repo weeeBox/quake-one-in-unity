@@ -64,6 +64,17 @@ class func_bossgate_editor : EntityEditor<func_bossgate>
 [CustomEditor(typeof(func_button))]
 class func_button_editor : EntityEditor<func_button>
 {
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+
+        if (GUILayout.Button("Trigger"))
+        {
+            var button = target as func_button;
+            button.Trigger();
+        }
+    }
+
 }
 
 [CustomEditor(typeof(func_door))]

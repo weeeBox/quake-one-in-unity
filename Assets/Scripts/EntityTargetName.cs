@@ -3,8 +3,8 @@ using System.Collections;
 
 public class EntityTargetName : MonoBehaviour
 {
-    public entity GetEntity<T>() where T : entity
+    public void Signal()
     {
-        return gameObject.GetComponent<T>();
+        gameObject.SendMessage("OnSignal");
     }
 }

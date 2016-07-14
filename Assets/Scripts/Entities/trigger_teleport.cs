@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class trigger_teleport : trigger
 {
-    info_teleport_destination m_destination;
+    EntityTargetName m_targetName;
 
     void Start()
     {
-        m_destination = GetTarget<info_teleport_destination>();
+        m_targetName = GetTargetName();
     }
 
     protected override void OnCharacterEnter(CharacterController character)
@@ -17,7 +17,7 @@ public class trigger_teleport : trigger
         rigidbody.Sleep();
         rigidbody.velocity = Vector3.zero;
         rigidbody.angularVelocity = Vector3.zero;
-        character.transform.position = m_destination.transform.position + 0.5f * character.height * Vector3.up;
+        character.transform.position = m_targetName.transform.position + 0.5f * character.height * Vector3.up;
         rigidbody.WakeUp();
     }
 
@@ -25,10 +25,10 @@ public class trigger_teleport : trigger
     {
         base.DrawGizmos(selected);
 
-        if (selected && m_destination != null)
+        if (selected && m_targetName != null)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawLine(transform.position, m_destination.transform.position);
+            Gizmos.DrawLine(transform.position, m_targetName.transform.position);
         }
     }
 }
