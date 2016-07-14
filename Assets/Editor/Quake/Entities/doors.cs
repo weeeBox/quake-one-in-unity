@@ -97,7 +97,7 @@ public class func_door_t : door_entity_t
         }
         else if (angle >= 0 && angle < 360)
         {
-            movedir = Quaternion.AngleAxis(angle, Vector3.up) * Vector3.left;
+            movedir = Quaternion.AngleAxis(-angle, Vector3.up) * Vector3.right;
             amount = this.size.z;
         }
         else
