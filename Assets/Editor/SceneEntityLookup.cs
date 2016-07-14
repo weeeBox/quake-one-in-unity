@@ -34,12 +34,12 @@ public class SceneEntities
         }
     }
 
-    public GameObject FindTarget(int id)
+    public EntityTargetName FindTargetName(int id)
     {
         GameObject target;
         if (m_targets.TryGetValue(id, out target))
         {
-            return target;
+            return target.GetComponent<EntityTargetName>();
         }
 
         return null;

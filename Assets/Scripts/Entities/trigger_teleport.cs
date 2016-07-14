@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class trigger_teleport : trigger
 {
-    [SerializeField]
     info_teleport_destination m_destination;
+
+    void Start()
+    {
+        m_destination = GetTarget<info_teleport_destination>();
+    }
 
     protected override void OnCharacterEnter(CharacterController character)
     {
@@ -27,11 +31,4 @@ public class trigger_teleport : trigger
             Gizmos.DrawLine(transform.position, m_destination.transform.position);
         }
     }
-
-    public info_teleport_destination destination
-    {
-        get { return m_destination; }
-        set { m_destination = value;  }
-    }
-
 }

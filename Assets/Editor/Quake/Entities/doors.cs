@@ -85,9 +85,14 @@ public class func_door_t : door_entity_t
     {
         Vector3 movedir;
         float amount;
-        if (angle == -1)
+        if (angle == -1) // moving up
         {
             movedir = Vector3.up;
+            amount = this.size.y;
+        }
+        else if (angle == -2) // moving down
+        {
+            movedir = Vector2.down;
             amount = this.size.y;
         }
         else if (angle >= 0 && angle < 360)

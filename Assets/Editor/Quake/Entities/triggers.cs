@@ -106,15 +106,6 @@ public class info_teleport_destination_t : trigger_entity_t
  */
 public class trigger_teleport_t : trigger_entity_t
 {
-    public override void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
-    {
-        base.SetupInstance(bsp, entity, entities);
-
-        var targetObj = entities.FindTarget(this.target);
-        var destination = targetObj.GetComponent<info_teleport_destination>();
-        var trigger = entity.GetComponent<trigger_teleport>();
-        trigger.destination = destination;
-    }
 }
 
 /*

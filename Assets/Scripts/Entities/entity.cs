@@ -26,4 +26,14 @@ public abstract class entity : MonoBehaviour
     }
 
     #endregion
+
+    #region Target
+
+    public T GetTarget<T>() where T : entity
+    {
+        var target = GetComponent<EntityTarget>();
+        return target != null ? target.GetComponent<T>() : null;
+    }
+
+    #endregion
 }

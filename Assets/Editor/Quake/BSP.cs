@@ -607,7 +607,7 @@ public class BSP
             var a = vert_ids[i + 2];
 
             int vi = i * 3;
-            int uvi = i * 3;
+            
             Vector3 vert = vertices[a];
             verts[vi] = vert;
 

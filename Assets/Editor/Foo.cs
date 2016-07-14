@@ -12,7 +12,7 @@ public static class Foo
     [MenuItem("Test/Load BSP")]
     static void LoadBSP()
     {
-        using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, "Maps/start.bsp")))
+        using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, "Maps/e1m1.bsp")))
         {
             DataStream ds = new DataStream(stream);
             BSP bsp = new BSP(ds);
@@ -148,9 +148,15 @@ public static class Foo
                 {
                     entityInstance.transform.parent = entitiesParent.transform;
                 }
+
+                if (entity.targetname != -1)
+                {
+                    entityInstance.AddComponent<EntityTargetName>();
+                }
             }
         }
-
+        
+        // setup instances
         for (int i = 0; i < bsp.entities.Length; ++i)
         {   
             var entityInstance = entityList[i];

@@ -34,6 +34,18 @@ public abstract class entity_t
 
     public virtual void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
     {
+        if (this.target != -1)
+        {
+            var targetName = entities.FindTargetName(this.target);
+            if (targetName == null)
+            {
+                Debug.LogError("Can't find entity with target name: " + this.target);
+            }
+
+            var target = entity.gameObject.AddComponent<EntityTarget>();
+            target.targetName = targetName;
+        }
+
         var instanceFields = ReflectionUtils.ListFields(entity);
         var dataFields = ReflectionUtils.ListFields(this);
 

@@ -4,7 +4,7 @@ using System.Reflection;
 
 using UnityEngine;
 
-public static class Extension
+public static class EditorExtension
 {
     #region Dictionary
 
@@ -57,25 +57,6 @@ public static class Extension
     {
         var attributes = field.GetCustomAttributes(typeof(T), false);
         return attributes.Length == 1 ? attributes[0] as T : null;
-    }
-
-    #endregion
-
-    #region GameObject
-
-    public static T GetSubclassComponent<T>(this GameObject obj) where T : Component
-    {
-        Type type = typeof(T);
-
-        foreach (var component in obj.GetComponents<Component>())
-        {
-            if (component.GetType().IsSubclassOf(type))
-            {
-                return (T)component;
-            }
-        }
-
-        return null;
     }
 
     #endregion
