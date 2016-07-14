@@ -95,10 +95,10 @@ public class func_door_t : door_entity_t
             movedir = Vector2.down;
             amount = this.size.y;
         }
-        else if (angle >= 0 && angle < 360)
+        else if (angle == 0 || angle == 90 || angle == 180 || angle == 270)
         {
             movedir = Quaternion.AngleAxis(-angle, Vector3.up) * Vector3.right;
-            amount = this.size.z;
+            amount = angle == 0 || angle == 180 ? this.size.x : this.size.z;
         }
         else
         {
