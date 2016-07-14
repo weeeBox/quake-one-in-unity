@@ -302,6 +302,7 @@ public class BSP
             {
                 var model = FindModel(entity.model);
                 model.entity = entity;
+                entity.modelRef = model;
             }
         }
     }
@@ -433,7 +434,10 @@ public class BSP
             faces.Clear();
         }
 
-        return new BSPModel(model, geometries.ToArray());
+        var result = new BSPModel(geometries.ToArray(), faces.ToArray());
+        result.origin = TransformVector(model.origin);
+        result.boundbox = TransformBoundbox(model.bbox);
+        return result;
     }
 
     Hash<UInt32, face_id_list_t> getFaceIdsPerTexture(GEOMETRY_T geometry, dmodel_t model)
@@ -627,6 +631,19 @@ public class BSP
         return new Vector3(v.x, v.z, v.y) * 0.02f;
     }
 
+    static boundbox_t TransformBoundbox(boundbox_t bbox)
+    {
+        boundbox_t result;
+        result.min = TransformVector(bbox.min);
+        result.max = TransformVector(bbox.max);
+        return result;
+    }
+
+    public static float Scale(float value)
+    {
+        return 0.02f * value;
+    }
+
     #region Helpers
 
     static int SizeOf<T>()
@@ -780,28 +797,26 @@ public class BSP
 
 public class BSPModel
 {
-    public readonly BSP.dmodel_t model;
     public readonly BSPModelGeometry[] geometries;
 
-    public BSPModel(BSP.dmodel_t model, BSPModelGeometry[] geometries)
+    public BSPModel(BSPModelGeometry[] geometries, BSPFace[] faces)
     {
-        this.model = model;
         this.geometries = geometries;
+    }
+
+    public Vector3 origin
+    {
+        get; set;
     }
 
     public boundbox_t boundbox
     {
-        get { return model.bbox; }
+        get; set;
     }
 
     public entity_t entity
     {
         get; set;
-    }
-
-    public Vector3 origin
-    {
-        get { return model.origin; }
     }
 }
 

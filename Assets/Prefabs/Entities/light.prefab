@@ -41,7 +41,7 @@ Light:
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
-  m_Range: 10
+  m_Range: 25
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
@@ -74,6 +74,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b72e89103810e74eb5a8fdba502b62a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  data: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

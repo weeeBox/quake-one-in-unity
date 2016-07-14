@@ -32,28 +32,34 @@ public static class Foo
         int tex_id = 0;
         foreach (var t in bsp.textures)
         {
-            Texture2D tex = new Texture2D(t.width, t.height);
-            Color32[] pixels = new Color32[t.width * t.height];
-            for (int i = 0, j = 0; i < pixels.Length; ++i)
-            {
-                pixels[i] = new Color32(t.data[j++], t.data[j++], t.data[j++], t.data[j++]);
-            }
+            string textureName = string.Format("[{0}] {1}.png", tex_id++, FileUtil.FixFilename(t.name));
+            string texturePath = "Assets/Textures/" + textureName;
+            string textureAbsolutePath = Path.Combine(textureDir, texturePath);
 
-            for (int x = 0; x < t.width; ++x)
+            if (!File.Exists(textureAbsolutePath))
             {
-                for (int y = 0; y < t.height / 2; ++y)
+                Texture2D tex = new Texture2D(t.width, t.height);
+                Color32[] pixels = new Color32[t.width * t.height];
+                for (int i = 0, j = 0; i < pixels.Length; ++i)
                 {
-                    int from = y * t.width + x;
-                    int to = (t.height - y - 1) * t.width + x;
-                    var temp = pixels[to];
-                    pixels[to] = pixels[from];
-                    pixels[from] = temp;
+                    pixels[i] = new Color32(t.data[j++], t.data[j++], t.data[j++], t.data[j++]);
                 }
-            }
 
-            string texturePath = string.Format("Assets/Textures/[{0}] {1}.png", tex_id++, FileUtil.FixFilename(t.name));
-            tex.SetPixels32(pixels);
-            File.WriteAllBytes(Path.Combine(textureDir, texturePath), tex.EncodeToPNG());
+                for (int x = 0; x < t.width; ++x)
+                {
+                    for (int y = 0; y < t.height / 2; ++y)
+                    {
+                        int from = y * t.width + x;
+                        int to = (t.height - y - 1) * t.width + x;
+                        var temp = pixels[to];
+                        pixels[to] = pixels[from];
+                        pixels[from] = temp;
+                    }
+                }
+
+                tex.SetPixels32(pixels);
+                File.WriteAllBytes(textureAbsolutePath, tex.EncodeToPNG());
+            }
 
             textures.Add(texturePath);
         }
@@ -61,21 +67,26 @@ public static class Foo
 
         foreach (var texture in textures)
         {
-            TextureImporter importer = TextureImporter.GetAtPath(texture) as TextureImporter;
-            importer.textureType = TextureImporterType.Image;
-            importer.wrapMode = TextureWrapMode.Repeat;
-            importer.filterMode = FilterMode.Point;
-            importer.maxTextureSize = 2048;
-            importer.textureFormat = TextureImporterFormat.DXT1;
-            importer.SaveAndReimport();
-
-            var material = new Material(Shader.Find("Standard"));
-            material.mainTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(texture);
-            material.SetFloat("_Glossiness", 0.0f);
-
             int index = texture.LastIndexOf('.');
             string materialPath = texture.Substring(0, index) + ".mat";
-            AssetDatabase.CreateAsset(material, materialPath);
+            string materialAbsolutePath = Path.Combine(textureDir, materialPath);
+
+            if (!File.Exists(materialAbsolutePath))
+            {
+                TextureImporter importer = TextureImporter.GetAtPath(texture) as TextureImporter;
+                importer.textureType = TextureImporterType.Image;
+                importer.wrapMode = TextureWrapMode.Repeat;
+                importer.filterMode = FilterMode.Point;
+                importer.maxTextureSize = 2048;
+                importer.textureFormat = TextureImporterFormat.DXT1;
+                importer.SaveAndReimport();
+
+                var material = new Material(Shader.Find("Standard"));
+                material.mainTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(texture);
+                material.SetFloat("_Glossiness", 0.0f);
+
+                AssetDatabase.CreateAsset(material, materialPath);
+            }
 
             materials.Add(AssetDatabase.LoadAssetAtPath<Material>(materialPath));
         }
@@ -103,6 +114,7 @@ public static class Foo
         }
 
         GameObject entitiesParent = new GameObject("Entities");
+        entitiesParent.isStatic = true;
         entitiesParent.transform.parent = level.transform;
 
         var groupParentLookup = new Dictionary<string, GameObject>();
@@ -126,6 +138,7 @@ public static class Foo
                     if (!groupParentLookup.TryGetValue(groupName, out groupParent))
                     {
                         groupParent = new GameObject(groupName);
+                        groupParent.isStatic = entitiesParent.isStatic;
                         groupParent.transform.parent = entitiesParent.transform;
                         groupParentLookup[groupName] = groupParent;
                     }
@@ -160,6 +173,7 @@ public static class Foo
 
         GameObject modelObj = new GameObject("Model");
         modelObj.transform.parent = level.transform;
+        modelObj.isStatic = true;
 
         GenerateGeometries(bsp, model, modelObj, materials, used);
     }
@@ -210,6 +224,7 @@ public static class Foo
     {
         GameObject obj = new GameObject("Collision");
         obj.transform.parent = parent.transform;
+        obj.isStatic = parent.isStatic;
 
         var verts = face.vertices;
 
@@ -254,10 +269,12 @@ public static class Foo
         }
 
         var entityInstance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-        if (entity.model != -1)
+        entityInstance.isStatic = !entity.movable;
+
+        if (entity.modelRef != null)
         {
-            var model = bsp.FindModel(entity.model);
-            entityInstance.transform.position = BSP.TransformVector(model.boundbox.center);
+            var model = entity.modelRef;
+            entityInstance.transform.position = model.boundbox.center;
 
             if (entity.solid)
             {
@@ -278,6 +295,7 @@ public static class Foo
         {
             GameObject brush = new GameObject("Brush");
             brush.transform.parent = parent.transform;
+            brush.isStatic = parent.isStatic;
             GenerateBrush(bsp, brush, geometry, materials);
 
             foreach (var face in geometry.faces)

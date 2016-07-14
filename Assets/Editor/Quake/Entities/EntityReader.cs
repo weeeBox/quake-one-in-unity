@@ -67,7 +67,7 @@ public class EntityReader
         }
 
         entity_t entity = Activator.CreateInstance(type) as entity_t;
-        Dictionary<string, FieldInfo> fields = ListFields(entity);
+        Dictionary<string, FieldInfo> fields = ReflectionUtils.ListFields(entity);
 
         foreach (var entry in dict)
         {
@@ -91,34 +91,6 @@ public class EntityReader
         return entity;
     }
 
-    static Dictionary<string, FieldInfo> ListFields(object target)
-    {
-        Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>();
-
-        Type type = target.GetType();
-        while (type != null)
-        {
-            FieldInfo[] typeFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (var field in typeFields)
-            {
-                string name = field.Name;
-                if (name.StartsWith("m_"))
-                {
-                    name = name.Substring("m_".Length);
-                }
-                else if (name.EndsWith("k__BackingField"))
-                {
-                    name = name.Substring(1, name.Length - ("k__BackingField".Length + 2));
-                }
-
-                fields[name] = field;
-            }
-            type = type.BaseType;
-        }
-
-        return fields;
-    }
-
     static void SetFieldValue(FieldInfo field, object target, string value)
     {
         EntityFieldPrefixAttribute prefixAttribute = field.GetCustomAttribute<EntityFieldPrefixAttribute>();
@@ -135,6 +107,10 @@ public class EntityReader
         else if (type == typeof(int))
         {
             field.SetValue(target, int.Parse(value));
+        }
+        else if (type == typeof(float))
+        {
+            field.SetValue(target, float.Parse(value));
         }
         else if (type == typeof(Vector3))
         {

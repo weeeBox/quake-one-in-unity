@@ -12,7 +12,7 @@ public class EntityEditor<T> : Editor where T : entity
         var entity = target as entity;
         GUILayout.Label("Entity data:");
         GUI.enabled = false;
-        GUILayout.TextArea(entity.data);
+        GUILayout.TextArea(entity.data != null ? entity.data : "No data");
         GUI.enabled = true;
     }
 }

@@ -1,19 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
 
 using UnityEngine;
 
 public abstract class entity_t
 {
     [EntityFieldPrefix("*")]
-    private int m_model = -1;
+    int m_model = -1;
 
     [EntityFieldPrefix("t")]
-    private int m_target = -1;
+    int m_target = -1;
 
     [EntityFieldPrefix("t")]
-    private int m_targetname = -1;
+    int m_targetname = -1;
+
+    [BSPTransform]
+    Vector3 m_origin;
+
+    [BSPTransform]
+    float m_speed;
+
+    [BSPTransform]
+    float m_lip;
 
     public entity_t()
     {
@@ -24,7 +34,40 @@ public abstract class entity_t
 
     public virtual void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
     {
-        entity.data = data;
+        var instanceFields = ReflectionUtils.ListFields(entity);
+        var dataFields = ReflectionUtils.ListFields(this);
+
+        foreach (var name in instanceFields.Keys)
+        {
+            FieldInfo dataField;
+            if (dataFields.TryGetValue(name, out dataField))
+            {
+                object value = dataField.GetValue(this);
+                if (dataField.GetCustomAttribute<BSPTransformAttribute>() != null)
+                {
+                    Type fieldType = dataField.FieldType;
+                    if (fieldType == typeof(int))
+                    {
+                        value = BSP.Scale((int) value);
+                    }
+                    else if (fieldType == typeof(float))
+                    {
+                        value = BSP.Scale((float) value);
+                    }
+                    else if (fieldType == typeof(Vector3))
+                    {
+                        value = BSP.TransformVector((Vector3) value);
+                    }
+                    else
+                    {
+                        throw new NotImplementedException("Unexpected field type: " + fieldType);
+                    }
+                }
+
+                FieldInfo instanceField = instanceFields[name];
+                instanceField.SetValue(entity, value);
+            }
+        }
     }
 
     #endregion
@@ -47,13 +90,24 @@ public abstract class entity_t
 
     public Vector3 origin
     {
-        get; protected set;
+        get { return m_origin; }
+        protected set { m_origin = value; }
     }
 
     public int model
     {
         get { return m_model; }
         protected set { m_model = value; }
+    }
+
+    public BSPModel modelRef
+    {
+        get; set;
+    }
+
+    public Vector3 size
+    {
+        get { return modelRef != null ? modelRef.boundbox.size : Vector3.zero; }
     }
 
     public int target
@@ -98,9 +152,10 @@ public abstract class entity_t
         get; protected set;
     }
 
-    public int speed
+    public float speed
     {
-        get; protected set;
+        get { return m_speed; }
+        protected set { m_speed = value; }
     }
 
     public int wait
@@ -108,9 +163,10 @@ public abstract class entity_t
         get; protected set;
     }
 
-    public int lip
+    public float lip
     {
-        get; protected set;
+        get { return m_lip; }
+        protected set { m_lip = value; }
     }
 
     public int dmg
@@ -124,6 +180,11 @@ public abstract class entity_t
     }
 
     public bool solid
+    {
+        get; protected set;
+    }
+
+    public bool movable
     {
         get; protected set;
     }

@@ -69,6 +69,21 @@ class func_button_editor : EntityEditor<func_button>
 [CustomEditor(typeof(func_door))]
 class func_door_editor : EntityEditor<func_door>
 {
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+
+        if (GUILayout.Button("Open"))
+        {
+            func_door door = target as func_door;
+            door.Open();
+        }
+        if (GUILayout.Button("Close"))
+        {
+            func_door door = target as func_door;
+            door.Close();
+        }
+    }
 }
 
 [CustomEditor(typeof(func_door_secret))]

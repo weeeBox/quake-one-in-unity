@@ -11,12 +11,10 @@ public abstract class trigger_entity_t : entity_t
 
     public override void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
     {
-        if (this.model != -1)
+        if (modelRef != null)
         {
-            var model = bsp.FindModel(this.model);
-
             var collider = entity.GetComponent<BoxCollider>();
-            collider.size = BSP.TransformVector(model.boundbox.size);
+            collider.size = this.size;
         }
     }
 }

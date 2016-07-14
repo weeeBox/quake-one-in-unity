@@ -9,6 +9,11 @@ public abstract class door_entity_t : solid_entity_t
     protected const int DOOR_GOLD_KEY = 8;
     protected const int DOOR_SILVER_KEY = 16;
     protected const int DOOR_TOGGLE = 32;
+
+    public door_entity_t()
+    {
+        this.movable = true;
+    }
 }
 
 /*
@@ -50,17 +55,54 @@ public class func_door_t : door_entity_t
     {
         base.SetupInstance(bsp, entity, entities);
 
-        var door = entity.GetComponent<func_door>();
+        var door = entity as func_door;
 
+        SetupTrigger(door);
+        SetupItems(door);
+        SetupMovement(door);
+    }
+
+    void SetupTrigger(func_door door)
+    {
+        var collider = door.GetComponent<BoxCollider>();
+
+        var colliderSize = this.size;
+        colliderSize.x += 0.4f;
+        colliderSize.z += 0.4f;
+
+        collider.size = colliderSize;
+    }
+
+    void SetupItems(func_door door)
+    {
         if ((spawnflags & DOOR_SILVER_KEY) != 0)
             door.items = door_items.IT_KEY1;
         if ((spawnflags & DOOR_GOLD_KEY) != 0)
             door.items = door_items.IT_KEY2;
+    }
 
-        Vector3 movedir = Quaternion.AngleAxis(angle, Vector3.up) * Vector3.forward;
-
-        door.pos1 = BSP.TransformVector(origin);
-        door.pos2 = BSP.TransformVector(origin);
+    void SetupMovement(func_door door)
+    {
+        Vector3 movedir;
+        float amount;
+        if (angle == -1)
+        {
+            movedir = Vector3.up;
+            amount = this.size.y;
+        }
+        else if (angle >= 0 && angle < 360)
+        {
+            movedir = Quaternion.AngleAxis(angle, Vector3.up) * Vector3.left;
+            amount = this.size.z;
+        }
+        else
+        {
+            movedir = Vector3.zero;
+            amount = 0.0f;
+            Debug.LogError("Unexpected angle: " + angle);
+        }
+        door.pos1 = door.transform.position;
+        door.pos2 = door.pos1 + movedir * (amount - BSP.Scale(lip));
     }
 
     public Vector3 movedir
