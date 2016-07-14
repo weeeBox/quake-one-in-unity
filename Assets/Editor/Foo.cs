@@ -186,12 +186,12 @@ public static class Foo
 
     static void GenerateBrush(BSP bsp, GameObject brush, BSPModelGeometry geometry, IList<Material> materials)
     {
-        Mesh mesh = GenerateMesh(geometry);
+        var mesh = GenerateMesh(geometry);
 
-        MeshFilter meshFilter = brush.AddComponent<MeshFilter>();
+        var meshFilter = brush.GetComponent<MeshFilter>();
         meshFilter.sharedMesh = mesh;
 
-        MeshRenderer meshRenderer = brush.AddComponent<MeshRenderer>();
+        var meshRenderer = brush.GetComponent<MeshRenderer>();
         meshRenderer.material = materials[(int) geometry.tex_id];
     }
 
@@ -228,13 +228,13 @@ public static class Foo
     
     static void GenerateCollision(BSP bsp, GameObject parent, BSPFace face)
     {
-        GameObject obj = new GameObject("Collision");
-        obj.transform.parent = parent.transform;
-        obj.isStatic = parent.isStatic;
+        GameObject levelCollision = PrefabCache.InstantiatePrefab("LevelCollision", "Assets/Prefabs");
+        levelCollision.transform.parent = parent.transform;
+        levelCollision.isStatic = parent.isStatic;
 
         var verts = face.vertices;
 
-        var collider = obj.AddComponent<MeshCollider>();
+        var collider = levelCollision.AddComponent<MeshCollider>();
 
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
@@ -267,14 +267,13 @@ public static class Foo
             name = name.Substring(0, name.Length - TYPE_PREFIX.Length);
         }
 
-        var prefab = PrefabCache.FindPrefab(name);
-        if (prefab == null)
+        var entityInstance = PrefabCache.InstantiatePrefab(name, "Assets/Prefabs/Entities");
+        if (entityInstance == null)
         {
             Debug.LogWarning("Can't load prefab: " + name);
             return null;
         }
 
-        var entityInstance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
         entityInstance.isStatic = !entity.movable;
 
         if (entity.modelRef != null)
@@ -299,7 +298,7 @@ public static class Foo
     {
         foreach (var geometry in model.geometries)
         {
-            GameObject brush = new GameObject("Brush");
+            GameObject brush = PrefabCache.InstantiatePrefab("LevelBrush", "Assets/Prefabs");
             brush.transform.parent = parent.transform;
             brush.isStatic = parent.isStatic;
             GenerateBrush(bsp, brush, geometry, materials);
