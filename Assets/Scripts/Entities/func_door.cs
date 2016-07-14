@@ -83,8 +83,8 @@ public class func_door : entity
         Toggle();
     }
 
-    void OnTriggerEnter(Collider other)
-    {
+    protected override void OnCharacterEnter(CharacterController character)
+    {   
         if (!HasTargetName())
         {
             Open();
