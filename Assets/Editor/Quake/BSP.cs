@@ -421,17 +421,19 @@ public class BSP
         {
             var miptex_entry = this.miptex_directory[i];
             var face_ids = face_id_lists[i];
-
-            var mesh = this.CreateMesh(geometry, face_ids, miptex_entry);
-            geometries.Add(new BSPModelGeometry(i, mesh));
-
+            
             foreach (var face_id in face_ids)
             {
                 faces.Add(this.faces[face_id]);
             }
+
+            var mesh = this.CreateMesh(geometry, face_ids, miptex_entry);
+            geometries.Add(new BSPModelGeometry(i, mesh, faces.ToArray()));
+
+            faces.Clear();
         }
 
-        return new BSPModel(model, geometries.ToArray(), faces.ToArray());
+        return new BSPModel(model, geometries.ToArray());
     }
 
     Hash<UInt32, face_id_list_t> getFaceIdsPerTexture(GEOMETRY_T geometry, dmodel_t model)
@@ -780,13 +782,11 @@ public class BSPModel
 {
     public readonly BSP.dmodel_t model;
     public readonly BSPModelGeometry[] geometries;
-    public readonly BSPFace[] faces;
 
-    public BSPModel(BSP.dmodel_t model, BSPModelGeometry[] geometries, BSPFace[] faces)
+    public BSPModel(BSP.dmodel_t model, BSPModelGeometry[] geometries)
     {
         this.model = model;
         this.geometries = geometries;
-        this.faces = faces;
     }
 
     public boundbox_t boundbox
@@ -809,11 +809,13 @@ public class BSPModelGeometry
 {
     public readonly UInt32 tex_id;
     public readonly BSPMesh mesh;
+    public readonly BSPFace[] faces;
 
-    public BSPModelGeometry(uint tex_id, BSPMesh mesh)
+    public BSPModelGeometry(uint tex_id, BSPMesh mesh, BSPFace[] faces)
     {
         this.tex_id = tex_id;
         this.mesh = mesh;
+        this.faces = faces;
     }
 }
 

@@ -280,7 +280,7 @@ public static class Foo
             brush.transform.parent = parent.transform;
             GenerateBrush(bsp, brush, geometry, materials);
 
-            foreach (var face in model.faces)
+            foreach (var face in geometry.faces)
             {
                 if (!used[face.id])
                 {
