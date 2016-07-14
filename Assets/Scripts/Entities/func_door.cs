@@ -10,7 +10,15 @@ public enum door_items
 }
 
 public class func_door : entity
-{   
+{
+    enum State
+    {
+        Closed,
+        Opening,
+        Opened,
+        Closing
+    }
+
     [HideInInspector]
     public Vector3 pos1;
 
@@ -23,50 +31,93 @@ public class func_door : entity
     [HideInInspector]
     public float speed;
 
-    protected override void OnSignal()
+    State m_state;
+    
+    Vector3 m_targetPos;
+    Vector3 m_targetDir;
+
+    void Start()
     {
-        Open();   
+        m_state = State.Closed;
     }
 
-    void OnTriggerEnter(Collider other)
+    void Update()
     {
-        Open();
-    }
-
-    public void Open()
-    {
-        StartCoroutine(MoveToTarget(pos2));
-    }
-
-    public void Close()
-    {
-        StartCoroutine(MoveToTarget(pos1));
-    }
-
-    IEnumerator MoveToTarget(Vector3 target)
-    {
-        Vector3 direction = (target - transform.position).normalized;
-        Vector3 offset;
-        Vector3 remains;
-        do
+        if (m_state == State.Opening || m_state == State.Closing)
         {
-            remains = target - transform.position;
-            offset = direction * speed * Time.deltaTime;
+            Vector3 remains = m_targetPos - transform.position;
+            Vector3 offset = m_targetDir * speed * Time.deltaTime;
 
             if (remains.sqrMagnitude < offset.sqrMagnitude)
             {
-                transform.Translate(remains);
-                break;
+                transform.position = m_targetPos;
+                OnTargetPosReach();
             }
             else
             {
                 transform.Translate(offset);
             }
-
-            yield return null;
         }
-        while (true);
+    }
 
-        transform.position = target;
+    void MoveToTargetPos(Vector3 targetPos)
+    {
+        m_targetPos = targetPos;
+        m_targetDir = (targetPos - transform.position).normalized;
+    }
+
+    void OnTargetPosReach()
+    {
+        if (m_state == State.Closing)
+        {
+            m_state = State.Closed;
+        }
+        else if (m_state == State.Opening)
+        {
+            m_state = State.Opened;
+        }
+    }
+
+    protected override void OnSignal()
+    {
+        Toggle();
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (!HasTargetName())
+        {
+            Open();
+        }
+    }
+
+    public void Toggle()
+    {
+        if (m_state == State.Closed || m_state == State.Closing)
+        {
+            Open();
+        }
+        else
+        {
+            Close();
+        }
+    }
+
+    public void Open()
+    {
+        if (m_state != State.Opened && m_state != State.Opening)
+        {
+            m_state = State.Opening;
+            MoveToTargetPos(pos2);
+        }
+    }
+
+    public void Close()
+    {
+        if (m_state != State.Closed && m_state != State.Closing)
+        {
+            m_state = State.Closing;
+            MoveToTargetPos(pos1);
+        }
     }
 }

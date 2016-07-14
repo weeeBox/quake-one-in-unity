@@ -51,6 +51,11 @@ public abstract class entity : MonoBehaviour
         var target = GetComponent<EntityTarget>();
         return target != null ? target.targetName : null;
     }
+    
+    public bool HasTargetName()
+    {
+        return GetComponent<EntityTargetName>();
+    }
 
     #endregion
 }
