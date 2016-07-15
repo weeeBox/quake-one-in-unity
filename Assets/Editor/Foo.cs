@@ -9,7 +9,17 @@ public static class Foo
 {
     private const string TYPE_PREFIX = "_t";
 
-    [MenuItem("Test/Load BSP")]
+    [MenuItem("Quake Utils/Load MDL...")]
+    static void LoadMDL()
+    {
+        using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, "Editor/Data/progs/v_shot.mdl")))
+        {
+            DataStream ds = new DataStream(stream);
+            MDL mdl = new MDL(ds, "v_shot.mdl");
+        }
+    }
+
+    [MenuItem("Quake Utils/Load BSP...")]
     static void LoadBSP()
     {
         using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, "Maps/e1m1.bsp")))
