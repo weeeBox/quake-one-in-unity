@@ -168,6 +168,18 @@ public static class Foo
                 entity.SetupInstance(bsp, entityObj, entityList);
             }
         }
+
+        // setup player start
+        var playerStart = GameObject.FindObjectOfType<info_player_start>();
+        if (playerStart == null)
+        {
+            Debug.LogError("Can't find player start position");
+        }
+
+        level.playerStart = playerStart;
+
+        var player = GameObject.FindObjectOfType<CharacterController>();
+        player.transform.position = playerStart.transform.position;
     }
 
     static void GenerateBrush(BSP bsp, Level level, BSPModel model, IList<Material> materials, bool[] used)
