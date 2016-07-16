@@ -19,6 +19,7 @@ public static class Foo
 
             GenerateModel(mdl);
             GenerateSkins(mdl);
+            GenerateAnimations(mdl);
         }
     }
 
@@ -30,7 +31,7 @@ public static class Foo
 
         var geometry = mdl.geometry;
 
-        var model = GameObject.FindObjectOfType<Model>();
+        var model = GameObject.FindObjectOfType<QModel>();
         var meshFilter = model.GetComponent<MeshFilter>();
         var meshRenderer = model.GetComponent<MeshRenderer>();
         var verts = geometry.frames[0].verts;
@@ -128,6 +129,43 @@ public static class Foo
 
         return materials;
     }
+    private static void GenerateAnimations(MDL mdl)
+    {
+        var frames = mdl.geometry.frames;
+        foreach (var e in mdl.animations)
+        {
+            var name = e.Key;
+            var anim = e.Value;
+
+            var animationFrames = new QModelFrame[anim.length];
+            for (int frameIndex = 0; frameIndex < anim.length; ++frameIndex)
+            {
+                var frame = frames[anim.start + frameIndex];
+                var verts = frame.verts;
+                Vector3[] vertices = new Vector3[verts.Length];
+                int[] triangles = new int[verts.Length];
+                for (int vertexIndex = 0; vertexIndex < verts.Length; vertexIndex += 3)
+                {
+                    vertices[vertexIndex] = BSP.TransformVector(verts[vertexIndex]);
+                    vertices[vertexIndex + 1] = BSP.TransformVector(verts[vertexIndex + 1]);
+                    vertices[vertexIndex + 2] = BSP.TransformVector(verts[vertexIndex + 2]);
+                    triangles[vertexIndex] = vertexIndex + 2;
+                    triangles[vertexIndex + 1] = vertexIndex + 1;
+                    triangles[vertexIndex + 2] = vertexIndex;
+                }
+                animationFrames[frameIndex] = new QModelFrame(frame.name, vertices, triangles);
+            }
+
+            var animation = ScriptableObject.CreateInstance<QModelAnimation>();
+            animation.name = name;
+            animation.frames = animationFrames;
+
+            var path = "Assets/Models/" + name + ".asset";
+            AssetDatabase.CreateAsset(animation, path);
+            AssetDatabase.SaveAssets();
+        }
+    }
+
 
     [MenuItem("Quake Utils/Load BSP...")]
     static void LoadBSP()
