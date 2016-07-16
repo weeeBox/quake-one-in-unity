@@ -12,13 +12,22 @@ public static class Foo
     [MenuItem("Quake Utils/Load MDL...")]
     static void LoadMDL()
     {
-        string path = "Editor/Data/progs/armor.mdl";
-        string modelsDir = Application.dataPath + "/Models";
+        string path = AssetUtils.GetAbsoluteAssetPath("Assets/Editor/Data/progs");
+        string modelsDir = "Assets/Models";
 
-        using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, path)))
+        var files = Directory.GetFiles(path, "*.mdl");
+        foreach (var file in files)
+        {   
+            GenerateModel(file.Replace('\\', '/'), modelsDir);
+        }
+    }
+
+    static void GenerateModel(string sourcePath, string modelsPath)
+    {
+        using (FileStream stream = File.OpenRead(sourcePath))
         {
-            var name = FileUtil.getFilenameNoExtension(path);
-            var destPath = "Assets/Models/" + name;
+            var name = FileUtil.getFilenameNoExtension(sourcePath);
+            var destPath = modelsPath + "/" + name;
 
             DataStream ds = new DataStream(stream);
             MDL mdl = new MDL(ds, name);
