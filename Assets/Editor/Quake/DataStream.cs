@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Reflection;
 using System.IO;
+using System.Text;
 
 using UnityEngine;
 
@@ -21,8 +22,8 @@ public class DataStream
     /// </summary>
     public string readString(int length)
     {
-        char[] chars = m_reader.ReadChars(length);
-        return new string(chars);
+        byte[] bytes = m_reader.ReadBytes(length);
+        return Encoding.ASCII.GetString(bytes);
     }
 
     /// <summary>

@@ -35,6 +35,8 @@ public class MDL
         public VERTEX_T max;
         [FieldSize(16)]
         public string name;
+
+        [IgnoreField]
         public VERTEX_T[] verts;
     }
 
@@ -180,7 +182,7 @@ public class MDL
         var sh = this.header.skin_height;
 
         // expand uvs
-        var uvs = new Vector2[num_tris * 2]; // 3 per face, size 2 (u, v)
+        var uvs = new Vector2[num_tris * 3]; // 3 per face, size 2 (u, v)
         for (var i = 0; i < num_tris; ++i)
         {
             var t = triangles[i];
