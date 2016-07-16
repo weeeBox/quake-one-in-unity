@@ -12,11 +12,121 @@ public static class Foo
     [MenuItem("Quake Utils/Load MDL...")]
     static void LoadMDL()
     {
-        using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, "Editor/Data/progs/v_shot.mdl")))
+        using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, "Editor/Data/progs/shambler.mdl")))
         {
             DataStream ds = new DataStream(stream);
-            MDL mdl = new MDL(ds, "v_shot.mdl");
+            MDL mdl = new MDL(ds, "shambler.mdl");
+
+            GenerateModel(mdl);
+            GenerateSkins(mdl);
         }
+    }
+
+    private static void GenerateModel(MDL mdl)
+    {
+        var skins = mdl.skins;
+
+
+
+        var geometry = mdl.geometry;
+
+        var model = GameObject.FindObjectOfType<Model>();
+        var meshFilter = model.GetComponent<MeshFilter>();
+        var meshRenderer = model.GetComponent<MeshRenderer>();
+        var verts = geometry.frames[0].verts;
+
+        Mesh mesh = new Mesh();
+
+        Vector3[] vertices = new Vector3[verts.Length];
+        int[] triangles = new int[verts.Length];
+        for (int i = 0; i < verts.Length; i += 3)
+        {
+            vertices[i] = BSP.TransformVector(verts[i]);
+            vertices[i + 1] = BSP.TransformVector(verts[i + 1]);
+            vertices[i + 2] = BSP.TransformVector(verts[i + 2]);
+            triangles[i] = i + 2;
+            triangles[i + 1] = i + 1;
+            triangles[i + 2] = i;
+        }
+
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.uv = geometry.uvs;
+        mesh.RecalculateNormals();
+
+        meshFilter.sharedMesh = mesh;
+    }
+
+    static object GenerateSkins(MDL mdl)
+    {
+        string textureDir = Directory.GetParent(Application.dataPath).ToString();
+
+        List<string> textures = new List<string>();
+        List<Material> materials = new List<Material>();
+
+        int tex_id = 0;
+        foreach (var skin in mdl.skins)
+        {
+            string textureName = string.Format("skin-{0}.png", tex_id++);
+            string texturePath = "Assets/Textures/Skins/" + textureName;
+            string textureAbsolutePath = Path.Combine(textureDir, texturePath);
+
+            if (!File.Exists(textureAbsolutePath))
+            {
+                Texture2D tex = new Texture2D(skin.width, skin.height);
+                Color32[] pixels = new Color32[skin.width * skin.height];
+                for (int i = 0, j = 0; i < pixels.Length; ++i)
+                {
+                    pixels[i] = new Color32(skin.data[j++], skin.data[j++], skin.data[j++], skin.data[j++]);
+                }
+
+                for (int x = 0; x < skin.width; ++x)
+                {
+                    for (int y = 0; y < skin.height / 2; ++y)
+                    {
+                        int from = y * skin.width + x;
+                        int to = (skin.height - y - 1) * skin.width + x;
+                        var temp = pixels[to];
+                        pixels[to] = pixels[from];
+                        pixels[from] = temp;
+                    }
+                }
+
+                tex.SetPixels32(pixels);
+                File.WriteAllBytes(textureAbsolutePath, tex.EncodeToPNG());
+            }
+
+            textures.Add(texturePath);
+        }
+        AssetDatabase.Refresh();
+
+        foreach (var texture in textures)
+        {
+            int index = texture.LastIndexOf('.');
+            string materialPath = texture.Substring(0, index) + ".mat";
+            string materialAbsolutePath = Path.Combine(textureDir, materialPath);
+
+            if (!File.Exists(materialAbsolutePath))
+            {
+                TextureImporter importer = TextureImporter.GetAtPath(texture) as TextureImporter;
+                importer.textureType = TextureImporterType.Image;
+                importer.wrapMode = TextureWrapMode.Repeat;
+                importer.filterMode = FilterMode.Point;
+                importer.maxTextureSize = 2048;
+                importer.textureFormat = TextureImporterFormat.DXT1;
+                importer.SaveAndReimport();
+
+                var material = new Material(Shader.Find("Standard"));
+                material.mainTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(texture);
+                material.SetFloat("_Glossiness", 0.0f);
+
+                AssetDatabase.CreateAsset(material, materialPath);
+            }
+
+            materials.Add(AssetDatabase.LoadAssetAtPath<Material>(materialPath));
+        }
+
+        return materials;
     }
 
     [MenuItem("Quake Utils/Load BSP...")]

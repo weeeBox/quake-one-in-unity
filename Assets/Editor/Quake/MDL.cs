@@ -126,7 +126,7 @@ public class MDL
                 skins[skins.length] = image_data; 
             }
         }
-        this.skins = skins.ToArray();
+        this.skins = expandSkins(skins.ToArray());
         this.skin_groups = skin_groups.ToArray();
 
         // read geometry
@@ -172,14 +172,14 @@ public class MDL
         this.geometry = this.expandGeometry(geometry);
         this.animations = this.detectAnimations();
     }
-
+    
     MDLGeometry expandGeometry(GEOMETRY_T geometry)
     {
         var triangles = geometry.triangles;
         var skin_verts = geometry.skin_verts;
         var num_tris = triangles.Length;
-        var sw = this.header.skin_width;
-        var sh = this.header.skin_height;
+        float sw = this.header.skin_width;
+        float sh = this.header.skin_height;
 
         // expand uvs
         var uvs = new Vector2[num_tris * 3]; // 3 per face, size 2 (u, v)
@@ -191,16 +191,15 @@ public class MDL
             var b = t.vert_indices[1];
             var c = t.vert_indices[2];
 
-            var idx = i * 2;
+            var idx = i * 3;
             var uv = skin_verts[c];
-            var onseam = uv.onseam != 0;
-            uvs[idx + 0].x = (!ff && onseam) ? uv.s / sw + 0.5f : uv.s / sw;
+            uvs[idx + 0].x = (!ff && uv.onseam != 0) ? uv.s / sw + 0.5f : uv.s / sw;
             uvs[idx + 0].y = 1 - uv.t / sh; // uvs are upside down so invert
             uv = skin_verts[b];
-            uvs[idx + 1].x = (!ff && onseam) ? uv.s / sw + 0.5f : uv.s / sw;
+            uvs[idx + 1].x = (!ff && uv.onseam != 0) ? uv.s / sw + 0.5f : uv.s / sw;
             uvs[idx + 1].y = 1 - uv.t / sh;
             uv = skin_verts[a];
-            uvs[idx + 2].x = (!ff && onseam) ? uv.s / sw + 0.5f : uv.s / sw;
+            uvs[idx + 2].x = (!ff && uv.onseam != 0) ? uv.s / sw + 0.5f : uv.s / sw;
             uvs[idx + 2].y = 1 - uv.t / sh;
         }
 
@@ -280,6 +279,20 @@ public class MDL
         return anims;
     }
 
+    private BSPTexture[] expandSkins(ImageData[] skins)
+    {
+        var textures = new BSPTexture[skins.Length];
+
+        for (int i = 0; i < skins.Length; ++i)
+        {
+            var skin = skins[i];
+            var data = ImageUtil.expandImageData(skin, PAL.DEFAULT_PALETTE);
+            textures[i] = new BSPTexture("skin-" + i, data, skin.width, skin.height);
+        }
+
+        return textures;
+    }
+
     bool notNumber(int charcode)
     {
         return (charcode < 48 || charcode > 57);
@@ -293,7 +306,7 @@ public class MDL
         private set;
     }
 
-    public ImageData[] skins
+    public BSPTexture[] skins
     {
         get;
         private set;

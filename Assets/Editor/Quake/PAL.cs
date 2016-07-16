@@ -53,5 +53,7 @@ public class PAL
         231,255,215,255,255,103,0,0,139,0,0,179,0,0,215,0,
         0,255,0,0,255,243,147,255,247,199,255,255,255,159,91,83
     };
+
+    public static readonly PAL DEFAULT_PALETTE = new PAL();
 }
 

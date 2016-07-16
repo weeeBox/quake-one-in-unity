@@ -234,9 +234,7 @@ public class BSP
     }
 
     #endregion
-
-    readonly PAL DEFAULT_PALETTE = new PAL();
-
+    
     public BSP(DataStream ds)
     {
         this.ReadHeader(ds);
@@ -366,7 +364,7 @@ public class BSP
         {
             var entry = this.miptex_directory[i];
             var image_data = ImageUtil.getImageData(entry.name, ds, entry);
-            var data = ImageUtil.expandImageData(image_data, DEFAULT_PALETTE);
+            var data = ImageUtil.expandImageData(image_data, PAL.DEFAULT_PALETTE);
             textures[i] = new BSPTexture(entry.name, data, image_data.width, image_data.height);
         }
     }
