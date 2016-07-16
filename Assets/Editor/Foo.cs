@@ -51,13 +51,15 @@ public static class Foo
 
         Mesh mesh = new Mesh();
 
+        var rotation = Quaternion.AngleAxis(-90, Vector3.up);
+
         Vector3[] vertices = new Vector3[verts.Length];
         int[] triangles = new int[verts.Length];
         for (int i = 0; i < verts.Length; i += 3)
         {
-            vertices[i] = BSP.TransformVector(verts[i]);
-            vertices[i + 1] = BSP.TransformVector(verts[i + 1]);
-            vertices[i + 2] = BSP.TransformVector(verts[i + 2]);
+            vertices[i] = rotation * BSP.TransformVector(verts[i]);
+            vertices[i + 1] = rotation * BSP.TransformVector(verts[i + 1]);
+            vertices[i + 2] = rotation * BSP.TransformVector(verts[i + 2]);
             triangles[i] = i + 2;
             triangles[i + 1] = i + 1;
             triangles[i + 2] = i;
@@ -156,6 +158,8 @@ public static class Foo
             var name = e.Key;
             var anim = e.Value;
 
+            var rotation = Quaternion.AngleAxis(-90, Vector3.up);
+
             var animationFrames = new QModelFrame[anim.length];
             for (int frameIndex = 0; frameIndex < anim.length; ++frameIndex)
             {
@@ -165,9 +169,9 @@ public static class Foo
                 int[] triangles = new int[verts.Length];
                 for (int vertexIndex = 0; vertexIndex < verts.Length; vertexIndex += 3)
                 {
-                    vertices[vertexIndex] = BSP.TransformVector(verts[vertexIndex]);
-                    vertices[vertexIndex + 1] = BSP.TransformVector(verts[vertexIndex + 1]);
-                    vertices[vertexIndex + 2] = BSP.TransformVector(verts[vertexIndex + 2]);
+                    vertices[vertexIndex] = rotation * BSP.TransformVector(verts[vertexIndex]);
+                    vertices[vertexIndex + 1] = rotation * BSP.TransformVector(verts[vertexIndex + 1]);
+                    vertices[vertexIndex + 2] = rotation * BSP.TransformVector(verts[vertexIndex + 2]);
                     triangles[vertexIndex] = vertexIndex + 2;
                     triangles[vertexIndex + 1] = vertexIndex + 1;
                     triangles[vertexIndex + 2] = vertexIndex;
