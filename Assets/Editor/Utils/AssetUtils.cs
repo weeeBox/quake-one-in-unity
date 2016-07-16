@@ -13,7 +13,7 @@ public static class AssetUtils
     {
         if (!Path.IsPathRooted(path))
         {
-            if (path.StartsWith("Assets/") || path.StartsWith("/Assets/"))
+            if (IsValidRelativeAssetPath(path))
             {
                 path = Path.Combine(projectPath, path);
             }
@@ -25,8 +25,8 @@ public static class AssetUtils
 
         return Directory.Exists(path) || File.Exists(path);
     }
-
-    public static bool MakeDirectory(string path)
+    
+    public static bool CreateFolder(string path)
     {
         if (AssetPathExists(path))
         {
@@ -56,6 +56,26 @@ public static class AssetUtils
         }
 
         return true;
+    }
+
+    public static string GetAbsoluteAssetPath(string assetPath)
+    {
+        if (Path.IsPathRooted(assetPath))
+        {
+            return assetPath;
+        }
+
+        if (!IsValidRelativeAssetPath(assetPath))
+        {
+            throw new ArgumentException("Invalid asset path: " + assetPath);
+        }
+        
+        return projectPath + "/" + assetPath;
+    }
+
+    private static bool IsValidRelativeAssetPath(string path)
+    {
+        return path.StartsWith("Assets/") || path.StartsWith("/Assets/");
     }
 
     public static string projectPath

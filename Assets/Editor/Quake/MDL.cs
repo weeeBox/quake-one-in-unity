@@ -91,8 +91,10 @@ public class MDL
         public int length;
     }
 
-    public MDL(DataStream ds, string filename)
+    public MDL(DataStream ds, string name)
     {
+        this.name = name;
+
         // read header
         var header = ds.readStruct<HEADER_T>();
         this.header = header;
@@ -100,8 +102,7 @@ public class MDL
         // read skins
         var skins = new DynamicArray<ImageData>(); // image_data (see ImageUtil.newImageData)
         var skin_groups = new DynamicArray<SKIN_GROUP_T>(); // { index, num_skins }
-
-        var name = FileUtil.getFilenameNoExtension(filename) + "_";
+        
         var skin_size = header.skin_width * header.skin_height;
         for (var i = 0; i < header.num_skins; ++i)
         {
@@ -299,6 +300,11 @@ public class MDL
     }
 
     #region Properties
+
+    public string name
+    {
+        get; private set;
+    }
 
     public HEADER_T header
     {

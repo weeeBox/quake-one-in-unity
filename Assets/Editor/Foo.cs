@@ -12,23 +12,27 @@ public static class Foo
     [MenuItem("Quake Utils/Load MDL...")]
     static void LoadMDL()
     {
-        using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, "Editor/Data/progs/shambler.mdl")))
-        {
-            DataStream ds = new DataStream(stream);
-            MDL mdl = new MDL(ds, "shambler.mdl");
+        string path = "Editor/Data/progs/armor.mdl";
+        string modelsDir = Application.dataPath + "/Models";
 
-            GenerateModel(mdl);
-            GenerateSkins(mdl);
-            GenerateAnimations(mdl);
+        using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, path)))
+        {
+            var name = FileUtil.getFilenameNoExtension(path);
+            var destPath = "Assets/Models/" + name;
+
+            DataStream ds = new DataStream(stream);
+            MDL mdl = new MDL(ds, name);
+
+            AssetUtils.CreateFolder(destPath);
+
+            GenerateModel(mdl, destPath);
+            GenerateSkins(mdl, destPath);
+            GenerateAnimations(mdl, destPath);
         }
     }
 
-    private static void GenerateModel(MDL mdl)
+    private static void GenerateModel(MDL mdl, string destPath)
     {
-        var skins = mdl.skins;
-
-
-
         var geometry = mdl.geometry;
 
         var model = GameObject.FindObjectOfType<QModel>();
@@ -55,24 +59,25 @@ public static class Foo
         mesh.uv = geometry.uvs;
         mesh.RecalculateNormals();
 
-        meshFilter.sharedMesh = mesh;
+        AssetDatabase.CreateAsset(mesh, destPath + "/" + mdl.name + ".asset");
     }
 
-    static object GenerateSkins(MDL mdl)
+    static object GenerateSkins(MDL mdl, string destPath)
     {
         string textureDir = Directory.GetParent(Application.dataPath).ToString();
 
         List<string> textures = new List<string>();
         List<Material> materials = new List<Material>();
 
-        int tex_id = 0;
+        var skinsPath = destPath + "/skins";
+        AssetUtils.CreateFolder(skinsPath); 
+
+        int skinId = 0;
         foreach (var skin in mdl.skins)
         {
-            string textureName = string.Format("skin-{0}.png", tex_id++);
-            string texturePath = "Assets/Textures/Skins/" + textureName;
-            string textureAbsolutePath = Path.Combine(textureDir, texturePath);
-
-            if (!File.Exists(textureAbsolutePath))
+            var textureName = string.Format("[{0}] [{1}]_{0}.png", skinId++, mdl.name);
+            var texturePath = skinsPath + "/" + textureName;
+            if (!AssetUtils.AssetPathExists(texturePath))
             {
                 Texture2D tex = new Texture2D(skin.width, skin.height);
                 Color32[] pixels = new Color32[skin.width * skin.height];
@@ -94,7 +99,7 @@ public static class Foo
                 }
 
                 tex.SetPixels32(pixels);
-                File.WriteAllBytes(textureAbsolutePath, tex.EncodeToPNG());
+                File.WriteAllBytes(AssetUtils.GetAbsoluteAssetPath(texturePath), tex.EncodeToPNG());
             }
 
             textures.Add(texturePath);
@@ -105,9 +110,7 @@ public static class Foo
         {
             int index = texture.LastIndexOf('.');
             string materialPath = texture.Substring(0, index) + ".mat";
-            string materialAbsolutePath = Path.Combine(textureDir, materialPath);
-
-            if (!File.Exists(materialAbsolutePath))
+            if (!AssetUtils.AssetPathExists(materialPath))
             {
                 TextureImporter importer = TextureImporter.GetAtPath(texture) as TextureImporter;
                 importer.textureType = TextureImporterType.Image;
@@ -127,11 +130,18 @@ public static class Foo
             materials.Add(AssetDatabase.LoadAssetAtPath<Material>(materialPath));
         }
 
+        AssetDatabase.SaveAssets();
+
         return materials;
     }
-    private static void GenerateAnimations(MDL mdl)
+    private static void GenerateAnimations(MDL mdl, string destPath)
     {
         var frames = mdl.geometry.frames;
+        if (frames.Length == 1) return; // no animations
+
+        var animationsPath = destPath + "/animations";
+        AssetUtils.CreateFolder(animationsPath);
+        
         foreach (var e in mdl.animations)
         {
             var name = e.Key;
@@ -160,8 +170,8 @@ public static class Foo
             animation.name = name;
             animation.frames = animationFrames;
 
-            var path = "Assets/Models/" + name + ".asset";
-            AssetDatabase.CreateAsset(animation, path);
+            var animationPath = animationsPath + "/" + name + ".asset";
+            AssetDatabase.CreateAsset(animation, animationPath);
             AssetDatabase.SaveAssets();
         }
     }
