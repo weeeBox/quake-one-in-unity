@@ -43,10 +43,15 @@ public class QModelAnimation : ScriptableObject
     [SerializeField]
     [HideInInspector]
     QModelFrame[] m_frames;
-
+    
     public QModelFrame[] frames
     {
         get { return m_frames; }
         set { m_frames = value; }
+    }
+
+    public int frameCount
+    {
+        get { return m_frames != null ? m_frames.Length : 0; }
     }
 }
