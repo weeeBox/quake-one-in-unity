@@ -4,9 +4,6 @@ using System.Collections;
 public class MDL : ScriptableObject
 {
     [SerializeField]
-    string m_name;
-
-    [SerializeField]
     Mesh m_mesh;
 
     [SerializeField]
@@ -15,29 +12,28 @@ public class MDL : ScriptableObject
     [SerializeField]
     MDLAnimation[] m_animations;
 
+    #region Properties
+
     public Mesh mesh
     {
         get { return m_mesh; }
         set { m_mesh = value; }
     }
-
-    public Material material
-    {
-        get { return m_materials != null && m_materials.Length > 0 ? m_materials[0] : null; }
-        set
-        {
-            if (m_materials == null || m_materials.Length == 0)
-            {
-                m_materials = new Material[1];
-            }
-            m_materials[0] = value;
-        }
-    }
-
+    
     public Material[] materials
     {
         get { return m_materials; }
         set { m_materials = value; }
+    }
+
+    public Material material
+    {
+        get { return this.materialCount > 0 ? m_materials[0] : null; }
+    }
+
+    public int materialCount
+    {
+        get { return m_materials != null ? m_materials.Length : 0; }
     }
 
     public MDLAnimation[] animations
@@ -45,4 +41,16 @@ public class MDL : ScriptableObject
         get { return m_animations; }
         set { m_animations = value; }
     }
+
+    public MDLAnimation animation
+    {
+        get{ return this.animationCount > 0 ? m_animations[0] : null; }
+    }
+
+    public int animationCount
+    {
+        get { return m_animations != null ? m_animations.Length : 0; }
+    }
+
+    #endregion
 }

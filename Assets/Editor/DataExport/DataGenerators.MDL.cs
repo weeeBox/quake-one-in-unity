@@ -222,19 +222,16 @@ static partial class DataGenerators
                 Debug.LogError("Can't load mesh: " + meshPath);
             }
 
-            var materialsPath = assetPath + "/skins/" + dirname;
+            var materialsPath = assetPath + "/skins";
             mdl.materials = AssetUtils.LoadAssetsAtPath<Material>(materialsPath);
-            if (mdl.materials.Length == 0)
+            if (mdl.materialCount == 0)
             {
                 Debug.LogError("Can't load materials: " + materialsPath);
             }
 
             var animationsPath = assetPath + "/animations";
-            mdl.animations = AssetUtils.LoadAssetsAtPath<MDLAnimation>(animationsPath);
-            if (mdl.animations.Length == 0)
-            {
-                Debug.LogError("Can't load animations: " + animationsPath);
-            }
+            mdl.animations = AssetUtils.AssetPathExists(animationsPath) ?
+                AssetUtils.LoadAssetsAtPath<MDLAnimation>(animationsPath) : null;
 
             AssetDatabase.CreateAsset(mdl, assetPath + "/" + dirname + ".asset");
         }

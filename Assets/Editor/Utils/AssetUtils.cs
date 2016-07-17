@@ -12,11 +12,12 @@ public static class AssetUtils
     public static T[] LoadAssetsAtPath<T>(string path) where T : UnityEngine.Object
     {
         var folders = new string[] { path };
-        var paths = AssetDatabase.FindAssets("t:Material", folders);
-        var assets = new T[paths.Length];
-        for (int i = 0; i < paths.Length; ++i)
+        var GUIDs = AssetDatabase.FindAssets("t:Material", folders);
+        var assets = new T[GUIDs.Length];
+        for (int i = 0; i < GUIDs.Length; ++i)
         {
-            assets[i] = AssetDatabase.LoadAssetAtPath<T>(paths[i]);
+            var assetPath = AssetDatabase.GUIDToAssetPath(GUIDs[i]);
+            assets[i] = AssetDatabase.LoadAssetAtPath<T>(assetPath);
         }
         return assets;
     }
