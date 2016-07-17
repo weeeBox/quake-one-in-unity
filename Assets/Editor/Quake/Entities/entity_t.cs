@@ -32,7 +32,7 @@ public abstract class entity_t
 
     #region Game Object
 
-    public virtual void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
+    public virtual void SetupInstance(BSPFile bsp, entity entity, SceneEntities entities)
     {
         if (this.target != -1)
         {
@@ -60,15 +60,15 @@ public abstract class entity_t
                     Type fieldType = dataField.FieldType;
                     if (fieldType == typeof(int))
                     {
-                        value = BSP.Scale((int) value);
+                        value = BSPFile.Scale((int) value);
                     }
                     else if (fieldType == typeof(float))
                     {
-                        value = BSP.Scale((float) value);
+                        value = BSPFile.Scale((float) value);
                     }
                     else if (fieldType == typeof(Vector3))
                     {
-                        value = BSP.TransformVector((Vector3) value);
+                        value = BSPFile.TransformVector((Vector3) value);
                     }
                     else
                     {

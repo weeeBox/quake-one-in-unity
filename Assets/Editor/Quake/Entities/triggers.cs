@@ -9,7 +9,7 @@ public abstract class trigger_entity_t : entity_t
     [EntityFieldPrefix("t")]
     protected int m_killtarget;
 
-    public override void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
+    public override void SetupInstance(BSPFile bsp, entity entity, SceneEntities entities)
     {
         if (modelRef != null)
         {
@@ -115,7 +115,7 @@ public class trigger_teleport_t : trigger_entity_t
  */
 public class trigger_setskill_t : trigger_entity_t
 {
-    public override void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
+    public override void SetupInstance(BSPFile bsp, entity entity, SceneEntities entities)
     {
         base.SetupInstance(bsp, entity, entities);
 

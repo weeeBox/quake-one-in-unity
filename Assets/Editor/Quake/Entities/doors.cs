@@ -51,7 +51,7 @@ public class func_door_t : door_entity_t
         this.dmg = 2;
     }
 
-    public override void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
+    public override void SetupInstance(BSPFile bsp, entity entity, SceneEntities entities)
     {
         base.SetupInstance(bsp, entity, entities);
 
@@ -107,7 +107,7 @@ public class func_door_t : door_entity_t
             Debug.LogError("Unexpected angle: " + angle);
         }
         door.pos1 = door.transform.position;
-        door.pos2 = door.pos1 + movedir * (amount - BSP.Scale(lip));
+        door.pos2 = door.pos1 + movedir * (amount - BSPFile.Scale(lip));
     }
 
     public Vector3 movedir

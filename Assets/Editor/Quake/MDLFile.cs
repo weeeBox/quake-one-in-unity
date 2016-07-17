@@ -5,7 +5,7 @@ using UnityEngine;
 
 using VECTOR3_T = UnityEngine.Vector3;
 
-public class MDL
+public class MDLFile
 {
     public struct VERTEX_T
     {
@@ -91,7 +91,7 @@ public class MDL
         public int length;
     }
 
-    public MDL(DataStream ds, string name)
+    public MDLFile(DataStream ds, string name)
     {
         this.name = name;
 
@@ -354,10 +354,10 @@ public class MDLGeometry
 {
     public readonly Vector2[] uvs;
     public readonly MDLFrame[] frames;
-    public readonly MDL.FRAME_GROUP_T[] frame_groups;
+    public readonly MDLFile.FRAME_GROUP_T[] frame_groups;
     public readonly bool expanded;
 
-    public MDLGeometry(Vector2[] uvs, MDLFrame[] frames, MDL.FRAME_GROUP_T[] frame_groups, bool expanded)
+    public MDLGeometry(Vector2[] uvs, MDLFrame[] frames, MDLFile.FRAME_GROUP_T[] frame_groups, bool expanded)
     {
         this.uvs = uvs;
         this.frames = frames;

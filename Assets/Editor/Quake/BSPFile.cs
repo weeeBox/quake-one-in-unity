@@ -25,7 +25,7 @@ public struct boundbox_t
     }
 }
 
-public class BSP
+public class BSPFile
 {
     #region Structures
 
@@ -235,7 +235,7 @@ public class BSP
 
     #endregion
     
-    public BSP(DataStream ds)
+    public BSPFile(DataStream ds)
     {
         this.ReadHeader(ds);
         this.ReadMiptexDirectory(ds);

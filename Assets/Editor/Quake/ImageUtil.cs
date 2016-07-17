@@ -37,7 +37,7 @@ public class ImageUtil
         SPECIAL_CASE["colormap.lmp"] = new SpecialCase(16385, 256, 64, HEADER_NONE);
     }
 
-    public static ImageData getImageData(string name, DataStream ds, BSP.MIPTEX_DIRECTORY_ENTRY_T entry, bool header_only = false)
+    public static ImageData getImageData(string name, DataStream ds, BSPFile.MIPTEX_DIRECTORY_ENTRY_T entry, bool header_only = false)
     {
         // most non-miptex and non-special case are this format
         var header_type = HEADER_SIMPLE;

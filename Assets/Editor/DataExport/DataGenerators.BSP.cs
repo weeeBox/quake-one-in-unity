@@ -13,14 +13,14 @@ static partial class DataGenerators
         using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, "Maps/e1m1.bsp")))
         {
             DataStream ds = new DataStream(stream);
-            BSP bsp = new BSP(ds);
+            BSPFile bsp = new BSPFile(ds);
 
             var materials = GenerateMaterials(bsp);
             GenerateLevel(bsp, materials);
         }
     }
 
-    static IList<Material> GenerateMaterials(BSP bsp)
+    static IList<Material> GenerateMaterials(BSPFile bsp)
     {
         string textureDir = Directory.GetParent(Application.dataPath).ToString();
 
@@ -92,7 +92,7 @@ static partial class DataGenerators
         return materials;
     }
 
-    static void GenerateLevel(BSP bsp, IList<Material> materials)
+    static void GenerateLevel(BSPFile bsp, IList<Material> materials)
     {
         Level level = GameObject.FindObjectOfType<Level>();
         if (level != null)
@@ -180,7 +180,7 @@ static partial class DataGenerators
         player.transform.position = playerStart.transform.position;
     }
 
-    static void GenerateBrush(BSP bsp, Level level, BSPModel model, IList<Material> materials, bool[] used)
+    static void GenerateBrush(BSPFile bsp, Level level, BSPModel model, IList<Material> materials, bool[] used)
     {
         if (model.entity != null)
         {
@@ -194,7 +194,7 @@ static partial class DataGenerators
         GenerateGeometries(bsp, model, modelObj, materials, used);
     }
 
-    static void GenerateBrush(BSP bsp, GameObject brush, BSPModelGeometry geometry, IList<Material> materials)
+    static void GenerateBrush(BSPFile bsp, GameObject brush, BSPModelGeometry geometry, IList<Material> materials)
     {
         var mesh = GenerateMesh(geometry);
 
@@ -214,9 +214,9 @@ static partial class DataGenerators
         var g = geometry.mesh;
         for (int vi = 0, ti = 0; vi < g.vertices.Length; vi +=3, ti += 3)
         {
-            vertices.Add(BSP.TransformVector(g.vertices[vi + 0]));
-            vertices.Add(BSP.TransformVector(g.vertices[vi + 1]));
-            vertices.Add(BSP.TransformVector(g.vertices[vi + 2]));
+            vertices.Add(BSPFile.TransformVector(g.vertices[vi + 0]));
+            vertices.Add(BSPFile.TransformVector(g.vertices[vi + 1]));
+            vertices.Add(BSPFile.TransformVector(g.vertices[vi + 2]));
 
             uvs.Add(g.uvs[vi + 0]);
             uvs.Add(g.uvs[vi + 1]);
@@ -236,7 +236,7 @@ static partial class DataGenerators
         return mesh;
     }
     
-    static void GenerateCollision(BSP bsp, GameObject parent, BSPFace face)
+    static void GenerateCollision(BSPFile bsp, GameObject parent, BSPFace face)
     {
         GameObject levelCollision = PrefabCache.InstantiatePrefab("LevelCollision", "Assets/Prefabs");
         levelCollision.transform.parent = parent.transform;
@@ -251,9 +251,9 @@ static partial class DataGenerators
 
         for (int vi = 0, ti = 0; vi < verts.Length; vi +=3, ti += 3)
         {
-            vertices.Add(BSP.TransformVector(verts[vi + 0]));
-            vertices.Add(BSP.TransformVector(verts[vi + 1]));
-            vertices.Add(BSP.TransformVector(verts[vi + 2]));
+            vertices.Add(BSPFile.TransformVector(verts[vi + 0]));
+            vertices.Add(BSPFile.TransformVector(verts[vi + 1]));
+            vertices.Add(BSPFile.TransformVector(verts[vi + 2]));
 
             triangles.Add(ti + 2);
             triangles.Add(ti + 1);
@@ -269,7 +269,7 @@ static partial class DataGenerators
         collider.sharedMesh = mesh;
     }
 
-    static GameObject GenerateEntity(BSP bsp, entity_t entity, IList<Material> materials, bool[] used)
+    static GameObject GenerateEntity(BSPFile bsp, entity_t entity, IList<Material> materials, bool[] used)
     {
         var name = entity.GetType().Name;
         if (name.EndsWith(TYPE_PREFIX))
@@ -298,13 +298,13 @@ static partial class DataGenerators
         }
         else
         {
-            entityInstance.transform.position = BSP.TransformVector(entity.origin);
+            entityInstance.transform.position = BSPFile.TransformVector(entity.origin);
         }
 
         return entityInstance;
     }
 
-    private static void GenerateGeometries(BSP bsp, BSPModel model, GameObject parent, IList<Material> materials, bool[] used)
+    private static void GenerateGeometries(BSPFile bsp, BSPModel model, GameObject parent, IList<Material> materials, bool[] used)
     {
         foreach (var geometry in model.geometries)
         {

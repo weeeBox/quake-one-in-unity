@@ -42,7 +42,7 @@ static partial class DataGenerators
             var destPath = modelsPath + "/" + name;
 
             DataStream ds = new DataStream(stream);
-            MDL mdl = new MDL(ds, name);
+            MDLFile mdl = new MDLFile(ds, name);
 
             AssetUtils.CreateFolder(destPath);
 
@@ -52,7 +52,7 @@ static partial class DataGenerators
         }
     }
 
-    private static void GenerateModel(MDL mdl, string destPath)
+    private static void GenerateModel(MDLFile mdl, string destPath)
     {
         var geometry = mdl.geometry;
 
@@ -66,9 +66,9 @@ static partial class DataGenerators
         int[] triangles = new int[verts.Length];
         for (int i = 0; i < verts.Length; i += 3)
         {
-            vertices[i] = rotation * BSP.TransformVector(verts[i]);
-            vertices[i + 1] = rotation * BSP.TransformVector(verts[i + 1]);
-            vertices[i + 2] = rotation * BSP.TransformVector(verts[i + 2]);
+            vertices[i] = rotation * BSPFile.TransformVector(verts[i]);
+            vertices[i + 1] = rotation * BSPFile.TransformVector(verts[i + 1]);
+            vertices[i + 2] = rotation * BSPFile.TransformVector(verts[i + 2]);
             triangles[i] = i + 2;
             triangles[i + 1] = i + 1;
             triangles[i + 2] = i;
@@ -82,7 +82,7 @@ static partial class DataGenerators
         AssetDatabase.CreateAsset(mesh, destPath + "/" + mdl.name + "_mesh.asset");
     }
 
-    static object GenerateSkins(MDL mdl, string destPath)
+    static object GenerateSkins(MDLFile mdl, string destPath)
     {
         string textureDir = Directory.GetParent(Application.dataPath).ToString();
 
@@ -157,7 +157,7 @@ static partial class DataGenerators
         return materials;
     }
 
-    private static void GenerateAnimations(MDL mdl, string destPath)
+    private static void GenerateAnimations(MDLFile mdl, string destPath)
     {
         var frames = mdl.geometry.frames;
         if (frames.Length == 1) return; // no animations
@@ -181,9 +181,9 @@ static partial class DataGenerators
                 int[] triangles = new int[verts.Length];
                 for (int vertexIndex = 0; vertexIndex < verts.Length; vertexIndex += 3)
                 {
-                    vertices[vertexIndex] = rotation * BSP.TransformVector(verts[vertexIndex]);
-                    vertices[vertexIndex + 1] = rotation * BSP.TransformVector(verts[vertexIndex + 1]);
-                    vertices[vertexIndex + 2] = rotation * BSP.TransformVector(verts[vertexIndex + 2]);
+                    vertices[vertexIndex] = rotation * BSPFile.TransformVector(verts[vertexIndex]);
+                    vertices[vertexIndex + 1] = rotation * BSPFile.TransformVector(verts[vertexIndex + 1]);
+                    vertices[vertexIndex + 2] = rotation * BSPFile.TransformVector(verts[vertexIndex + 2]);
                     triangles[vertexIndex] = vertexIndex + 2;
                     triangles[vertexIndex + 1] = vertexIndex + 1;
                     triangles[vertexIndex + 2] = vertexIndex;

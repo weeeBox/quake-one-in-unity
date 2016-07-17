@@ -28,7 +28,7 @@ public class func_button_t : solid_entity_t
         this.lip = 4;
     }
 
-    public override void SetupInstance(BSP bsp, entity entity, SceneEntities entities)
+    public override void SetupInstance(BSPFile bsp, entity entity, SceneEntities entities)
     {
         base.SetupInstance(bsp, entity, entities);
 
