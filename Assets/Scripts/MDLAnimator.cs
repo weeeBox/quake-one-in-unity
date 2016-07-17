@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MDLController : MonoBehaviour
+public class MDLAnimator : MonoBehaviour
 {
 }
