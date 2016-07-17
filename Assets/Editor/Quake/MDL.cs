@@ -163,7 +163,7 @@ public class MDL
             {
                 var frame = ds.readStruct<FRAME_T>();
                 frame.verts = ds.readArray<VERTEX_T>(this.header.num_verts);
-                frame.name = FileUtil.trimNullTerminatedString(frame.name);
+                frame.name = FileUtilEx.trimNullTerminatedString(frame.name);
                 frames[frames.length] = frame;
             }
         }

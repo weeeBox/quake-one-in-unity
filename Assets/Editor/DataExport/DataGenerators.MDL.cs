@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 static partial class DataGenerators
 {
-    [MenuItem("Quake Utils/Load MDL...")]
+    [MenuItem("Quake Utils/Load MDL's")]
     static void LoadMDL()
     {
         string path = AssetUtils.GetAbsoluteAssetPath("Assets/Editor/Data/progs");
@@ -38,7 +38,7 @@ static partial class DataGenerators
     {
         using (FileStream stream = File.OpenRead(sourcePath))
         {
-            var name = FileUtil.getFilenameNoExtension(sourcePath);
+            var name = FileUtilEx.getFilenameNoExtension(sourcePath);
             var destPath = modelsPath + "/" + name;
 
             DataStream ds = new DataStream(stream);
@@ -156,6 +156,7 @@ static partial class DataGenerators
 
         return materials;
     }
+
     private static void GenerateAnimations(MDL mdl, string destPath)
     {
         var frames = mdl.geometry.frames;
@@ -199,6 +200,17 @@ static partial class DataGenerators
             var animationPath = animationsPath + "/" + name + "_animation.asset";
             AssetDatabase.CreateAsset(animation, animationPath);
             AssetDatabase.SaveAssets();
+        }
+    }
+
+    [MenuItem("Quake Utils/Generate MDL info")]
+    static void GenerateMDLInfo()
+    {
+        string rootPath = AssetUtils.GetAbsoluteAssetPath("Assets/Models");
+        var directories = Directory.GetDirectories(rootPath);
+        foreach (var directory in directories)
+        {
+            Debug.Log(UnityEditor.FileUtil.GetProjectRelativePath(directory));
         }
     }
 }

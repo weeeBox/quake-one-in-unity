@@ -30,7 +30,7 @@ static partial class DataGenerators
         int tex_id = 0;
         foreach (var t in bsp.textures)
         {
-            string textureName = string.Format("[{0}] {1}.png", tex_id++, FileUtil.FixFilename(t.name));
+            string textureName = string.Format("[{0}] {1}.png", tex_id++, FileUtilEx.FixFilename(t.name));
             string texturePath = "Assets/Textures/" + textureName;
             string textureAbsolutePath = Path.Combine(textureDir, texturePath);
 

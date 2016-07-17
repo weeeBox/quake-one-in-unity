@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-public static class FileUtil
+public static class FileUtilEx
 {
     static readonly string[] kInvalidChars = { "*", "?", ":" };
 

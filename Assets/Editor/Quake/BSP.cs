@@ -332,7 +332,7 @@ public class BSP
             entry.size = (miptex.width * miptex.height);
             entry.type = "D"[0];
             entry.compression = 0;
-            entry.name = FileUtil.trimNullTerminatedString(miptex.name);
+            entry.name = FileUtilEx.trimNullTerminatedString(miptex.name);
             // additional parameters useful for generating uvs
             entry.width = miptex.width;
             entry.height = miptex.height;
