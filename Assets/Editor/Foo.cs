@@ -58,9 +58,6 @@ public static class Foo
     {
         var geometry = mdl.geometry;
 
-        var model = GameObject.FindObjectOfType<QModel>();
-        var meshFilter = model.GetComponent<MeshFilter>();
-        var meshRenderer = model.GetComponent<MeshRenderer>();
         var verts = geometry.frames[0].verts;
 
         Mesh mesh = new Mesh();
@@ -84,7 +81,7 @@ public static class Foo
         mesh.uv = geometry.uvs;
         mesh.RecalculateNormals();
 
-        AssetDatabase.CreateAsset(mesh, destPath + "/" + mdl.name + ".asset");
+        AssetDatabase.CreateAsset(mesh, destPath + "/" + mdl.name + "_mesh.asset");
     }
 
     static object GenerateSkins(MDL mdl, string destPath)
@@ -100,7 +97,7 @@ public static class Foo
         int skinId = 0;
         foreach (var skin in mdl.skins)
         {
-            var textureName = string.Format("[{0}] [{1}]_{0}.png", skinId++, mdl.name);
+            var textureName = string.Format("{0}_skin_{1}.png", mdl.name, skinId++);
             var texturePath = skinsPath + "/" + textureName;
             if (!AssetUtils.AssetPathExists(texturePath))
             {
@@ -197,7 +194,9 @@ public static class Foo
             animation.name = name;
             animation.frames = animationFrames;
 
-            var animationPath = animationsPath + "/" + name + ".asset";
+            if (name == "frame") name = mdl.name;
+
+            var animationPath = animationsPath + "/" + name + "_animation.asset";
             AssetDatabase.CreateAsset(animation, animationPath);
             AssetDatabase.SaveAssets();
         }
