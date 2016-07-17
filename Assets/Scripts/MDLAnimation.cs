@@ -38,7 +38,7 @@ public class QModelFrame
 }
 
 [Serializable]
-public class QModelAnimation : ScriptableObject
+public class MDLAnimation : ScriptableObject
 {
     [SerializeField]
     [HideInInspector]

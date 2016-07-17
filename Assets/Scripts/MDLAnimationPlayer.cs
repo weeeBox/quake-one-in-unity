@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class QAnimationPlayer : MonoBehaviour
+public class MDLAnimationPlayer : MonoBehaviour
 {
     [SerializeField]
-    QModelAnimation m_animation;
+    MDLAnimation m_animation;
 
     [SerializeField]
     float m_frameTime = 0.01f;

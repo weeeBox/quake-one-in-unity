@@ -191,7 +191,7 @@ static partial class DataGenerators
                 animationFrames[frameIndex] = new QModelFrame(frame.name, vertices, triangles);
             }
 
-            var animation = ScriptableObject.CreateInstance<QModelAnimation>();
+            var animation = ScriptableObject.CreateInstance<MDLAnimation>();
             animation.name = name;
             animation.frames = animationFrames;
 
@@ -213,25 +213,30 @@ static partial class DataGenerators
             var dirname = new DirectoryInfo(FileUtilEx.FixOSPath(directory)).Name;
             var assetPath = FileUtilEx.GetProjectRelativePath(directory);
 
-            if (dirname.StartsWith("v_")) // weapons in player's hands
+            var mdl = ScriptableObject.CreateInstance<MDL>();
+
+            var meshPath = assetPath + "/" + dirname + "_mesh.asset";
+            mdl.mesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
+            if (mdl.mesh == null)
             {
-                var weaponInfo = ScriptableObject.CreateInstance<WeaponInfo>();
-
-                var meshPath = assetPath + "/" + dirname + "_mesh.asset";
-                weaponInfo.mesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
-
-                var materialPath = assetPath + "/skins/" + dirname + "_skin.mat";
-                weaponInfo.material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
-
-                var animationPath = assetPath + "/animations/shot_animation.asset";
-                if (!AssetUtils.AssetPathExists(animationPath))
-                {
-                    animationPath = assetPath + "/animations/" + dirname + "_animation.asset";
-                }
-                weaponInfo.animation = AssetDatabase.LoadAssetAtPath<QModelAnimation>(animationPath);
-
-                AssetDatabase.CreateAsset(weaponInfo, assetPath + "/" + dirname + ".asset");
+                Debug.LogError("Can't load mesh: " + meshPath);
             }
+
+            var materialsPath = assetPath + "/skins/" + dirname;
+            mdl.materials = AssetUtils.LoadAssetsAtPath<Material>(materialsPath);
+            if (mdl.materials.Length == 0)
+            {
+                Debug.LogError("Can't load materials: " + materialsPath);
+            }
+
+            var animationsPath = assetPath + "/animations";
+            mdl.animations = AssetUtils.LoadAssetsAtPath<MDLAnimation>(animationsPath);
+            if (mdl.animations.Length == 0)
+            {
+                Debug.LogError("Can't load animations: " + animationsPath);
+            }
+
+            AssetDatabase.CreateAsset(mdl, assetPath + "/" + dirname + ".asset");
         }
 
         AssetDatabase.SaveAssets();

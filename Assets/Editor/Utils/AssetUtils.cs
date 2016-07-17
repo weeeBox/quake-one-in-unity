@@ -9,6 +9,18 @@ public static class AssetUtils
 {
     static string s_projectPath;
 
+    public static T[] LoadAssetsAtPath<T>(string path) where T : UnityEngine.Object
+    {
+        var folders = new string[] { path };
+        var paths = AssetDatabase.FindAssets("t:Material", folders);
+        var assets = new T[paths.Length];
+        for (int i = 0; i < paths.Length; ++i)
+        {
+            assets[i] = AssetDatabase.LoadAssetAtPath<T>(paths[i]);
+        }
+        return assets;
+    }
+
     public static bool AssetPathExists(string path)
     {
         if (!Path.IsPathRooted(path))
