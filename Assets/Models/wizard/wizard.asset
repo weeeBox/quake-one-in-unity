@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0f0299cff4eba24e82d72528f6c6d88, type: 3}
+  m_Name: wizard
+  m_EditorClassIdentifier: 
+  m_mesh: {fileID: 4300000, guid: d0d8cbc7551c96a4aa5247ac5c1c1f4a, type: 2}
+  m_materials:
+  - {fileID: 2100000, guid: cae68e7618bb9814fb6cd0e4cea23a0b, type: 2}
+  m_animations: []
