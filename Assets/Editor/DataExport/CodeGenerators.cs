@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.IO;
 
-public static class Bar
+static class CodeGenerators
 {
     private const string TYPE_SUFFIX = "_t";
 
