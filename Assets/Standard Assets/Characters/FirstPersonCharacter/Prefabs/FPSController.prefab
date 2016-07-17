@@ -47,8 +47,9 @@ GameObject:
   - 4: {fileID: 473998}
   - 33: {fileID: 3359348}
   - 23: {fileID: 2353898}
+  - 114: {fileID: 11493488}
   m_Layer: 10
-  m_Name: Gun
+  m_Name: Weapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104,10 +105,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 162986}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.032, z: 0.038}
+  m_LocalRotation: {x: -0.009514017, y: 0, z: 0, w: 0.99995476}
+  m_LocalPosition: {x: 0, y: 0.031999886, z: 0.034999847}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -1.0902, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 494568}
   m_RootOrder: 0
@@ -176,7 +177,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.05
-  far clip plane: 0.73
+  far clip plane: 2
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -415,6 +416,18 @@ MonoBehaviour:
   m_FootstepSounds: []
   m_JumpSound: {fileID: 8300000, guid: a017b8f9f8d615d4498a64da7dd1eef7, type: 3}
   m_LandSound: {fileID: 8300000, guid: 68c4534706bb73d43aca11654c7867b3, type: 3}
+--- !u!114 &11493488
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 162986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daf1e94399ffd614a891c301aebf4c85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_weaponType: 1
 --- !u!124 &12474086
 Behaviour:
   m_ObjectHideFlags: 1

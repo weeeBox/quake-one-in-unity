@@ -14,11 +14,25 @@ public static class Foo
     {
         string path = AssetUtils.GetAbsoluteAssetPath("Assets/Editor/Data/progs");
         string modelsDir = "Assets/Models";
-
+        
         var files = Directory.GetFiles(path, "*.mdl");
-        foreach (var file in files)
-        {   
-            GenerateModel(file.Replace('\\', '/'), modelsDir);
+        int index = 0;
+        try
+        {
+            foreach (var file in files)
+            {
+                float progress = index++ / files.Length;
+                if (EditorUtility.DisplayCancelableProgressBar("Generating models", UnityEditor.FileUtil.GetProjectRelativePath(file), progress))
+                {
+                    break;
+                }
+
+                GenerateModel(file.Replace('\\', '/'), modelsDir);
+            }
+        }
+        finally
+        {
+            EditorUtility.ClearProgressBar();
         }
     }
 
