@@ -172,7 +172,7 @@ static partial class DataGenerators
 
             var rotation = Quaternion.AngleAxis(-90, Vector3.up);
 
-            var animationFrames = new QModelFrame[anim.length];
+            var animationFrames = new MDLAnimationFrame[anim.length];
             for (int frameIndex = 0; frameIndex < anim.length; ++frameIndex)
             {
                 var frame = frames[anim.start + frameIndex];
@@ -188,7 +188,7 @@ static partial class DataGenerators
                     triangles[vertexIndex + 1] = vertexIndex + 1;
                     triangles[vertexIndex + 2] = vertexIndex;
                 }
-                animationFrames[frameIndex] = new QModelFrame(frame.name, vertices, triangles);
+                animationFrames[frameIndex] = new MDLAnimationFrame(frame.name, vertices, triangles);
             }
 
             var animation = ScriptableObject.CreateInstance<MDLAnimation>();

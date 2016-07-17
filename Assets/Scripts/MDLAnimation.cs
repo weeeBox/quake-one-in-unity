@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 
 [Serializable]
-public class QModelFrame
+public class MDLAnimationFrame
 {
     [SerializeField]
     string m_name;
@@ -14,7 +14,7 @@ public class QModelFrame
     [SerializeField]
     int[] m_triangles;
 
-    public QModelFrame(string name, Vector3[] verts, int[] triangles)
+    public MDLAnimationFrame(string name, Vector3[] verts, int[] triangles)
     {
         m_name = name;
         m_vertices = verts;
@@ -42,9 +42,9 @@ public class MDLAnimation : ScriptableObject
 {
     [SerializeField]
     [HideInInspector]
-    QModelFrame[] m_frames;
+    MDLAnimationFrame[] m_frames;
     
-    public QModelFrame[] frames
+    public MDLAnimationFrame[] frames
     {
         get { return m_frames; }
         set { m_frames = value; }
