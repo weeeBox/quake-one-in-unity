@@ -97,7 +97,9 @@ public static class Foo
         int skinId = 0;
         foreach (var skin in mdl.skins)
         {
-            var textureName = string.Format("{0}_skin_{1}.png", mdl.name, skinId++);
+            var textureName = mdl.skins.Length > 1 ?
+                string.Format("{0}_skin_{1}.png", mdl.name, skinId++) :
+                string.Format("{0}_skin.png", mdl.name);
             var texturePath = skinsPath + "/" + textureName;
             if (!AssetUtils.AssetPathExists(texturePath))
             {
