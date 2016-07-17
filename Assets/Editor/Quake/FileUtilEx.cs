@@ -1,10 +1,25 @@
-﻿using System;
+﻿using UnityEditor;
+
+using System;
 using System.IO;
 using System.Text;
 
 public static class FileUtilEx
 {
     static readonly string[] kInvalidChars = { "*", "?", ":" };
+
+    public static string FixOSPath(string path)
+    {
+        path = path.Replace('\\', Path.DirectorySeparatorChar);
+        path = path.Replace('/', Path.DirectorySeparatorChar);
+        return path;
+    }
+
+    public static string GetProjectRelativePath(string path)
+    {
+        return FileUtil.GetProjectRelativePath(path.Replace(Path.DirectorySeparatorChar, '/'));
+
+    }
 
     public static string FixFilename(string name)
     {

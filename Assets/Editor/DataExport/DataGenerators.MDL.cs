@@ -25,7 +25,7 @@ static partial class DataGenerators
                     break;
                 }
 
-                GenerateModel(file.Replace('\\', '/'), modelsDir);
+                GenerateModel(FileUtilEx.FixFilename(file), modelsDir);
             }
         }
         finally
@@ -210,7 +210,30 @@ static partial class DataGenerators
         var directories = Directory.GetDirectories(rootPath);
         foreach (var directory in directories)
         {
-            Debug.Log(UnityEditor.FileUtil.GetProjectRelativePath(directory));
+            var dirname = new DirectoryInfo(FileUtilEx.FixOSPath(directory)).Name;
+            var assetPath = FileUtilEx.GetProjectRelativePath(directory);
+
+            if (dirname.StartsWith("v_")) // weapons in player's hands
+            {
+                var weaponInfo = ScriptableObject.CreateInstance<WeaponInfo>();
+
+                var meshPath = assetPath + "/" + dirname + "_mesh.asset";
+                weaponInfo.mesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
+
+                var materialPath = assetPath + "/skins/" + dirname + "_skin.mat";
+                weaponInfo.material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+
+                var animationPath = assetPath + "/animations/shot_animation.asset";
+                if (!AssetUtils.AssetPathExists(animationPath))
+                {
+                    animationPath = assetPath + "/animations/" + dirname + "_animation.asset";
+                }
+                weaponInfo.animation = AssetDatabase.LoadAssetAtPath<QModelAnimation>(animationPath);
+
+                AssetDatabase.CreateAsset(weaponInfo, assetPath + "/" + dirname + ".asset");
+            }
         }
+
+        AssetDatabase.SaveAssets();
     }
 }

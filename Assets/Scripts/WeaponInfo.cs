@@ -16,15 +16,18 @@ public class WeaponInfo : ScriptableObject
     public Mesh mesh
     {
         get { return m_mesh; }
+        set { m_mesh = value; }
     }
 
     public Material material
     {
         get { return m_material; }
+        set { m_material = value; }
     }
 
     public QModelAnimation animation
     {
         get { return m_animation; }
+        set { m_animation = value; }
     }
 }
