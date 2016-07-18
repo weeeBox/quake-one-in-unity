@@ -3,7 +3,9 @@ using UnityEditor;
 
 using System;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
+
+using Object = UnityEngine.Object;
 
 public static class AssetUtils
 {
@@ -11,15 +13,20 @@ public static class AssetUtils
 
     public static T[] LoadAssetsAtPath<T>(string path) where T : UnityEngine.Object
     {
+        var typename = typeof(T).Name;
         var folders = new string[] { path };
-        var GUIDs = AssetDatabase.FindAssets("t:Material", folders);
-        var assets = new T[GUIDs.Length];
-        for (int i = 0; i < GUIDs.Length; ++i)
+        var GUIDs = AssetDatabase.FindAssets("t:Object", folders); // using custom type didn't work (Unity 5.3)
+        var assets = new List<T>(GUIDs.Length);
+        foreach (var GUID in GUIDs)
         {
-            var assetPath = AssetDatabase.GUIDToAssetPath(GUIDs[i]);
-            assets[i] = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+            var assetPath = AssetDatabase.GUIDToAssetPath(GUID);
+            var asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath) as T;
+            if (asset != null)
+            {
+                assets.Add(asset);
+            }
         }
-        return assets;
+        return assets.ToArray();
     }
 
     public static bool AssetPathExists(string path)
@@ -28,7 +35,7 @@ public static class AssetUtils
         {
             if (IsValidRelativeAssetPath(path))
             {
-                path = Path.Combine(projectPath, path);
+                path = Path.Combine(projectPath, FileUtilEx.FixOSPath(path));
             }
             else
             {
