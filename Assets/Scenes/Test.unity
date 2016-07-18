@@ -280,8 +280,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_model: {fileID: 11400000, guid: 3b7b5d4c62e928848b05e6a40966f123, type: 2}
-  m_animation: {fileID: 11400000, guid: a248f3aea139bf54ea4ed763e3f33669, type: 2}
-  m_skin: {fileID: 2100000, guid: cdd1b20d0b83e2f44a69301d443062bb, type: 2}
+  m_animation: {fileID: 11400000, guid: 80d8f0e1b629a694192891081d5d18e9, type: 2}
   m_frameTime: 0.1
 --- !u!1 &1163199695
 GameObject:

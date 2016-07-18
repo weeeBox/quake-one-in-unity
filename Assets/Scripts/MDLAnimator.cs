@@ -13,14 +13,11 @@ public class MDLAnimator : MonoBehaviour
     MDLAnimation m_animation;
 
     [SerializeField]
-    [HideInInspector]
-    Material m_skin;
-
-    [SerializeField]
     float m_frameTime = 0.01f;
 
     Dictionary<string, MDLAnimation> m_animationLookup;
 
+    MeshRenderer m_meshRenderer;
     Mesh m_mesh;
 
     Vector3[] m_frameBlendVertices;
@@ -35,11 +32,12 @@ public class MDLAnimator : MonoBehaviour
         m_mesh = meshFilter.mesh;
         m_mesh.MarkDynamic();
 
+        m_meshRenderer = GetComponent<MeshRenderer>();
+
         if (m_animation != null)
         {
             SetFrameIndex(0); // rewind to the first frame
         }
-        SetSkin(m_skin != null ? m_skin : m_model.material);
     }
 
     void Update()
@@ -103,7 +101,7 @@ public class MDLAnimator : MonoBehaviour
 
     #region Animations
 
-    public void SetAnimation(string name)
+    public void PlayAnimation(string name)
     {
         if (this.animationName != name)
         {
@@ -114,9 +112,14 @@ public class MDLAnimator : MonoBehaviour
                 return;
             }
 
-            m_animation = animation;
-            SetFrameIndex(0);
+            PlayAnimation(animation);
         }
+    }
+
+    void PlayAnimation(MDLAnimation animation)
+    {
+        m_animation = animation;
+        SetFrameIndex(0);
     }
 
     MDLAnimation FindAnimation(string name)
@@ -151,7 +154,6 @@ public class MDLAnimator : MonoBehaviour
         {
             m_mesh = m_model.mesh;
             m_animation = m_model.animation;
-            m_skin = m_model.material;
 
             var meshFilter = GetComponent<MeshFilter>();
             meshFilter.sharedMesh = m_model.mesh;
@@ -163,13 +165,44 @@ public class MDLAnimator : MonoBehaviour
         {
             m_mesh = null;
             m_animation = null;
-            m_skin = null;
 
             var meshFilter = GetComponent<MeshFilter>();
             meshFilter.sharedMesh = null;
 
             var meshRenderer = GetComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = null;
+        }
+    }
+
+    public new MDLAnimation sharedAnimation
+    {
+        get { return this.animation; }
+        set { m_animation = value; }
+    }
+
+    public Material sharedSkin
+    {
+        get
+        {
+            if (Application.isPlaying)
+            {
+                return this.skin;
+            }
+
+            var meshRenderer = GetComponent<MeshRenderer>();
+            return meshRenderer.sharedMaterial;
+        }
+        set
+        {
+            if (Application.isPlaying)
+            {
+                this.skin = value;
+            }
+            else
+            {
+                var meshRenderer = GetComponent<MeshRenderer>();
+                meshRenderer.sharedMaterial = value;
+            }
         }
     }
 
@@ -187,7 +220,6 @@ public class MDLAnimator : MonoBehaviour
     public new MDLAnimation animation
     {
         get { return m_animation; }
-        set { m_animation = value; }
     }
 
     public string animationName
@@ -197,7 +229,8 @@ public class MDLAnimator : MonoBehaviour
 
     public Material skin
     {
-        get { return m_skin; }
+        get { return m_meshRenderer.material; }
+        set { m_meshRenderer.material = value; }
     }
 
     #endregion
