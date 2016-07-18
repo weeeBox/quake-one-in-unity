@@ -40,7 +40,7 @@ public class MDLAnimatorEditor : Editor
                 }
             }
 
-            int newIndex = EditorGUILayout.Popup(currentIndex, names);
+            int newIndex = EditorGUILayout.Popup("Animation", currentIndex, names);
             if (currentIndex != newIndex)
             {
                 var animation = model.animations[newIndex];
