@@ -14,4 +14,5 @@ MonoBehaviour:
   m_mesh: {fileID: 4300000, guid: ffbbcc6fb70029948a33e2859bcf3538, type: 2}
   m_materials:
   - {fileID: 2100000, guid: 241dae7cbb2cdb343a28be10951989ed, type: 2}
-  m_animations: []
+  m_animations:
+  - {fileID: 11400000, guid: 3d4e003ca9d94204e92e762b8dc22522, type: 2}
