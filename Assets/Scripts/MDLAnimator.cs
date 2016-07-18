@@ -35,15 +35,11 @@ public class MDLAnimator : MonoBehaviour
         m_mesh = meshFilter.mesh;
         m_mesh.MarkDynamic();
 
-        if (m_animation == null)
+        if (m_animation != null)
         {
-            SetAnimation(m_model.animation); // if not sure - set the first animation
+            SetFrameIndex(0); // rewind to the first frame
         }
-
-        if (m_skin == null)
-        {
-            SetSkin(m_model.material);
-        }
+        SetSkin(m_skin != null ? m_skin : m_model.material);
     }
 
     void Update()
@@ -87,6 +83,7 @@ public class MDLAnimator : MonoBehaviour
         // initialize blend vertices
         var vertices = m_animation.frames[index].vertices;
         m_mesh.vertices = vertices;
+
         if (m_frameBlendVertices == null || m_frameBlendVertices.Length != vertices.Length)
         {
             m_frameBlendVertices = new Vector3[vertices.Length];
@@ -155,19 +152,31 @@ public class MDLAnimator : MonoBehaviour
     {
         if (m_model != null)
         {
-            SetMesh(m_model.mesh);
-            SetAnimation(m_model.animation);
-            SetSkin(m_model.material);
+            m_mesh = m_model.mesh;
+            m_animation = m_model.animation;
+            m_skin = m_model.material;
+
+            var meshFilter = GetComponent<MeshFilter>();
+            meshFilter.sharedMesh = m_model.mesh;
+
+            var meshRenderer = GetComponent<MeshRenderer>();
+            meshRenderer.sharedMaterial = m_model.material;
+        }
+        else
+        {
+            m_mesh = null;
+            m_animation = null;
+            m_skin = null;
+
+            var meshFilter = GetComponent<MeshFilter>();
+            meshFilter.sharedMesh = null;
+
+            var meshRenderer = GetComponent<MeshRenderer>();
+            meshRenderer.sharedMaterial = null;
         }
     }
 
-    void SetMesh(Mesh mesh)
-    {
-        var meshFilter = GetComponent<MeshFilter>();
-        meshFilter.mesh = mesh;
-    }
-
-#endif
+    #endif
 
     #endregion
 
