@@ -113,13 +113,10 @@ public class MDLAnimator : MonoBehaviour
                 Debug.LogError("Can't find animation: " + name);
                 return;
             }
-        }
-    }
 
-    void SetAnimation(MDLAnimation animation)
-    {
-        m_animation = animation;
-        SetFrameIndex(0);
+            m_animation = animation;
+            SetFrameIndex(0);
+        }
     }
 
     MDLAnimation FindAnimation(string name)
@@ -190,6 +187,7 @@ public class MDLAnimator : MonoBehaviour
     public new MDLAnimation animation
     {
         get { return m_animation; }
+        set { m_animation = value; }
     }
 
     public string animationName
