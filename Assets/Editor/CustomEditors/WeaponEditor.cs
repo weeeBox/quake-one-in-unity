@@ -45,8 +45,8 @@ public class WeaponEditor : Editor
     {
         var weapon = target as Weapon;
 
-        var materialPath = string.Format("Assets/Models/{0}/skins/[0] [{0}]_0.mat", name);
-        var meshPath = string.Format("Assets/Models/{0}/{0}.asset", name);
+        var materialPath = string.Format("Assets/Models/{0}/skins/{0}_skin.mat", name);
+        var meshPath = string.Format("Assets/Models/{0}/{0}_mesh.asset", name);
 
         var meshRenderer = weapon.GetComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(materialPath);

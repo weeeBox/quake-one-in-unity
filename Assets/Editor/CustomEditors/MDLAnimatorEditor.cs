@@ -18,10 +18,11 @@ public class MDLAnimatorEditor : Editor
         var model = animator.model;
         if (model != null && model.animationCount > 0)
         {
-            string[] names = new string[model.animationCount];
-            for (int i = 0; i < names.Length; ++i)
+            string[] names = new string[1 + model.animationCount];
+            names[0] = "None";
+            for (int i = 0; i < model.animationCount; ++i)
             {
-                names[i] = model.animations[i].name;
+                names[i + 1] = model.animations[i].name;
             }
 
             int currentIndex = 0;
@@ -32,7 +33,7 @@ public class MDLAnimatorEditor : Editor
                 {
                     if (animation.name == animator.animationName)
                     {
-                        currentIndex = index;
+                        currentIndex = index + 1;
                         break;
                     }
 
@@ -43,10 +44,17 @@ public class MDLAnimatorEditor : Editor
             int newIndex = EditorGUILayout.Popup("Animation", currentIndex, names);
             if (currentIndex != newIndex)
             {
-                var animation = model.animations[newIndex];
+                var animation = newIndex > 0 ? model.animations[newIndex - 1] : null;
                 if (Application.isPlaying)
                 {
-                    animator.PlayAnimation(animation.name);
+                    if (animation != null)
+                    {
+                        animator.PlayAnimation(animation.name);
+                    }
+                    else
+                    {
+                        animator.StopAnimation();
+                    }
                 }
                 else
                 {

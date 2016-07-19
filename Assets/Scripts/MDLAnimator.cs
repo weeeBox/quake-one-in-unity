@@ -21,17 +21,20 @@ public class MDLAnimator : MonoBehaviour
     MeshRenderer m_meshRenderer;
     Mesh m_mesh;
 
+    Vector3[] m_initialVertices;
     Vector3[] m_frameBlendVertices;
     float m_elaspedTime;
 
     int m_frameIndex;
     int m_nextFrameIndex;
+    bool m_animationFinished;
 
     void Start()
     {
         var meshFilter = GetComponent<MeshFilter>();
         m_mesh = meshFilter.mesh;
         m_mesh.MarkDynamic();
+        m_initialVertices = m_mesh.vertices;
 
         m_meshRenderer = GetComponent<MeshRenderer>();
 
@@ -43,7 +46,7 @@ public class MDLAnimator : MonoBehaviour
 
     void Update()
     {
-        if (m_animation != null)
+        if (m_animation != null && !m_animationFinished)
         {
             m_elaspedTime += Time.deltaTime;
             if (m_elaspedTime < m_frameTime)
@@ -53,7 +56,19 @@ public class MDLAnimator : MonoBehaviour
             }
             else
             {
-                SetFrameIndex((m_frameIndex + 1) % m_animation.frameCount);
+                int nextFrame = m_frameIndex + 1;
+                if (nextFrame < m_animation.frameCount)
+                {
+                    SetFrameIndex(nextFrame);
+                }
+                else if (m_animation.looped)
+                {
+                    SetFrameIndex(0);
+                }
+                else
+                {
+                    m_animationFinished = true;
+                }
             }
         }
     }
@@ -117,9 +132,16 @@ public class MDLAnimator : MonoBehaviour
         }
     }
 
+    public void StopAnimation()
+    {
+        m_animation = null;
+        m_mesh.vertices = m_initialVertices;
+    }
+
     void PlayAnimation(MDLAnimation animation)
     {
         m_animation = animation;
+        m_animationFinished = false;
         SetFrameIndex(0);
     }
 
