@@ -174,7 +174,7 @@ public class MDLAnimator : MonoBehaviour
         }
     }
 
-    public new MDLAnimation sharedAnimation
+    public MDLAnimation sharedAnimation
     {
         get { return this.animation; }
         set { m_animation = value; }

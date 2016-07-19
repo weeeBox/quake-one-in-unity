@@ -25,16 +25,20 @@ public class func_door : entity
     [HideInInspector]
     public Vector3 pos2;
 
-    [HideInInspector]
     public door_items items;
 
-    [HideInInspector]
     public float speed;
+
+    public float wait = -1;
+
+    public float health;
 
     State m_state;
     
     Vector3 m_targetPos;
     Vector3 m_targetDir;
+
+    float m_openedTime;
 
     void Start()
     {
@@ -56,6 +60,15 @@ public class func_door : entity
             else
             {
                 transform.Translate(offset);
+            }
+        }
+        else if (m_state == State.Opened && this.wait != -1)
+        {
+            m_openedTime += Time.deltaTime;
+            if (m_openedTime > this.wait)
+            {
+                m_openedTime = 0.0f;
+                Close();
             }
         }
     }
@@ -85,7 +98,7 @@ public class func_door : entity
 
     protected override void OnCharacterEnter(CharacterController character)
     {   
-        if (!HasTargetName())
+        if (this.CanBeOpenedOnTouch)
         {
             Open();
         }
@@ -119,5 +132,10 @@ public class func_door : entity
             m_state = State.Closing;
             MoveToTargetPos(pos1);
         }
+    }
+
+    public bool CanBeOpenedOnTouch
+    {
+        get { return !HasTargetName() && this.health == 0; }
     }
 }

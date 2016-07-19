@@ -108,6 +108,16 @@ public class func_door_t : door_entity_t
         }
         door.pos1 = door.transform.position;
         door.pos2 = door.pos1 + movedir * (amount - BSPFile.Scale(lip));
+
+        if ((this.spawnflags & DOOR_START_OPEN) != 0)
+        {
+            door.transform.position = door.pos2;
+
+            // swap positions
+            var temp = door.pos1;
+            door.pos1 = door.pos2;
+            door.pos2 = temp;
+        }
     }
 
     public Vector3 movedir
