@@ -45,13 +45,18 @@ public class WeaponEditor : Editor
     {
         var weapon = target as Weapon;
 
-        var materialPath = string.Format("Assets/Models/{0}/skins/{0}_skin.mat", name);
-        var meshPath = string.Format("Assets/Models/{0}/{0}_mesh.asset", name);
+        var modelPath = string.Format("Assets/Models/{0}/{0}.asset", name);
+        var model = AssetDatabase.LoadAssetAtPath<MDL>(modelPath);
+        if (model == null)
+        {
+            Debug.LogError("Can't load model: " + modelPath);
+            return;
+        }
 
         var meshRenderer = weapon.GetComponent<MeshRenderer>();
-        meshRenderer.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+        meshRenderer.sharedMaterial = model.material;
 
         var meshFilter = weapon.GetComponent<MeshFilter>();
-        meshFilter.sharedMesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
+        meshFilter.sharedMesh = model.mesh;
     }
 }
