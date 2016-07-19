@@ -19,18 +19,25 @@ public class func_door : entity
         Closing
     }
 
+    [SerializeField]
+    public func_door linkedDoor;
+
     [HideInInspector]
     public Vector3 pos1;
 
     [HideInInspector]
     public Vector3 pos2;
 
+    [SerializeField]
     public door_items items;
 
+    [SerializeField]
     public float speed;
 
+    [SerializeField]
     public float wait = -1;
 
+    [SerializeField]
     public float health;
 
     State m_state;

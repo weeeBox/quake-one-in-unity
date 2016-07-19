@@ -10,13 +10,25 @@ static partial class DataGenerators
     [MenuItem("Quake Utils/Load BSP...")]
     static void LoadBSP()
     {
-        using (FileStream stream = File.OpenRead(AssetUtils.GetAbsoluteAssetPath("Assets/Editor/Data/maps/e1m1.bsp")))
+        try
         {
-            DataStream ds = new DataStream(stream);
-            BSPFile bsp = new BSPFile(ds);
+            using (FileStream stream = File.OpenRead(AssetUtils.GetAbsoluteAssetPath("Assets/Editor/Data/maps/e1m1.bsp")))
+            {
+                DataStream ds = new DataStream(stream);
+                BSPFile bsp = new BSPFile(ds);
 
-            var materials = GenerateMaterials(bsp);
-            GenerateLevel(bsp, materials);
+                var materials = GenerateMaterials(bsp);
+                if (materials == null) // cancelled
+                {
+                    return;
+                }
+
+                GenerateLevel(bsp, materials);
+            }
+        }
+        finally
+        {
+            EditorUtility.ClearProgressBar();
         }
     }
 
@@ -33,6 +45,12 @@ static partial class DataGenerators
             string textureName = string.Format("[{0}] {1}.png", tex_id++, FileUtilEx.FixFilename(t.name));
             string texturePath = "Assets/Textures/" + textureName;
             string textureAbsolutePath = Path.Combine(textureDir, texturePath);
+
+            float progress = ((float)tex_id) / bsp.textures.Length;
+            if (EditorUtility.DisplayCancelableProgressBar("Level", "Reading texture: " + texturePath, progress))
+            {
+                return null;
+            }
 
             if (!File.Exists(textureAbsolutePath))
             {
@@ -63,11 +81,18 @@ static partial class DataGenerators
         }
         AssetDatabase.Refresh();
 
+        int materialNum = 0;
         foreach (var texture in textures)
         {
             int index = texture.LastIndexOf('.');
             string materialPath = texture.Substring(0, index) + ".mat";
             string materialAbsolutePath = Path.Combine(textureDir, materialPath);
+
+            float progress = ((float) ++materialNum) / bsp.textures.Length;
+            if (EditorUtility.DisplayCancelableProgressBar("Level", "Generating material: " + materialPath, progress))
+            {
+                return null;
+            }
 
             if (!File.Exists(materialAbsolutePath))
             {
@@ -106,8 +131,15 @@ static partial class DataGenerators
         }
 
         bool[] used = new bool[bsp.faces.Length];
+        int modelNum = 0;
         foreach (var model in bsp.models)
         {
+            float progress = ((float) ++modelNum) / bsp.models.Length;
+            if (EditorUtility.DisplayCancelableProgressBar("Level", "Generating models", progress))
+            {
+                return;
+            }
+
             GenerateBrush(bsp, level, model, materials, used);
         }
 
@@ -120,6 +152,12 @@ static partial class DataGenerators
 
         for (int i = 0; i < bsp.entities.Length; ++i)
         {
+            float progress = ((float)(i + 1)) / bsp.entities.Length;
+            if (EditorUtility.DisplayCancelableProgressBar("Level", "Generating entities...", progress))
+            {
+                return;
+            }
+
             var entity = bsp.entities[i];
 
             var entityInstance = GenerateEntity(bsp, entity, materials, used);
@@ -156,7 +194,13 @@ static partial class DataGenerators
         
         // setup instances
         for (int i = 0; i < bsp.entities.Length; ++i)
-        {   
+        {
+            float progress = ((float)(i + 1)) / bsp.entities.Length;
+            if (EditorUtility.DisplayCancelableProgressBar("Level", "Setting up instances...", progress))
+            {
+                return;
+            }
+
             var entityInstance = entityList[i];
             if (entityInstance != null)
             {
@@ -178,6 +222,8 @@ static partial class DataGenerators
 
         var player = GameObject.FindObjectOfType<CharacterController>();
         player.transform.position = playerStart.transform.position;
+
+        // TODO: link doors
     }
 
     static void GenerateBrush(BSPFile bsp, Level level, BSPModel model, IList<Material> materials, bool[] used)
