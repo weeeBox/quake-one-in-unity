@@ -13,6 +13,7 @@ public class MDLAnimator : MonoBehaviour
     MDLAnimation m_animation;
 
     [SerializeField]
+    [HideInInspector]
     float m_frameTime = 0.01f;
 
     Dictionary<string, MDLAnimation> m_animationLookup;

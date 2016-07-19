@@ -52,7 +52,7 @@ public static class FileUtilEx
             path = path.Substring(0, index);
         }
 
-        index = path.LastIndexOf("/");
+        index = Math.Max(path.LastIndexOf("/"), path.LastIndexOf("\\"));
         if (index != -1) {
             path = path.Substring(index + 1);
         }

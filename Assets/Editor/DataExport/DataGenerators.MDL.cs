@@ -7,6 +7,35 @@ using System.Collections.Generic;
 
 static partial class DataGenerators
 {
+    static readonly string[] LOOPED_ANIMATION_NAMES = {
+        // enemies
+        "stand",
+        "walk",
+        "run",
+        "runb",
+        "prowl_",
+        "fly",
+        "hover",
+        "cruc_",
+
+        // player
+        "axrun",
+        "axstnd",
+        "light",
+        "nailatt",
+        "rockrun",
+
+        // flame
+        "flame",
+        "flameb",
+
+        // lighting
+        "s_light",
+
+        // spike
+        "w_spike",
+    };
+
     [MenuItem("Quake Utils/Load MDL's")]
     static void LoadMDL()
     {
@@ -19,13 +48,13 @@ static partial class DataGenerators
         {
             foreach (var file in files)
             {
-                float progress = index++ / files.Length;
+                float progress = ((float)++index) / files.Length;
                 if (EditorUtility.DisplayCancelableProgressBar("Generating models", UnityEditor.FileUtil.GetProjectRelativePath(file), progress))
                 {
                     break;
                 }
 
-                GenerateModel(FileUtilEx.FixFilename(file), modelsDir);
+                GenerateModel(FileUtilEx.FixOSPath(file), modelsDir);
             }
         }
         finally
@@ -194,6 +223,7 @@ static partial class DataGenerators
             var animation = ScriptableObject.CreateInstance<MDLAnimation>();
             animation.name = name;
             animation.frames = animationFrames;
+            animation.looped = IsLoopedAnimationName(name);
 
             if (name == "frame") name = mdl.name;
 
@@ -201,6 +231,11 @@ static partial class DataGenerators
             AssetDatabase.CreateAsset(animation, animationPath);
             AssetDatabase.SaveAssets();
         }
+    }
+
+    private static bool IsLoopedAnimationName(string name)
+    {
+        return Array.IndexOf(LOOPED_ANIMATION_NAMES, name) != -1;
     }
 
     [MenuItem("Quake Utils/Generate MDL info")]

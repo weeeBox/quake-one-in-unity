@@ -43,11 +43,20 @@ public class MDLAnimation : ScriptableObject
     [SerializeField]
     [HideInInspector]
     MDLAnimationFrame[] m_frames;
+
+    [SerializeField]
+    bool m_looped;
     
     public MDLAnimationFrame[] frames
     {
         get { return m_frames; }
         set { m_frames = value; }
+    }
+
+    public bool looped
+    {
+        get { return m_looped; }
+        set { m_looped = value; }
     }
 
     public int frameCount
