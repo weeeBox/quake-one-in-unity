@@ -10,7 +10,7 @@ static partial class DataGenerators
     [MenuItem("Quake Utils/Load BSP...")]
     static void LoadBSP()
     {
-        using (FileStream stream = File.OpenRead(Path.Combine(Application.dataPath, "Maps/e1m1.bsp")))
+        using (FileStream stream = File.OpenRead(AssetUtils.GetAbsoluteAssetPath("Assets/Editor/Data/maps/e1m1.bsp")))
         {
             DataStream ds = new DataStream(stream);
             BSPFile bsp = new BSPFile(ds);
