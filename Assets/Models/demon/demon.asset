@@ -15,10 +15,10 @@ MonoBehaviour:
   m_materials:
   - {fileID: 2100000, guid: 85f51cc6507ebb54fa2fbdf32a85da47, type: 2}
   m_animations:
-  - {fileID: 11400000, guid: 32e15bc27d0c0d947af2264f2b0835c4, type: 2}
-  - {fileID: 11400000, guid: 025736b014bf5ac498d8fb9bed7ad383, type: 2}
-  - {fileID: 11400000, guid: 217b4e2b439e53d4e88c74e77b060fe1, type: 2}
-  - {fileID: 11400000, guid: 050288e6339e5544ba095ed69fcddae0, type: 2}
-  - {fileID: 11400000, guid: 09191f848abc4fc468e2f3f049bfbbff, type: 2}
   - {fileID: 11400000, guid: d45c1c0c5d1d11849a4931b3fd0f7ce5, type: 2}
   - {fileID: 11400000, guid: be94d6b3f020b5a4587647a3b0f04a6a, type: 2}
+  - {fileID: 11400000, guid: 09191f848abc4fc468e2f3f049bfbbff, type: 2}
+  - {fileID: 11400000, guid: 217b4e2b439e53d4e88c74e77b060fe1, type: 2}
+  - {fileID: 11400000, guid: 050288e6339e5544ba095ed69fcddae0, type: 2}
+  - {fileID: 11400000, guid: 025736b014bf5ac498d8fb9bed7ad383, type: 2}
+  - {fileID: 11400000, guid: 32e15bc27d0c0d947af2264f2b0835c4, type: 2}

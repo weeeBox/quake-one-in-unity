@@ -37,6 +37,13 @@ public class MDLAnimationFrame
     }
 }
 
+public enum MDLAnimationType
+{
+    Normal, // animation stays at the last frame when ended
+    Rewind, // animation rewinds to the first frame when ended
+    Looped, // animation is looped
+}
+
 [Serializable]
 public class MDLAnimation : ScriptableObject
 {
@@ -45,7 +52,7 @@ public class MDLAnimation : ScriptableObject
     MDLAnimationFrame[] m_frames;
 
     [SerializeField]
-    bool m_looped;
+    MDLAnimationType m_type;
     
     public MDLAnimationFrame[] frames
     {
@@ -53,10 +60,10 @@ public class MDLAnimation : ScriptableObject
         set { m_frames = value; }
     }
 
-    public bool looped
+    public MDLAnimationType type
     {
-        get { return m_looped; }
-        set { m_looped = value; }
+        get { return m_type; }
+        set { m_type = value; }
     }
 
     public int frameCount

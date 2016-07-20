@@ -15,13 +15,13 @@ MonoBehaviour:
   m_materials:
   - {fileID: 2100000, guid: 0dee3da4a80388c4ba5cbb719dab83e4, type: 2}
   m_animations:
+  - {fileID: 11400000, guid: d5d307487c5a0744aab5192c9a45eb8f, type: 2}
   - {fileID: 11400000, guid: 082499bc7a670564699069808ad4007a, type: 2}
   - {fileID: 11400000, guid: 5b0474ceb9a1275489865ac75d7f1504, type: 2}
   - {fileID: 11400000, guid: 2e004e0c7c4357242aabef9b66974b6a, type: 2}
   - {fileID: 11400000, guid: 37bda2b9f3332084396e47b165894dac, type: 2}
   - {fileID: 11400000, guid: d94bf3cbd98fc6b4891d80f897bcafe3, type: 2}
   - {fileID: 11400000, guid: 93a5fb188204bf64485bebc017e2dd6a, type: 2}
-  - {fileID: 11400000, guid: ddbbf815ae3a2724eb88646e1e109f2b, type: 2}
   - {fileID: 11400000, guid: 05e607aa7b9ead142a330a0eab577a0a, type: 2}
   - {fileID: 11400000, guid: 01316592d234d4a4f8fa9d9116e0d53d, type: 2}
-  - {fileID: 11400000, guid: d5d307487c5a0744aab5192c9a45eb8f, type: 2}
+  - {fileID: 11400000, guid: ddbbf815ae3a2724eb88646e1e109f2b, type: 2}

@@ -54,7 +54,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 16
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!1 &182280
 GameObject:
@@ -459,7 +459,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_model: {fileID: 11400000, guid: 7cf59ea049092974e9a0f49ca52a7292, type: 2}
   m_animation: {fileID: 0}
-  m_frameTime: 0.01
 --- !u!114 &11493488
 MonoBehaviour:
   m_ObjectHideFlags: 1

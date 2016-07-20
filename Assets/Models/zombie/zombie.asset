@@ -15,15 +15,15 @@ MonoBehaviour:
   m_materials:
   - {fileID: 2100000, guid: eef063a5effd0ac49b69ecf9cb7a9330, type: 2}
   m_animations:
+  - {fileID: 11400000, guid: 1fc11c116ab517644afc8e5f4feb4159, type: 2}
+  - {fileID: 11400000, guid: 752e2784b249d784880878f8f8253895, type: 2}
+  - {fileID: 11400000, guid: 9af1f60ac41056d44824cb2dfb7611f6, type: 2}
   - {fileID: 11400000, guid: 0746a2bff64fa2c41ab19370d057c517, type: 2}
   - {fileID: 11400000, guid: b0e74deb2245b664bba523051e8b4134, type: 2}
   - {fileID: 11400000, guid: 3f9e6d2106d4c2544acfd058823b9a22, type: 2}
-  - {fileID: 11400000, guid: f65200271c848b345bb6bba4376a1d37, type: 2}
   - {fileID: 11400000, guid: 3bafd3edf30a93648bbdc62249bf663e, type: 2}
   - {fileID: 11400000, guid: c48d1223d954bc246ac0e0ad985fa3a5, type: 2}
   - {fileID: 11400000, guid: 0db22c2b40b99d64382326b84026cc60, type: 2}
   - {fileID: 11400000, guid: 07f96782e228db346bab254fe287454a, type: 2}
   - {fileID: 11400000, guid: 3ff50affa86c6c1429dbe31033b1b4a4, type: 2}
-  - {fileID: 11400000, guid: 9af1f60ac41056d44824cb2dfb7611f6, type: 2}
-  - {fileID: 11400000, guid: 1fc11c116ab517644afc8e5f4feb4159, type: 2}
-  - {fileID: 11400000, guid: 752e2784b249d784880878f8f8253895, type: 2}
+  - {fileID: 11400000, guid: f65200271c848b345bb6bba4376a1d37, type: 2}

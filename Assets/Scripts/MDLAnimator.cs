@@ -12,9 +12,7 @@ public class MDLAnimator : MonoBehaviour
     [HideInInspector]
     MDLAnimation m_animation;
 
-    [SerializeField]
-    [HideInInspector]
-    float m_frameTime = 0.01f;
+    float m_frameTime = 1.0f / 10;
 
     Dictionary<string, MDLAnimation> m_animationLookup;
 
@@ -49,25 +47,28 @@ public class MDLAnimator : MonoBehaviour
         if (m_animation != null && !m_animationFinished)
         {
             m_elaspedTime += Time.deltaTime;
-            if (m_elaspedTime < m_frameTime)
-            {
-                float alpha = m_elaspedTime / m_frameTime;
-                Blend(m_frameIndex, m_nextFrameIndex, alpha);
-            }
-            else
+            if (m_elaspedTime > m_frameTime)
             {
                 int nextFrame = m_frameIndex + 1;
                 if (nextFrame < m_animation.frameCount)
                 {
                     SetFrameIndex(nextFrame);
                 }
-                else if (m_animation.looped)
-                {
-                    SetFrameIndex(0);
-                }
                 else
                 {
-                    m_animationFinished = true;
+                    if (m_animation.type == MDLAnimationType.Looped)
+                    {
+                        SetFrameIndex(0);
+                    }
+                    else 
+                    {
+                        if (m_animation.type == MDLAnimationType.Rewind)
+                        {
+                            SetFrameIndex(0);
+                        }
+
+                        m_animationFinished = true;
+                    }
                 }
             }
         }
@@ -119,17 +120,14 @@ public class MDLAnimator : MonoBehaviour
 
     public void PlayAnimation(string name)
     {
-        if (this.animationName != name)
+        var animation = FindAnimation(name);
+        if (animation == null)
         {
-            var animation = FindAnimation(name);
-            if (animation == null)
-            {
-                Debug.LogError("Can't find animation: " + name);
-                return;
-            }
-
-            PlayAnimation(animation);
+            Debug.LogError("Can't find animation: " + name);
+            return;
         }
+
+        PlayAnimation(animation);
     }
 
     public void StopAnimation()

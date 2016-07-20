@@ -31,7 +31,14 @@ public class Weapon : MonoBehaviour
 
     [SerializeField]
     GameObject m_hit;
-    
+
+    MDLAnimator m_animator;
+
+    void Awake()
+    {
+        m_animator = GetComponent<MDLAnimator>();
+    }
+
     void Update()
     {
         if (Input.GetButtonDown("Fire1"))
@@ -42,6 +49,8 @@ public class Weapon : MonoBehaviour
 
     public void Shoot()
     {
+        m_animator.PlayAnimation("shot_animation");
+
         Ray ray = m_weaponCamera.ViewportPointToRay(new Vector2(0.5f, 0.5f));
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 100.0f))

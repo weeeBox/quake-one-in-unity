@@ -36,6 +36,10 @@ static partial class DataGenerators
         "w_spike",
     };
 
+    static readonly string[] REWIND_ANIMATION_NAMES = {
+        "shot"
+    };
+
     [MenuItem("Quake Utils/Load MDL's")]
     static void LoadMDL()
     {
@@ -75,13 +79,21 @@ static partial class DataGenerators
 
             AssetUtils.CreateFolder(destPath);
 
-            GenerateModel(mdl, destPath);
-            GenerateSkins(mdl, destPath);
-            GenerateAnimations(mdl, destPath);
+            var mesh = GenerateMesh(mdl, destPath);
+            var skins = GenerateSkins(mdl, destPath);
+            var animations = GenerateAnimations(mdl, destPath);
+
+            var mdlAsset = ScriptableObject.CreateInstance<MDL>();
+
+            mdlAsset.mesh = mesh;
+            mdlAsset.materials = skins;
+            mdlAsset.animations = animations;
+
+            AssetDatabase.CreateAsset(mdlAsset, destPath + "/" + name + ".asset");
         }
     }
 
-    private static void GenerateModel(MDLFile mdl, string destPath)
+    private static Mesh GenerateMesh(MDLFile mdl, string destPath)
     {
         var geometry = mdl.geometry;
 
@@ -108,10 +120,13 @@ static partial class DataGenerators
         mesh.uv = geometry.uvs;
         mesh.RecalculateNormals();
 
-        AssetDatabase.CreateAsset(mesh, destPath + "/" + mdl.name + "_mesh.asset");
+        var meshPath = destPath + "/" + mdl.name + "_mesh.asset";
+        AssetDatabase.CreateAsset(mesh, meshPath);
+
+        return AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
     }
 
-    static object GenerateSkins(MDLFile mdl, string destPath)
+    static Material[] GenerateSkins(MDLFile mdl, string destPath)
     {
         string textureDir = Directory.GetParent(Application.dataPath).ToString();
 
@@ -183,17 +198,18 @@ static partial class DataGenerators
 
         AssetDatabase.SaveAssets();
 
-        return materials;
+        return materials.ToArray();
     }
 
-    private static void GenerateAnimations(MDLFile mdl, string destPath)
+    private static MDLAnimation[] GenerateAnimations(MDLFile mdl, string destPath)
     {
         var frames = mdl.geometry.frames;
-        if (frames.Length == 1) return; // no animations
+        if (frames.Length == 1) return null; // no animations
 
         var animationsPath = destPath + "/animations";
         AssetUtils.CreateFolder(animationsPath);
-        
+
+        var animations = new List<MDLAnimation>(mdl.animations.Count);
         foreach (var e in mdl.animations)
         {
             var name = e.Key;
@@ -223,54 +239,34 @@ static partial class DataGenerators
             var animation = ScriptableObject.CreateInstance<MDLAnimation>();
             animation.name = name;
             animation.frames = animationFrames;
-            animation.looped = IsLoopedAnimationName(name);
+            animation.type = GetAnimationType(name);
 
             if (name == "frame") name = mdl.name;
+            if (name == "v_axe") name = "shot"; // dirty little hack
 
             var animationPath = animationsPath + "/" + name + "_animation.asset";
             AssetDatabase.CreateAsset(animation, animationPath);
-            AssetDatabase.SaveAssets();
-        }
-    }
 
-    private static bool IsLoopedAnimationName(string name)
-    {
-        return Array.IndexOf(LOOPED_ANIMATION_NAMES, name) != -1;
-    }
-
-    [MenuItem("Quake Utils/Generate MDL info")]
-    static void GenerateMDLInfo()
-    {
-        string rootPath = AssetUtils.GetAbsoluteAssetPath("Assets/Models");
-        var directories = Directory.GetDirectories(rootPath);
-        foreach (var directory in directories)
-        {
-            var dirname = new DirectoryInfo(FileUtilEx.FixOSPath(directory)).Name;
-            var assetPath = FileUtilEx.GetProjectRelativePath(directory);
-
-            var mdl = ScriptableObject.CreateInstance<MDL>();
-
-            var meshPath = assetPath + "/" + dirname + "_mesh.asset";
-            mdl.mesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
-            if (mdl.mesh == null)
-            {
-                Debug.LogError("Can't load mesh: " + meshPath);
-            }
-
-            var materialsPath = assetPath + "/skins";
-            mdl.materials = AssetUtils.LoadAssetsAtPath<Material>(materialsPath);
-            if (mdl.materialCount == 0)
-            {
-                Debug.LogError("Can't load materials: " + materialsPath);
-            }
-
-            var animationsPath = assetPath + "/animations";
-            mdl.animations = AssetUtils.AssetPathExists(animationsPath) ?
-                AssetUtils.LoadAssetsAtPath<MDLAnimation>(animationsPath) : null;
-
-            AssetDatabase.CreateAsset(mdl, assetPath + "/" + dirname + ".asset");
+            animations.Add(AssetDatabase.LoadAssetAtPath<MDLAnimation>(animationPath));
         }
 
         AssetDatabase.SaveAssets();
+
+        return animations.ToArray();
+    }
+
+    private static MDLAnimationType GetAnimationType(string name)
+    {
+        if (Array.IndexOf(LOOPED_ANIMATION_NAMES, name) != -1)
+        {
+            return MDLAnimationType.Looped;
+        }
+
+        if (Array.IndexOf(REWIND_ANIMATION_NAMES, name) != -1)
+        {
+            return MDLAnimationType.Rewind;
+        }
+
+        return MDLAnimationType.Normal;
     }
 }

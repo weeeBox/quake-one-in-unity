@@ -15,4 +15,4 @@ MonoBehaviour:
   m_materials:
   - {fileID: 2100000, guid: b830b452e8670664e8efebee976ce9ad, type: 2}
   m_animations:
-  - {fileID: 11400000, guid: c953185fed47f32429f85ab9baed33bb, type: 2}
+  - {fileID: 11400000, guid: d041b15c29430cb449d0378cc17e8fff, type: 2}
