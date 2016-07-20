@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+
+using System;
 using System.Collections;
 
 public enum WeaponType
@@ -13,13 +15,11 @@ public enum WeaponType
     Lightning
 }
 
-public interface IShootTarget
-{
-    void TakeDamage(int damage);
-}
-
 public class Weapon : MonoBehaviour
 {
+    [SerializeField]
+    WeaponInfo[] m_weapons;
+
     [SerializeField]
     WeaponType m_weaponType;
 
@@ -46,7 +46,7 @@ public class Weapon : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 100.0f))
         {
-            var target = hit.collider.GetComponent<QuakeBehaviour>() as IShootTarget;
+            var target = hit.collider.GetComponent<QuakeBehaviour>();
             if (target != null)
             {
                 target.TakeDamage(100);

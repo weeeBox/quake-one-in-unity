@@ -94,7 +94,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 9.599999, y: 1.76, z: -7.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -471,6 +471,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daf1e94399ffd614a891c301aebf4c85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_weapons:
+  - {fileID: 11400000, guid: 92c33b91de47c0e42bfd85d0470ca37f, type: 2}
+  - {fileID: 11400000, guid: 0ec18255e4f87284093c22e20a2c3227, type: 2}
+  - {fileID: 11400000, guid: 564c9d1a98c54bd46b44b5cf20f05dce, type: 2}
+  - {fileID: 11400000, guid: f53d1b3ca00e0ab499e6929cf3850369, type: 2}
+  - {fileID: 11400000, guid: 9d6e2f7891204094893f28bc716a3cd8, type: 2}
+  - {fileID: 11400000, guid: bf47851303ea86741b1fbe5ed3fd642d, type: 2}
+  - {fileID: 11400000, guid: fc0b4c334dcf02f468199bc9137f3860, type: 2}
+  - {fileID: 11400000, guid: dd3d612e211681f4d90dea8b7060bc1b, type: 2}
   m_weaponType: 1
   m_weaponCamera: {fileID: 2092242}
   m_shootingOrigin: {fileID: 495794}

@@ -9,6 +9,9 @@ public abstract class entity : QuakeBehaviour
     [HideInInspector]
     public string data;
 
+    [SerializeField]
+    public float health;
+
     #region Collision
 
     void OnTriggerEnter(Collider other)
@@ -53,6 +56,26 @@ public abstract class entity : QuakeBehaviour
 
     protected virtual void DrawGizmos(bool selected)
     {   
+    }
+
+    #endregion
+
+    #region Damage
+
+    public override void TakeDamage(int damage)
+    {
+        if (this.health > 0)
+        {
+            this.health -= damage;
+            if (health <= 0)
+            {
+                OnKill();
+            }
+        }
+    }
+
+    protected virtual void OnKill()
+    {
     }
 
     #endregion

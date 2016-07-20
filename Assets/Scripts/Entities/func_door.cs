@@ -36,10 +36,7 @@ public class func_door : entity
 
     [SerializeField]
     public float wait = -1;
-
-    [SerializeField]
-    public float health;
-
+    
     State m_state;
     
     Vector3 m_targetPos;
@@ -47,7 +44,7 @@ public class func_door : entity
 
     float m_openedTime;
 
-    void Start()
+    protected virtual void Start()
     {
         m_state = State.Closed;
     }
@@ -140,6 +137,15 @@ public class func_door : entity
             MoveToTargetPos(pos1);
         }
     }
+
+    #region Damage
+
+    protected override void OnKill()
+    {
+        Open();
+    }
+
+    #endregion
 
     public bool CanBeOpenedOnTouch
     {

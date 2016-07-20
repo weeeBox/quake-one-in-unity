@@ -2,7 +2,6 @@ using System;
 
 using UnityEngine;
 
-// [RequireComponent(typeof())]
-public class func_door_secret : entity
-{
+public class func_door_secret : func_door
+{   
 }
