@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 
-public class MonoBehaviourEx : MonoBehaviour
+public class QuakeBehaviour : MonoBehaviour
 {
     protected void StopCoroutine(Delegate del)
     {

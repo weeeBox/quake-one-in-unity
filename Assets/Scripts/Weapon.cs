@@ -13,6 +13,11 @@ public enum WeaponType
     Lightning
 }
 
+public interface IShootTarget
+{
+    void TakeDamage(int damage);
+}
+
 public class Weapon : MonoBehaviour
 {
     [SerializeField]
@@ -41,6 +46,12 @@ public class Weapon : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 100.0f))
         {
+            var target = hit.collider.GetComponent<QuakeBehaviour>() as IShootTarget;
+            if (target != null)
+            {
+                target.TakeDamage(100);
+            }
+
             Instantiate(m_hit, hit.point, Quaternion.identity);
         }
     }

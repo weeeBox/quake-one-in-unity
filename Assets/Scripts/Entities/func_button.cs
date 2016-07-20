@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
-public class func_button : entity
+public class func_button : entity, IShootTarget
 {
     public void Trigger()
     {
@@ -14,4 +14,13 @@ public class func_button : entity
     {
         Trigger();
     }
+
+    #region IShootTarget
+
+    public void TakeDamage(int damage)
+    {
+        Trigger();   
+    }
+
+    #endregion
 }
