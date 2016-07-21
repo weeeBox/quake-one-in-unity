@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
 public class MDLAnimator : MonoBehaviour
 {
     [SerializeField]
@@ -27,7 +29,7 @@ public class MDLAnimator : MonoBehaviour
     int m_nextFrameIndex;
     bool m_animationFinished;
 
-    void Start()
+    void Awake()
     {
         var meshFilter = GetComponent<MeshFilter>();
         m_mesh = meshFilter.mesh;
@@ -35,7 +37,10 @@ public class MDLAnimator : MonoBehaviour
         m_initialVertices = m_mesh.vertices;
 
         m_meshRenderer = GetComponent<MeshRenderer>();
+    }
 
+    void Start()
+    {
         if (m_animation != null)
         {
             SetFrameIndex(0); // rewind to the first frame

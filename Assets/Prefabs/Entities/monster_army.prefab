@@ -8,8 +8,13 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 498660}
+  - 33: {fileID: 3366628}
+  - 23: {fileID: 2306186}
+  - 54: {fileID: 5429540}
+  - 136: {fileID: 13623194}
+  - 114: {fileID: 11451414}
   - 114: {fileID: 11428476}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: monster_army
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29,6 +34,54 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!23 &2306186
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 169488}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 0dee3da4a80388c4ba5cbb719dab83e4, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &3366628
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 169488}
+  m_Mesh: {fileID: 4300000, guid: 1426315bf7818df408596087b1d8e48d, type: 2}
+--- !u!54 &5429540
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 169488}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!114 &11428476
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -40,6 +93,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f03d1bb2927088d478fda02369b293ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  data: 
+  health: 0
+--- !u!114 &11451414
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 169488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ecf83a470a293540a064f5d82a07fa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_model: {fileID: 11400000, guid: ab2367cfe2b65a9429772404bd0bce81, type: 2}
+  m_animation: {fileID: 11400000, guid: d5d307487c5a0744aab5192c9a45eb8f, type: 2}
+--- !u!136 &13623194
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 169488}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.35068196
+  m_Height: 0.9889066
+  m_Direction: 1
+  m_Center: {x: -0.027018502, y: 0.007586673, z: 0.04263325}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

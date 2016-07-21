@@ -1,8 +1,28 @@
 using System;
 
+using UnityEngine;
+
 [EntityGroup("Monsters")]
 public abstract class monster_entity_t : entity_t
 {
+    public monster_entity_t()
+    {
+        this.movable = true;
+    }
+
+    public override void SetupInstance(BSPFile bsp, entity entity, SceneEntities entities)
+    {
+        base.SetupInstance(bsp, entity, entities);
+
+        if (angle >= 0 && angle < 360)
+        {
+            entity.transform.rotation = Quaternion.AngleAxis(90 - angle, Vector3.up);
+        }
+        else
+        {
+            Debug.LogError("Unexpected angle: " + angle);
+        }
+    }
 }
 
 public class monster_ogre_t : monster_entity_t
