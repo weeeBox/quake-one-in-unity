@@ -61,7 +61,7 @@ public class Weapon : MonoBehaviour
                 target.TakeDamage(100);
             }
 
-            Instantiate(m_hit, hit.point, Quaternion.identity);
+            Instantiate(m_hit, hit.point, Quaternion.LookRotation(-ray.direction));
         }
     }
 
