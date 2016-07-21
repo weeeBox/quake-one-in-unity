@@ -14,6 +14,17 @@ public class QuakeBehaviour : MonoBehaviour
 
     #region Helpers
 
+    protected T GetRequiredComponent<T>()
+    {
+        var component = GetComponent<T>();
+        if (component == null)
+        {
+            Debug.LogError("Can't get required component: " + typeof(T)); // TODO: throw exception?
+        }
+
+        return component;
+    }
+
     protected void StopCoroutine(Delegate del)
     {
         var name = del.Method.Name;
