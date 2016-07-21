@@ -13,7 +13,7 @@ GameObject:
   - 23: {fileID: 2372242}
   - 33: {fileID: 3321922}
   - 114: {fileID: 11438082}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: monster_oldone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
