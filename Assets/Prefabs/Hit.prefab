@@ -78,8 +78,12 @@ MonoBehaviour:
   m_particleCount: 50
   m_particleSize: 0.01
   m_spreadRadius: 0.25
+  m_acc: -0.75
+  m_velocity: 0.05
+  m_lifetime: 0.25
   m_colors:
-  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0.66176474, g: 0.6520329, b: 0.6520329, a: 1}
+  - {r: 0.28676468, g: 0.26567903, b: 0.26567903, a: 1}
   - {r: 0, g: 0, b: 0, a: 1}
 --- !u!1001 &100100000
 Prefab:
