@@ -3,6 +3,10 @@ using System;
 [EntityGroup("Items")]
 public abstract class item_entity_t : entity_t
 {
+    public item_entity_t()
+    {
+        this.movable = true;
+    }
 }
 
 [EntityGroup("Weapons")]
