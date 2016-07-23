@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0f0299cff4eba24e82d72528f6c6d88, type: 3}
+  m_Name: tarbaby
+  m_EditorClassIdentifier: 
+  m_mesh: {fileID: 4300000, guid: f93d3c3ff3a815b4c9644312fa37009b, type: 2}
+  m_materials:
+  - {fileID: 2100000, guid: b5f728fc480b1974e99ecf5ff06c3046, type: 2}
+  m_animations:
+  - {fileID: 11400000, guid: f6ab31f61461b4043a562cc08d9f6041, type: 2}
+  - {fileID: 11400000, guid: e01db5fb927df2c4788e5cda19eccf21, type: 2}
+  - {fileID: 11400000, guid: 15ca2a7c97454474084ec613d8dac7f7, type: 2}
+  - {fileID: 11400000, guid: 5c99232c15de97f4d87b261aaaf1312f, type: 2}
+  - {fileID: 11400000, guid: f8a4b48f883d534448c9b9bdfe74e90c, type: 2}

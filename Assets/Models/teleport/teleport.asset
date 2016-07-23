@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0f0299cff4eba24e82d72528f6c6d88, type: 3}
+  m_Name: teleport
+  m_EditorClassIdentifier: 
+  m_mesh: {fileID: 4300000, guid: 84e2b3d140d1c9e44b2669babd1f3019, type: 2}
+  m_materials:
+  - {fileID: 2100000, guid: e862896854b00ab4b87311e31ee7e6ec, type: 2}
+  m_animations: []

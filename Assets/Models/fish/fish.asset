@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0f0299cff4eba24e82d72528f6c6d88, type: 3}
+  m_Name: fish
+  m_EditorClassIdentifier: 
+  m_mesh: {fileID: 4300000, guid: 3bdeeceaa461dc44298a860bc5381448, type: 2}
+  m_materials:
+  - {fileID: 2100000, guid: 3a875078a98e56e45afecd3e5a711984, type: 2}
+  m_animations:
+  - {fileID: 11400000, guid: b44b4b56bd7f0484f9b28329827dd4b8, type: 2}
+  - {fileID: 11400000, guid: 84fe2309c964cd8429dd64220b8ffe46, type: 2}
+  - {fileID: 11400000, guid: 9046fcc3d8ee20d42885d4385bf410dd, type: 2}
+  - {fileID: 11400000, guid: eed03e583fe3d214a8a5c526c3626280, type: 2}

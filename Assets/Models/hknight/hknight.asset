@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0f0299cff4eba24e82d72528f6c6d88, type: 3}
+  m_Name: hknight
+  m_EditorClassIdentifier: 
+  m_mesh: {fileID: 4300000, guid: 3cfe72029f14778488cf57cdd39c614c, type: 2}
+  m_materials:
+  - {fileID: 2100000, guid: 95f93de598ca41941be9bf85c93143d3, type: 2}
+  m_animations:
+  - {fileID: 11400000, guid: 517d9c4d5986a5e4aa8125b7982e4706, type: 2}
+  - {fileID: 11400000, guid: ce814967c4ca42d418b354388c7a77d2, type: 2}
+  - {fileID: 11400000, guid: d8d04dbe72cba2a48a3d3b0c2d94ebd0, type: 2}
+  - {fileID: 11400000, guid: 4d0a9d7dd36c1a24aa2348bb0e77268b, type: 2}
+  - {fileID: 11400000, guid: 39f21efb60064fa448c99afd8b05f176, type: 2}
+  - {fileID: 11400000, guid: 441be5879760c9b42921dfd067111055, type: 2}
+  - {fileID: 11400000, guid: 93dc5f3f210ea16459f86104591dc159, type: 2}
+  - {fileID: 11400000, guid: 9377ce5e7f3c7364dbc128099eb43fc2, type: 2}
+  - {fileID: 11400000, guid: 35a2b93a9ae44884893d10d7b904ca1d, type: 2}
+  - {fileID: 11400000, guid: 16d56c98baeebb94eace16cff1564607, type: 2}
+  - {fileID: 11400000, guid: 647934a024ac0524ebcd9b1772933280, type: 2}
+  - {fileID: 11400000, guid: 2e39c6ffdce707a47a81b9ded0644507, type: 2}
+  - {fileID: 11400000, guid: 47c0e0bf9498f3247820c8632d0fa2bb, type: 2}
+  - {fileID: 11400000, guid: 8805c3ad54892844cb0f0e50d999a3d2, type: 2}

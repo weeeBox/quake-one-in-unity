@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0f0299cff4eba24e82d72528f6c6d88, type: 3}
+  m_Name: shalrath
+  m_EditorClassIdentifier: 
+  m_mesh: {fileID: 4300000, guid: fefad94c653a1694a923cf0f4c4fdad8, type: 2}
+  m_materials:
+  - {fileID: 2100000, guid: 2ecf441565a09014387cfd373a179e70, type: 2}
+  m_animations:
+  - {fileID: 11400000, guid: 0163d0773fb2dbd4b971d153634ad1dc, type: 2}
+  - {fileID: 11400000, guid: 41ca7742adf130643b15f8a169ac6ac0, type: 2}
+  - {fileID: 11400000, guid: c8b079663a9303f48bdb429a890fbcbd, type: 2}
+  - {fileID: 11400000, guid: 351107dd14726f649bbf71e5b8dea1f8, type: 2}
