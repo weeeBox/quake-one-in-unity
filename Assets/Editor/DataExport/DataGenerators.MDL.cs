@@ -46,13 +46,13 @@ static partial class DataGenerators
         string path = AssetUtils.GetAbsoluteAssetPath("Assets/Editor/Data/progs");
         string modelsDir = "Assets/Models";
         
-        var files = Directory.GetFiles(path, "*.mdl");
+        var files = ListModelFiles(path, "*.mdl", "*.bsp");
         int index = 0;
         try
         {
             foreach (var file in files)
             {
-                float progress = ((float)++index) / files.Length;
+                float progress = ((float)++index) / files.Count;
                 if (EditorUtility.DisplayCancelableProgressBar("Generating models", UnityEditor.FileUtil.GetProjectRelativePath(file), progress))
                 {
                     break;
@@ -67,6 +67,16 @@ static partial class DataGenerators
         }
     }
 
+    static IList<string> ListModelFiles(string path, params string[] filters)
+    {
+        List<string> files = new List<string>();
+        foreach (var filter in filters)
+        {
+            files.AddRange(Directory.GetFiles(path, filter));
+        }
+        return files;
+    }
+
     static void GenerateModel(string sourcePath, string modelsPath)
     {
         using (FileStream stream = File.OpenRead(sourcePath))
@@ -74,25 +84,50 @@ static partial class DataGenerators
             var name = FileUtilEx.getFilenameNoExtension(sourcePath);
             var destPath = modelsPath + "/" + name;
 
-            DataStream ds = new DataStream(stream);
-            MDLFile mdl = new MDLFile(ds, name);
-
             AssetUtils.CreateFolder(destPath);
 
-            var mesh = GenerateMesh(mdl, destPath);
-            var skins = GenerateSkins(mdl, destPath);
-            var animations = GenerateAnimations(mdl, destPath);
+            DataStream ds = new DataStream(stream);
 
-            var mdlAsset = ScriptableObject.CreateInstance<MDL>();
+            UnityEngine.Object asset;
 
-            mdlAsset.mesh = mesh;
-            mdlAsset.materials = skins;
-            mdlAsset.animations = animations;
+            string ext = Path.GetExtension(sourcePath).ToLower();
+            if (ext == ".mdl")
+            {
+                asset = CreateMDL(ds, destPath, name);
+            }
+            else if (ext == ".bsp")
+            {
+                asset = CreateBSP(ds, destPath, name);
+            }
+            else
+            {
+                Debug.LogError("Unexpected model type: " + ext);
+                return;
+            }
 
-            AssetDatabase.CreateAsset(mdlAsset, destPath + "/" + name + ".asset");
+            AssetDatabase.CreateAsset(asset, destPath + "/" + name + ".asset");
         }
     }
 
+    #region MDL
+
+    private static MDL CreateMDL(DataStream ds, string destPath, string name)
+    {
+        MDLFile mdl = new MDLFile(ds, name);
+
+        var mesh = GenerateMesh(mdl, destPath);
+        var skins = GenerateSkins(mdl, destPath);
+        var animations = GenerateAnimations(mdl, destPath);
+
+        var asset = ScriptableObject.CreateInstance<MDL>();
+
+        asset.name = name;
+        asset.mesh = mesh;
+        asset.materials = skins;
+        asset.animations = animations;
+        return asset;
+    }
+    
     private static Mesh GenerateMesh(MDLFile mdl, string destPath)
     {
         var geometry = mdl.geometry;
@@ -128,8 +163,6 @@ static partial class DataGenerators
 
     static Material[] GenerateSkins(MDLFile mdl, string destPath)
     {
-        string textureDir = Directory.GetParent(Application.dataPath).ToString();
-
         List<string> textures = new List<string>();
         List<Material> materials = new List<Material>();
 
@@ -269,4 +302,168 @@ static partial class DataGenerators
 
         return MDLAnimationType.Normal;
     }
+
+    #endregion
+
+    #region BSP
+
+    private static UnityEngine.Object CreateBSP(DataStream ds, string destPath, string name)
+    {
+        BSPFile bsp = new BSPFile(ds);
+        if (bsp.models.Length != 1) throw new ArgumentException("BSP should have 1 model only");
+
+        var textures = AdjustTextureSizes(bsp);
+        var atlas = new TextureAtlas(textures, 1024, 1024);
+        var mesh = GenerateMesh(bsp, name, destPath, atlas);
+        var skins = GenerateSkins(bsp, name, destPath, atlas);
+
+        var asset = ScriptableObject.CreateInstance<MDL>(); // BSP is not quite MDL but who cares: it's a miracle I went this far with that budget
+        asset.name = name;
+        asset.mesh = mesh;
+        asset.materials = skins;
+        return asset;
+    }
+
+    private static BSPTexture[] AdjustTextureSizes(BSPFile bsp)
+    {
+        var textures = bsp.textures;
+        var sizes = new Vector2[textures.Length];
+
+        foreach (var geometry in bsp.models[0].geometries)
+        {
+            var g = geometry.mesh;
+            var tex_id = geometry.tex_id;
+            var texture = textures[tex_id];
+            for (int i = 0; i < g.vertices.Length; ++i)
+            {
+                var uv = g.uvs[i];
+                float w = texture.width * uv.x;
+                float h = texture.height * uv.y;
+
+                if (w > sizes[tex_id].x || h > sizes[tex_id].y)
+                {
+                    sizes[tex_id] = new Vector2(w, h);
+                }
+            }
+        }
+
+        var result = new BSPTexture[textures.Length];
+        for (int i = 0; i < sizes.Length; ++i)
+        {
+            result[i] = ResizeTextures(textures[i], sizes[i]);
+        }
+        return result;
+    }
+
+    private static BSPTexture ResizeTextures(BSPTexture texture, Vector2 size)
+    {
+        int width = (int)size.x;
+        int height = (int)size.y;
+        
+        if (texture.width > width && texture.height > height)
+        {
+            return texture;
+        }
+
+        byte[] data = new byte[width * height * 4];
+        for (int y = 0; y < height; ++y)
+        {
+            for (int x = 0; x < width; ++x)
+            {
+                int rx = x % texture.width;
+                int ry = y % texture.height;
+                int srcIndex = 4 * (y * width + x);
+                int dstIndex = 4 * (ry * texture.width + rx);
+                data[srcIndex] = texture.data[dstIndex];
+                data[srcIndex + 1] = texture.data[dstIndex + 1];
+                data[srcIndex + 2] = texture.data[dstIndex + 2];
+                data[srcIndex + 3] = texture.data[dstIndex + 3];
+            }
+        }
+
+        return new BSPTexture(texture.name, data, width, height);
+    }
+
+    private static Mesh GenerateMesh(BSPFile bsp, string name, string destPath, TextureAtlas atlas)
+    {
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+        List<Vector2> uvs = new List<Vector2>();
+
+        var textures = bsp.textures;
+
+        int ti = 0;
+        foreach (var geometry in bsp.models[0].geometries)
+        {
+            var g = geometry.mesh;
+            var tex_id = geometry.tex_id;
+            var texture = textures[tex_id];
+
+            for (int vi = 0; vi < g.vertices.Length; vi += 3, ti += 3)
+            {
+                vertices.Add(BSPFile.TransformVector(g.vertices[vi + 0]));
+                vertices.Add(BSPFile.TransformVector(g.vertices[vi + 1]));
+                vertices.Add(BSPFile.TransformVector(g.vertices[vi + 2]));
+
+                uvs.Add(atlas.TransformUV(tex_id, g.uvs[vi + 0], texture.width, texture.height));
+                uvs.Add(atlas.TransformUV(tex_id, g.uvs[vi + 1], texture.width, texture.height));
+                uvs.Add(atlas.TransformUV(tex_id, g.uvs[vi + 2], texture.width, texture.height));
+
+                triangles.Add(ti + 2);
+                triangles.Add(ti + 1);
+                triangles.Add(ti + 0);
+            }
+        }
+
+        Mesh mesh = new Mesh();
+        mesh.name = "Model Mesh";
+        mesh.vertices = vertices.ToArray();
+        mesh.uv = uvs.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.RecalculateNormals();
+
+        var meshPath = destPath + "/" + name + "_mesh.asset";
+        AssetDatabase.CreateAsset(mesh, meshPath);
+
+        return AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
+    }
+
+    private static Material[] GenerateSkins(BSPFile bsp, string name, string destPath, TextureAtlas atlas)
+    {
+        var skinsPath = destPath + "/skins";
+        AssetUtils.CreateFolder(skinsPath);
+
+        string textureName = FileUtilEx.FixFilename(name);
+        var texturePath = skinsPath + "/" + textureName + ".png";
+
+        if (!AssetUtils.AssetPathExists(texturePath))
+        {
+            atlas.WriteTexture(texturePath);
+            AssetDatabase.Refresh();
+        }
+
+        int index = texturePath.LastIndexOf('.');
+        string materialPath = texturePath.Substring(0, index) + ".mat";
+
+        if (!AssetUtils.AssetPathExists(materialPath))
+        {
+            TextureImporter importer = TextureImporter.GetAtPath(texturePath) as TextureImporter;
+            importer.textureType = TextureImporterType.Image;
+            importer.wrapMode = TextureWrapMode.Repeat;
+            importer.filterMode = FilterMode.Point;
+            importer.maxTextureSize = 2048;
+            importer.textureFormat = TextureImporterFormat.DXT1;
+            importer.SaveAndReimport();
+
+            var material = new Material(Shader.Find("Standard"));
+            material.mainTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+            material.SetFloat("_Glossiness", 0.0f);
+
+            AssetDatabase.CreateAsset(material, materialPath);
+        }
+
+        return new Material[] { AssetDatabase.LoadAssetAtPath<Material>(materialPath) };
+    }
+
+    #endregion
 }

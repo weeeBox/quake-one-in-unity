@@ -140,7 +140,7 @@ static partial class DataGenerators
                 return;
             }
 
-            GenerateBrush(bsp, level, model, materials, used);
+            GenerateModel(bsp, level, model, materials, used);
         }
 
         GameObject entitiesParent = new GameObject("Entities");
@@ -226,7 +226,7 @@ static partial class DataGenerators
         // TODO: link doors
     }
 
-    static void GenerateBrush(BSPFile bsp, Level level, BSPModel model, IList<Material> materials, bool[] used)
+    static void GenerateModel(BSPFile bsp, Level level, BSPModel model, IList<Material> materials, bool[] used)
     {
         if (model.entity != null)
         {
