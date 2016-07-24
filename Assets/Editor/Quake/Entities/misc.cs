@@ -23,6 +23,14 @@ public abstract class light_entity_t : entity_t
     protected int m_light;
 }
 
+public abstract class flame_entity_t : light_entity_t
+{
+    public flame_entity_t()
+    {
+        this.movable = true;
+    }
+}
+
 /*
  * (0 1 0) (-8 -8 -8) (8 8 8) START_OFF
  * Non-displayed light.
@@ -73,7 +81,7 @@ public class light_globe_t : light_entity_t
  * Default light value is 200
  * Default style is 0
  */
-public class light_torch_small_walltorch_t : light_entity_t
+public class light_torch_small_walltorch_t : flame_entity_t
 {
 }
 
@@ -81,7 +89,7 @@ public class light_torch_small_walltorch_t : light_entity_t
  * (0 1 0) (-10 -10 -12) (12 12 18)
  * Large yellow flame ball
  */
-public class light_flame_large_yellow_t : light_entity_t
+public class light_flame_large_yellow_t : flame_entity_t
 {
 }
 
@@ -89,7 +97,7 @@ public class light_flame_large_yellow_t : light_entity_t
  * (0 1 0) (-8 -8 -8) (8 8 8) START_OFF
  * Small yellow flame ball
  */
-public class light_flame_small_yellow_t : light_entity_t
+public class light_flame_small_yellow_t : flame_entity_t
 {
 }
 
@@ -97,7 +105,7 @@ public class light_flame_small_yellow_t : light_entity_t
  * (0 1 0) (-10 -10 -40) (10 10 40) START_OFF
  * Small white flame ball
  */
-public class light_flame_small_white_t : light_entity_t
+public class light_flame_small_white_t : flame_entity_t
 {
 }
 
@@ -105,7 +113,7 @@ public class light_flame_small_white_t : light_entity_t
  * (0 .5 .8) (-8 -8 -8) (8 8 8)
  * Lava Balls
  */
-public class misc_fireball_t : entity_t
+public class misc_fireball_t : flame_entity_t
 {
 }
 
