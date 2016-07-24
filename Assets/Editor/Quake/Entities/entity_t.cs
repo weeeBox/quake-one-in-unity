@@ -7,6 +7,11 @@ using UnityEngine;
 
 public abstract class entity_t
 {
+    protected const int SPAWNFLAG_NOT_EASY = 256;
+    protected const int SPAWNFLAG_NOT_MEDIUM = 512;
+    protected const int SPAWNFLAG_NOT_HARD = 1024;
+    protected const int SPAWNFLAG_NOT_DEATHMATCH = 2048;
+
     [EntityFieldPrefix("*")]
     int m_model = -1;
 

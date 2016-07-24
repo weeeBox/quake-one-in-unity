@@ -55,6 +55,28 @@ public class monster_dog_t : monster_entity_t
 
 public class monster_zombie_t : monster_entity_t
 {
+    public override void SetupInstance(BSPFile bsp, entity entity, SceneEntities entities)
+    {
+        base.SetupInstance(bsp, entity, entities);
+
+        if (this.spawnflags == 1) // not sure what this value means but it might be "crucified"
+        {
+            var rigidBoby = entity.GetComponent<Rigidbody>();
+            if (rigidBoby != null)
+            {
+                GameObject.DestroyImmediate(rigidBoby);
+            }
+
+            var collider = entity.GetComponent<BoxCollider>();
+            if (collider != null)
+            {
+                GameObject.DestroyImmediate(collider);
+            }
+
+            var zombie = entity as monster_zombie;
+            zombie.crucified = true;
+        }
+    }
 }
 
 public class monster_boss_t : monster_entity_t

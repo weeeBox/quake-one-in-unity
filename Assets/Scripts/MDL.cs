@@ -12,6 +12,26 @@ public class MDL : ScriptableObject
     [SerializeField]
     MDLAnimation[] m_animations;
 
+    #region Animations
+
+    public MDLAnimation FindAnimation(string name)
+    {
+        if (m_animations != null)
+        {
+            foreach (var animation in m_animations)
+            {
+                if (animation.name == name)
+                {
+                    return animation;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    #endregion
+
     #region Properties
 
     public Mesh mesh
