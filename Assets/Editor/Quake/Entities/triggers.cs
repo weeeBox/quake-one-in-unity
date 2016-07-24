@@ -11,6 +11,8 @@ public abstract class trigger_entity_t : entity_t
 
     public override void SetupInstance(BSPFile bsp, entity entity, SceneEntities entities)
     {
+        base.SetupInstance(bsp, entity, entities);
+
         if (modelRef != null)
         {
             var collider = entity.GetComponent<BoxCollider>();

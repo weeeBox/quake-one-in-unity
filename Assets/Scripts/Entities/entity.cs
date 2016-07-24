@@ -12,6 +12,8 @@ public abstract class entity : QuakeBehaviour
     [SerializeField]
     public float health;
 
+    AudioSource m_audioSource;
+
     #region Life cycle
 
     protected virtual void Awake()
@@ -121,6 +123,38 @@ public abstract class entity : QuakeBehaviour
     public bool HasTargetName()
     {
         return GetComponent<EntityTargetName>();
+    }
+
+    #endregion
+
+    #region Sounds
+
+    protected void PlayRandomAudioClip(AudioClip[] clips)
+    {
+        if (clips == null)
+        {
+            Debug.LogWarning("Can't play random sound: audio clips are null");
+            return;
+        }
+
+        if (clips.Length == 0)
+        {
+            Debug.LogWarning("Can't play random sound: clips are empty");
+            return;
+        }
+
+        if (m_audioSource == null)
+        {
+            m_audioSource = GetComponent<AudioSource>();
+            if (m_audioSource == null)
+            {
+                Debug.LogError("Can't play random sound: AudioSource component is missing");
+                return;
+            }
+        }
+
+        m_audioSource.clip = clips[Random.Range(0, clips.Length)];
+        m_audioSource.Play();
     }
 
     #endregion

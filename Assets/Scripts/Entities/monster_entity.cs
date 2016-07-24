@@ -17,20 +17,12 @@ public abstract class monster_entity : entity
     AudioClip[] m_deathSounds;
 
     MDLAnimator m_animator;
-    AudioSource m_audioSource;
 
     protected override void Awake()
     {
         base.Awake();
-
         m_animator = GetRequiredComponent<MDLAnimator>();
-        m_audioSource = GetRequiredComponent<AudioSource>();
     }
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
     #region Damage
 
@@ -77,20 +69,6 @@ public abstract class monster_entity : entity
     protected void PlayAnimation(string name)
     {
         m_animator.PlayAnimation(name);
-    }
-
-    #endregion
-
-    #region Sounds
-
-    private void PlayRandomAudioClip(AudioClip[] clips)
-    {
-        if (clips != null)
-        {
-            int clipIndex = Random.Range(0, clips.Length);
-            m_audioSource.clip = clips[clipIndex];
-            m_audioSource.Play();
-        }
     }
 
     #endregion

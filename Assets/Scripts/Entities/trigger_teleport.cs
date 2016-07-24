@@ -2,8 +2,12 @@ using System;
 
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class trigger_teleport : trigger
 {
+    [SerializeField]
+    AudioClip[] m_teleportClips;
+
     EntityTargetName m_targetName;
 
     protected override void Start()
@@ -11,6 +15,10 @@ public class trigger_teleport : trigger
         base.Start();
 
         m_targetName = GetTargetName();
+        if (m_targetName == null)
+        {
+            Debug.LogError("Can't resolve teleport target");
+        }
     }
 
     protected override void OnCharacterEnter(CharacterController character)
@@ -21,6 +29,8 @@ public class trigger_teleport : trigger
         rigidbody.angularVelocity = Vector3.zero;
         character.transform.position = m_targetName.transform.position + 0.5f * character.height * Vector3.up;
         rigidbody.WakeUp();
+
+        PlayRandomAudioClip(m_teleportClips);
     }
 
     protected override void DrawGizmos(bool selected)
