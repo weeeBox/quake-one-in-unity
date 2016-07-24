@@ -7,17 +7,30 @@ using System.Collections.Generic;
 
 static partial class DataGenerators
 {
+    static readonly string kLastOpenedBSP = "kLastOpenedBSP";
+
     [MenuItem("Quake Utils/Load BSP...")]
     static void LoadBSP()
     {
         try
         {
-            using (FileStream stream = File.OpenRead(AssetUtils.GetAbsoluteAssetPath("Assets/Editor/Data/maps/e1m1.bsp")))
+            string path = EditorUtility.OpenFilePanelWithFilters("Open BSP", AssetUtils.GetAbsoluteAssetPath("Assets/Editor/Data/maps"), new string[] { "BSP files", "bsp" });
+            if (string.IsNullOrEmpty(path))
+            {
+                return;
+            }
+
+            using (FileStream stream = File.OpenRead(path))
             {
                 DataStream ds = new DataStream(stream);
                 BSPFile bsp = new BSPFile(ds);
 
-                var materials = GenerateMaterials(bsp);
+                string name = Path.GetFileNameWithoutExtension(path);
+                string destPath = "Assets/Scenes/Maps/" + name;
+
+                AssetUtils.CreateFolder(destPath);
+
+                var materials = GenerateMaterials(bsp, destPath);
                 if (materials == null) // cancelled
                 {
                     return;
@@ -32,27 +45,27 @@ static partial class DataGenerators
         }
     }
 
-    static IList<Material> GenerateMaterials(BSPFile bsp)
+    static IList<Material> GenerateMaterials(BSPFile bsp, string destPath)
     {
-        string textureDir = Directory.GetParent(Application.dataPath).ToString();
-
         List<string> textures = new List<string>();
         List<Material> materials = new List<Material>();
+
+        string materialsPath = destPath + "/materials";
+        AssetUtils.CreateFolder(materialsPath);
 
         int tex_id = 0;
         foreach (var t in bsp.textures)
         {
-            string textureName = string.Format("[{0}] {1}.png", tex_id++, FileUtilEx.FixFilename(t.name));
-            string texturePath = "Assets/Textures/" + textureName;
-            string textureAbsolutePath = Path.Combine(textureDir, texturePath);
+            string textureName = string.Format("{0}.png", FileUtilEx.FixFilename(t.name));
+            string texturePath = materialsPath + "/" + textureName;
 
-            float progress = ((float)tex_id) / bsp.textures.Length;
+            float progress = ((float)++tex_id) / bsp.textures.Length;
             if (EditorUtility.DisplayCancelableProgressBar("Level", "Reading texture: " + texturePath, progress))
             {
                 return null;
             }
 
-            if (!File.Exists(textureAbsolutePath))
+            if (!AssetUtils.AssetPathExists(texturePath))
             {
                 Texture2D tex = new Texture2D(t.width, t.height);
                 Color32[] pixels = new Color32[t.width * t.height];
@@ -74,7 +87,7 @@ static partial class DataGenerators
                 }
 
                 tex.SetPixels32(pixels);
-                File.WriteAllBytes(textureAbsolutePath, tex.EncodeToPNG());
+                File.WriteAllBytes(AssetUtils.GetAbsoluteAssetPath(texturePath), tex.EncodeToPNG());
             }
 
             textures.Add(texturePath);
@@ -86,7 +99,6 @@ static partial class DataGenerators
         {
             int index = texture.LastIndexOf('.');
             string materialPath = texture.Substring(0, index) + ".mat";
-            string materialAbsolutePath = Path.Combine(textureDir, materialPath);
 
             float progress = ((float) ++materialNum) / bsp.textures.Length;
             if (EditorUtility.DisplayCancelableProgressBar("Level", "Generating material: " + materialPath, progress))
@@ -94,7 +106,7 @@ static partial class DataGenerators
                 return null;
             }
 
-            if (!File.Exists(materialAbsolutePath))
+            if (!AssetUtils.AssetPathExists(materialPath))
             {
                 TextureImporter importer = TextureImporter.GetAtPath(texture) as TextureImporter;
                 importer.textureType = TextureImporterType.Image;
