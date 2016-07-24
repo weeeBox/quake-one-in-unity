@@ -121,8 +121,27 @@ public class trigger_setskill_t : trigger_entity_t
     {
         base.SetupInstance(bsp, entity, entities);
 
+        if (string.IsNullOrEmpty(this.message))
+        {
+            Debug.LogError("Can't set skill: message is null or empty");
+            return;
+        }
+
+        int value;
+        if (!int.TryParse(this.message, out value))
+        {
+            Debug.LogError("Can't set skill: invalid message '" + this.message + "'");
+            return;
+        }
+
+        if (!Enum.IsDefined(typeof(GameSkill), value))
+        {
+            Debug.LogError("Can't set skill: invalid GameSkill value '" + value + "'");
+            return;
+        }
+
         var trigger = entity.GetComponent<trigger_setskill>();
-        trigger.message = this.message;
+        trigger.skill = (GameSkill)value;
     }
 }
 

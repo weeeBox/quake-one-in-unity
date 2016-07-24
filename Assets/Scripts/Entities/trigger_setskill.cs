@@ -5,24 +5,25 @@ using UnityEngine;
 public class trigger_setskill : trigger
 {
     [SerializeField]
-    string m_message;
+    GameSkill m_skill = GameSkill.Normal;
 
     #region Collision
 
     protected override void OnCharacterEnter(CharacterController character)
-    {  
+    {
+        GameMode.skill = m_skill;
+        Debug.Log("Trigger set skill: " + m_skill);
     }
 
     #endregion
 
     #region Properties
 
-    public string message
+    public GameSkill skill
     {
-        get { return m_message; }
-        set { m_message = value; }
+        get { return m_skill; }
+        set { m_skill = value; }
     }
-
 
     #endregion
 }
