@@ -42,5 +42,15 @@ public class GameMode : SingletonBehaviour<GameMode>
         set { instance.m_skill = value; }
     }
 
+    public static bool isDeathMatch
+    {
+        get { return false; } // at this point no death matches
+    }
+
+    public static bool isSingleMode
+    {
+        get { return true; } // at this point single mode only
+    }
+
     #endregion
 }

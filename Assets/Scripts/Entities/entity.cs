@@ -6,8 +6,16 @@ using System.Collections;
 /// </summary>
 public abstract class entity : QuakeBehaviour
 {
+    protected const int SPAWNFLAG_NOT_EASY = 256;
+    protected const int SPAWNFLAG_NOT_MEDIUM = 512;
+    protected const int SPAWNFLAG_NOT_HARD = 1024;
+    protected const int SPAWNFLAG_NOT_DEATHMATCH = 2048;
+
     [HideInInspector]
     public string data;
+
+    [HideInInspector]
+    public int spawnflags;
 
     [SerializeField]
     public float health;
@@ -18,9 +26,16 @@ public abstract class entity : QuakeBehaviour
 
     protected void Awake()
     {
-        OnAwake();
+        if (CheckSpawnFlags(this.spawnflags))
+        {
+            OnAwake();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
-
+    
     protected void Start()
     {
         OnStart();
@@ -33,6 +48,30 @@ public abstract class entity : QuakeBehaviour
 
     protected virtual void OnStart()
     {
+    }
+
+    #endregion
+
+    #region Spawnflags
+
+    protected virtual bool CheckSpawnFlags(int spawnflags)
+    {
+        if ((spawnflags & SPAWNFLAG_NOT_EASY) != 0 && GameMode.skill == GameSkill.Easy)
+        {
+            return false;
+        }
+
+        if ((spawnflags & SPAWNFLAG_NOT_MEDIUM) != 0 && GameMode.skill == GameSkill.Normal)
+        {
+            return false;
+        }
+
+        if ((spawnflags & SPAWNFLAG_NOT_DEATHMATCH) != 0 && GameMode.isDeathMatch)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     #endregion
