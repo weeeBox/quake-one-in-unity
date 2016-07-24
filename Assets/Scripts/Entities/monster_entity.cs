@@ -18,9 +18,9 @@ public abstract class monster_entity : entity
 
     MDLAnimator m_animator;
 
-    protected override void Awake()
+    protected override void OnAwake()
     {
-        base.Awake();
+        base.OnAwake();
         m_animator = GetRequiredComponent<MDLAnimator>();
     }
 

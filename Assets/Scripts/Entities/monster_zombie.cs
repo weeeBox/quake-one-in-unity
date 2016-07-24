@@ -16,9 +16,9 @@ public class monster_zombie : monster_entity
     [SerializeField]
     public bool crucified;
 
-    protected override void Start()
+    protected override void OnStart()
     {
-        base.Start();
+        base.OnStart();
 
         if (crucified)
         {

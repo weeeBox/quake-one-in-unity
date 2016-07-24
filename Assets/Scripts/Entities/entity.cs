@@ -16,12 +16,22 @@ public abstract class entity : QuakeBehaviour
 
     #region Life cycle
 
-    protected virtual void Awake()
+    protected void Awake()
+    {
+        OnAwake();
+    }
+
+    protected void Start()
+    {
+        OnStart();
+    }
+
+    protected virtual void OnAwake()
     {
 
     }
 
-    protected virtual void Start()
+    protected virtual void OnStart()
     {
     }
 

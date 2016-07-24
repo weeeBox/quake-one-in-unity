@@ -44,9 +44,9 @@ public class func_door : entity
 
     float m_openedTime;
 
-    protected override void Start()
+    protected override void OnStart()
     {
-        base.Start();
+        base.OnStart();
         m_state = State.Closed;
     }
 

@@ -10,9 +10,9 @@ public class trigger_teleport : trigger
 
     EntityTargetName m_targetName;
 
-    protected override void Start()
+    protected override void OnStart()
     {
-        base.Start();
+        base.OnStart();
 
         m_targetName = GetTargetName();
         if (m_targetName == null)
