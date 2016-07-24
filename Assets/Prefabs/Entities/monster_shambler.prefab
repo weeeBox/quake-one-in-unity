@@ -13,7 +13,7 @@ GameObject:
   - 23: {fileID: 2326942}
   - 33: {fileID: 3398958}
   - 114: {fileID: 11413182}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: monster_shambler
   m_TagString: Untagged
   m_Icon: {fileID: 0}

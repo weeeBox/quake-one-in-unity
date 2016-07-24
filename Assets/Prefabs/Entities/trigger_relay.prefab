@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 443058}
   - 65: {fileID: 6539772}
   - 114: {fileID: 11407082}
-  m_Layer: 8
+  m_Layer: 13
   m_Name: trigger_relay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,6 +53,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a6e264824a937f499408fd2d707dae4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  data: 
+  health: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -10,11 +10,19 @@ public abstract class monster_entity : entity
     [SerializeField]
     int m_health = 100;
 
+    [SerializeField]
+    AudioClip[] m_hurtSounds;
+
+    [SerializeField]
+    AudioClip[] m_deathSounds;
+
     MDLAnimator m_animator;
+    AudioSource m_audioSource;
 
     void Awake()
     {
         m_animator = GetRequiredComponent<MDLAnimator>();
+        m_audioSource = GetRequiredComponent<AudioSource>();
     }
 
     // Use this for initialization
@@ -45,15 +53,17 @@ public abstract class monster_entity : entity
     }
 
     protected virtual void Kill()
-    {
+    {   
         PlayRandomAnimation(DeathAnimations);
+        PlayRandomAudioClip(m_deathSounds);
     }
     
     protected virtual void Hurt()
     {
         PlayRandomAnimation(PainAnimations);
+        PlayRandomAudioClip(m_hurtSounds);
     }
-
+    
     protected abstract string[] PainAnimations { get; }
     protected abstract string[] DeathAnimations { get; }
 
@@ -70,6 +80,20 @@ public abstract class monster_entity : entity
     protected void PlayAnimation(string name)
     {
         m_animator.PlayAnimation(name);
+    }
+
+    #endregion
+
+    #region Sounds
+
+    private void PlayRandomAudioClip(AudioClip[] clips)
+    {
+        if (clips != null)
+        {
+            int clipIndex = Random.Range(0, clips.Length);
+            m_audioSource.clip = clips[clipIndex];
+            m_audioSource.Play();
+        }
     }
 
     #endregion

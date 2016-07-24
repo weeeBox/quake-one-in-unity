@@ -14,7 +14,8 @@ GameObject:
   - 114: {fileID: 11414054}
   - 114: {fileID: 11437318}
   - 136: {fileID: 13609044}
-  m_Layer: 9
+  - 82: {fileID: 8234840}
+  m_Layer: 12
   m_Name: monster_dog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,6 +83,80 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!82 &8234840
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 172986}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!114 &11414054
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -109,6 +184,11 @@ MonoBehaviour:
   data: "\"classname\" \"monster_dog\"\r\n\"origin\" \"88 1520 -200\"\r\n\"angle\"
     \"270\"\r\n"
   health: 0
+  m_health: 100
+  m_hurtSounds:
+  - {fileID: 8300000, guid: 768c4fd0b4997c64298e835596711f89, type: 3}
+  m_deathSounds:
+  - {fileID: 8300000, guid: 0a558f44fb20cc849884713c41ea088b, type: 3}
 --- !u!136 &13609044
 CapsuleCollider:
   m_ObjectHideFlags: 1

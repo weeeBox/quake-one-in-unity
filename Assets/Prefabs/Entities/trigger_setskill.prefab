@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 450248}
   - 65: {fileID: 6531806}
   - 114: {fileID: 11406134}
-  m_Layer: 8
+  m_Layer: 13
   m_Name: trigger_setskill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,6 +53,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bae1aadf1b7aaa49956753d21c19186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  data: 
+  health: 0
   m_message: 
 --- !u!1001 &100100000
 Prefab:

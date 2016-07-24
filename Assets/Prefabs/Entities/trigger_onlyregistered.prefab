@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 494028}
   - 65: {fileID: 6555158}
   - 114: {fileID: 11478434}
-  m_Layer: 8
+  m_Layer: 13
   m_Name: trigger_onlyregistered
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,6 +53,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daeca2a5547b5ab4d8523906a067932a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  data: 
+  health: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

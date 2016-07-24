@@ -32,11 +32,16 @@ public class Weapon : MonoBehaviour
     [SerializeField]
     GameObject m_hit;
 
+    [SerializeField]
+    LayerMask m_shootingMask;
+
+    AudioSource m_audioSource;
     MDLAnimator m_animator;
 
     void Awake()
     {
         m_animator = GetComponent<MDLAnimator>();
+        m_audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -49,11 +54,16 @@ public class Weapon : MonoBehaviour
 
     public void Shoot()
     {
+        // animation
         m_animator.PlayAnimation("shot_animation");
 
+        // sound
+        m_audioSource.Play();
+
+        // physics
         Ray ray = m_weaponCamera.ViewportPointToRay(new Vector2(0.5f, 0.5f));
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100.0f))
+        if (Physics.Raycast(ray, out hit, 100.0f, m_shootingMask))
         {
             var target = hit.collider.GetComponent<QuakeBehaviour>();
             if (target != null)
