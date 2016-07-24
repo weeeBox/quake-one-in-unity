@@ -9,6 +9,9 @@ GameObject:
   m_Component:
   - 4: {fileID: 405572}
   - 114: {fileID: 11481446}
+  - 23: {fileID: 2347626}
+  - 33: {fileID: 3310408}
+  - 114: {fileID: 11485378}
   m_Layer: 0
   m_Name: weapon_supershotgun
   m_TagString: Untagged
@@ -29,6 +32,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!23 &2347626
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 182592}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 95b7520b9e48e7d44b3f3337befe6c6f, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &3310408
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 182592}
+  m_Mesh: {fileID: 4300000, guid: f5253f52f47895e409735af315eba46b, type: 2}
 --- !u!114 &11481446
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -40,6 +76,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 382a84b35fc93024a997e98135fe3c17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  data: 
+  health: 0
+--- !u!114 &11485378
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 182592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ecf83a470a293540a064f5d82a07fa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_model: {fileID: 11400000, guid: 6c17cc5aadbba304aa72d72ac05344c6, type: 2}
+  m_animation: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

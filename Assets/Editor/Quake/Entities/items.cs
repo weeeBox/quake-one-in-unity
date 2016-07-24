@@ -12,6 +12,10 @@ public abstract class item_entity_t : entity_t
 [EntityGroup("Weapons")]
 public abstract class weapon_entity_t : entity_t
 {
+    public weapon_entity_t()
+    {
+        this.movable = true;
+    }
 }
 
 /*
