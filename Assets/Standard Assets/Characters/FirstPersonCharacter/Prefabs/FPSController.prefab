@@ -558,6 +558,9 @@ MonoBehaviour:
   m_weaponCamera: {fileID: 2092242}
   m_shootingOrigin: {fileID: 495794}
   m_hit: {fileID: 155490, guid: 403f0169e1e8b154fac10d0780043177, type: 2}
+  m_shootingMask:
+    serializedVersion: 2
+    m_Bits: 4352
 --- !u!124 &12474086
 Behaviour:
   m_ObjectHideFlags: 1
