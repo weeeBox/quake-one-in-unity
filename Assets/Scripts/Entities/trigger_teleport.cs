@@ -6,8 +6,10 @@ public class trigger_teleport : trigger
 {
     EntityTargetName m_targetName;
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+
         m_targetName = GetTargetName();
     }
 

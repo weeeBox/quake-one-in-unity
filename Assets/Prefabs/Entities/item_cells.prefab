@@ -12,7 +12,7 @@ GameObject:
   - 23: {fileID: 2380000}
   - 33: {fileID: 3398602}
   - 114: {fileID: 11416756}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: item_cells
   m_TagString: Untagged
   m_Icon: {fileID: 0}

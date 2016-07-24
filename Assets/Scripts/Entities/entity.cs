@@ -12,6 +12,19 @@ public abstract class entity : QuakeBehaviour
     [SerializeField]
     public float health;
 
+    #region Life cycle
+
+    protected virtual void Awake()
+    {
+
+    }
+
+    protected virtual void Start()
+    {
+    }
+
+    #endregion
+
     #region Collision
 
     void OnTriggerEnter(Collider other)

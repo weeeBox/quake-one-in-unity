@@ -19,16 +19,13 @@ public abstract class monster_entity : entity
     MDLAnimator m_animator;
     AudioSource m_audioSource;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         m_animator = GetRequiredComponent<MDLAnimator>();
         m_audioSource = GetRequiredComponent<AudioSource>();
     }
-
-    // Use this for initialization
-	void Start () {
-	
-	}
 	
 	// Update is called once per frame
 	void Update () {

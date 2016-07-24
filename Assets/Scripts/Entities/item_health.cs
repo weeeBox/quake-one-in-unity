@@ -2,7 +2,11 @@ using System;
 
 using UnityEngine;
 
-// [RequireComponent(typeof())]
-public class item_health : entity
+public class item_health : item_entity
 {
+    protected override bool Pickup()
+    {
+        Debug.LogWarning("Implement me!");
+        return true;
+    }
 }

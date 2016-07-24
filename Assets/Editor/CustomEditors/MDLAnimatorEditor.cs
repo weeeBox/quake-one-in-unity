@@ -10,8 +10,6 @@ public class MDLAnimatorEditor : Editor
     {
         var animator = target as MDLAnimator;
         var oldModel = animator.model;
-        var oldAnimation = animator.animation;
-        var oldSkin = animator.sharedSkin;
 
         base.OnInspectorGUI();
 

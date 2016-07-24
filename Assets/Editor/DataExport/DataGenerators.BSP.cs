@@ -7,8 +7,6 @@ using System.Collections.Generic;
 
 static partial class DataGenerators
 {
-    static readonly string kLastOpenedBSP = "kLastOpenedBSP";
-
     [MenuItem("Quake Utils/Load BSP...")]
     static void LoadBSP()
     {

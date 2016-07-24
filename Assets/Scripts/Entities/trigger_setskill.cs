@@ -10,8 +10,7 @@ public class trigger_setskill : trigger
     #region Collision
 
     protected override void OnCharacterEnter(CharacterController character)
-    {
-        Debug.Log(m_message);
+    {  
     }
 
     #endregion

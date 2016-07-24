@@ -9,7 +9,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 483744}
   - 114: {fileID: 11450932}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: item_sigil
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,6 +40,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4687c4c5831ccf249953a3cc90e5429a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  data: 
+  health: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -12,8 +12,7 @@ public static class AssetUtils
     static string s_projectPath;
 
     public static T[] LoadAssetsAtPath<T>(string path) where T : UnityEngine.Object
-    {
-        var typename = typeof(T).Name;
+    {   
         var folders = new string[] { path };
         var GUIDs = AssetDatabase.FindAssets("t:Object", folders); // using custom type didn't work (Unity 5.3)
         var assets = new List<T>(GUIDs.Length);

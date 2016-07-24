@@ -33,7 +33,6 @@ public class HitSplash : MonoBehaviour
     void Awake()
     {
         var meshFilter = GetComponent<MeshFilter>();
-        var meshRenderer = GetComponent<MeshRenderer>();
 
         m_mesh = meshFilter.mesh;
         m_mesh.MarkDynamic();

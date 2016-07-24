@@ -16,8 +16,10 @@ public class monster_zombie : monster_entity
     [SerializeField]
     public bool crucified;
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+
         if (crucified)
         {
             PlayAnimation("cruc__animation"); // TODO: play from a random frame

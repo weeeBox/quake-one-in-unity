@@ -26,7 +26,6 @@ public class MDLAnimator : MonoBehaviour
     float m_elaspedTime;
 
     int m_frameIndex;
-    int m_nextFrameIndex;
     bool m_animationFinished;
 
     void Awake()
@@ -98,7 +97,6 @@ public class MDLAnimator : MonoBehaviour
 
         // indices
         m_frameIndex = index;
-        m_nextFrameIndex = (index + 1) % m_animation.frameCount;
 
         // initialize blend vertices
         var vertices = m_animation.frames[index].vertices;
