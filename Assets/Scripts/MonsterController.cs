@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class EnemyController : QuakeBehaviour
+public class MonsterController : QuakeBehaviour
 {
     enum EnemyState
     {
