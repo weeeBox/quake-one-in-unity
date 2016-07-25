@@ -138,5 +138,15 @@ public class MonsterVision : QuakeBehaviour
     public Action onPlayerBecomeVisible { get; set; }
     public Action onPlayerBecomeInvisible { get; set; }
 
+    public bool playerInRange
+    {
+        get { return m_playerInRange; }
+    }
+
+    public bool playerVisible
+    {
+        get { return m_playerVisible; }
+    }
+
     #endregion
 }

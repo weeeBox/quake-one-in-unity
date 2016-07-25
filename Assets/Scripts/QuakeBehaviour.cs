@@ -14,6 +14,14 @@ public class QuakeBehaviour : MonoBehaviour
 
     #region Helpers
 
+    protected void CheckAssigned(object field, string name)
+    {
+        if (field == null)
+        {
+            Debug.LogError("Field '" + name + "' not assigned");
+        }
+    }
+
     protected T GetRequiredComponent<T>()
     {
         var component = GetComponent<T>();

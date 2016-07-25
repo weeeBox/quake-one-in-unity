@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 
+public delegate void MDLAnimatorDelegate(MDLAnimator animator, MDLAnimation animation, bool cancelled);
+
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 public class MDLAnimator : MonoBehaviour
@@ -27,6 +29,8 @@ public class MDLAnimator : MonoBehaviour
 
     int m_frameIndex;
     bool m_animationFinished;
+
+    MDLAnimatorDelegate m_delegate;
 
     void Awake()
     {
@@ -72,6 +76,13 @@ public class MDLAnimator : MonoBehaviour
                         }
 
                         m_animationFinished = true;
+                        if (m_delegate != null)
+                        {
+                            var del = m_delegate;
+                            m_delegate = null;
+
+                            del(this, m_animation, false);
+                        }
                     }
                 }
             }
@@ -121,6 +132,7 @@ public class MDLAnimator : MonoBehaviour
 
     #region Animations
 
+    [Obsolete]
     public void PlayAnimation(string name)
     {
         var animation = FindAnimation(name);
@@ -139,10 +151,16 @@ public class MDLAnimator : MonoBehaviour
         m_mesh.vertices = m_initialVertices;
     }
 
-    void PlayAnimation(MDLAnimation animation)
+    public void PlayAnimation(MDLAnimation animation, MDLAnimatorDelegate del = null)
     {
+        if (m_delegate != null && m_delegate != del)
+        {
+            m_delegate(this, m_animation, true);
+        }
+
         m_animation = animation;
         m_animationFinished = false;
+        m_delegate = del;
         SetFrameIndex(0);
     }
 

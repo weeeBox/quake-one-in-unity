@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16eab90008619184a9ce6be29d588551, type: 3}
+  m_Name: soldier_data
+  m_EditorClassIdentifier: 
+  animations:
+    stand:
+    - {fileID: 11400000, guid: d5d307487c5a0744aab5192c9a45eb8f, type: 2}
+    patrol:
+    - {fileID: 11400000, guid: ddbbf815ae3a2724eb88646e1e109f2b, type: 2}
+    chase:
+    - {fileID: 11400000, guid: 05e607aa7b9ead142a330a0eab577a0a, type: 2}
+    leap: []
+    attack:
+    - {fileID: 11400000, guid: 01316592d234d4a4f8fa9d9116e0d53d, type: 2}
+    pain:
+    - {fileID: 11400000, guid: 93a5fb188204bf64485bebc017e2dd6a, type: 2}
+    - {fileID: 11400000, guid: d94bf3cbd98fc6b4891d80f897bcafe3, type: 2}
+    - {fileID: 11400000, guid: 37bda2b9f3332084396e47b165894dac, type: 2}
+    death:
+    - {fileID: 11400000, guid: 5b0474ceb9a1275489865ac75d7f1504, type: 2}
+    - {fileID: 11400000, guid: 082499bc7a670564699069808ad4007a, type: 2}
+  audio:
+    idle:
+    - {fileID: 8300000, guid: f431f74cd8fc4ba4b899693c171c3a4a, type: 3}
+    sight:
+    - {fileID: 8300000, guid: 9bc4913a33ad97c4daff0f73e4f186e7, type: 3}
+    attack:
+    - {fileID: 8300000, guid: 0d314f8cf2f4d2c44b9609a5d09b0f68, type: 3}
+    pain:
+    - {fileID: 8300000, guid: a33ad48caf305af4197b28f377a580a9, type: 3}
+    - {fileID: 8300000, guid: 92e55e4d3465acd4cb35c855e20a383a, type: 3}
+    death:
+    - {fileID: 8300000, guid: 718833bbaa759c140a983c55d9bca3ca, type: 3}
