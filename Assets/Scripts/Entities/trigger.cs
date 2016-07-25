@@ -6,6 +6,18 @@ public abstract class trigger : entity
 {
     BoxCollider m_collider;
 
+    #region Damage
+
+    public override void TakeDamage(int damage)
+    {
+        if (this.health > 0)
+        {
+            SignalTarget();
+        }
+    }
+
+    #endregion
+
     #region Gizmos
 
     protected override void DrawGizmos(bool selected)

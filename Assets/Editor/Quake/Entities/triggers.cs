@@ -18,6 +18,11 @@ public abstract class trigger_entity_t : entity_t
             var collider = entity.GetComponent<BoxCollider>();
             collider.size = this.size;
         }
+
+        if (health > 0)
+        {
+            entity.gameObject.layer = LayerMask.NameToLayer("ShootTrigger");
+        }
     }
 }
 
