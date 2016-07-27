@@ -85,61 +85,6 @@ NavMeshSettings:
     cellSize: 0.083333336
     manualCellSize: 0
   m_NavMeshData: {fileID: 23800000, guid: 1e12546cb227d524f9a293cadbfced06, type: 2}
---- !u!1001 &14118322
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 1412083670}
-    m_Modifications:
-    - target: {fileID: 409746, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0.041
-      objectReference: {fileID: 0}
-    - target: {fileID: 409746, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0.347
-      objectReference: {fileID: 0}
-    - target: {fileID: 409746, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 409746, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 409746, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 409746, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 409746, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 409746, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 13534994, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-      propertyPath: m_Radius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 197584, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11488546, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-      propertyPath: m_sightDistance
-      value: 7
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 13534994, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-  m_ParentPrefab: {fileID: 100100000, guid: f62a0306356d157489a69fd1afe6ced5, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1001 &31044923
 Prefab:
   m_ObjectHideFlags: 0
@@ -663,7 +608,26 @@ Prefab:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 5429540, guid: 78fbfd76f67a3244d857d0638faa83c0, type: 2}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11428476, guid: 78fbfd76f67a3244d857d0638faa83c0, type: 2}
+      propertyPath: m_data
+      value: 
+      objectReference: {fileID: 11400000, guid: 5db79a0e010673a4cb4140159f913d82,
+        type: 2}
+    - target: {fileID: 11428476, guid: 78fbfd76f67a3244d857d0638faa83c0, type: 2}
+      propertyPath: health
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 11428476, guid: 78fbfd76f67a3244d857d0638faa83c0, type: 2}
+      propertyPath: m_visionRaycastMask.m_Bits
+      value: 768
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 13623194, guid: 78fbfd76f67a3244d857d0638faa83c0, type: 2}
+    - {fileID: 5429540, guid: 78fbfd76f67a3244d857d0638faa83c0, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 78fbfd76f67a3244d857d0638faa83c0, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1395016292
@@ -761,7 +725,7 @@ NavMeshAgent:
   m_Speed: 3
   m_Acceleration: 100
   avoidancePriority: 50
-  m_AngularSpeed: 500
+  m_AngularSpeed: 10000
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -770,19 +734,19 @@ NavMeshAgent:
   m_BaseOffset: 0.50203997
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1412083672
-MonoBehaviour:
+--- !u!136 &1412083676
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1412083669}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe689586ec1ed8e49af28918a07bfc94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_data: {fileID: 11400000, guid: 5db79a0e010673a4cb4140159f913d82, type: 2}
-  m_closeRangeDistance: 2
+  m_Radius: 0.16
+  m_Height: 0.9889066
+  m_Direction: 1
+  m_Center: {x: -0.027018502, y: 0.007586673, z: 0.04263325}
 --- !u!1 &1463850395
 GameObject:
   m_ObjectHideFlags: 0

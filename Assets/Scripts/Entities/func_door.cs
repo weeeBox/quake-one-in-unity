@@ -141,7 +141,7 @@ public class func_door : entity
 
     #region Damage
 
-    protected override void OnKill()
+    protected override void OnKill(int damage)
     {
         Open();
     }

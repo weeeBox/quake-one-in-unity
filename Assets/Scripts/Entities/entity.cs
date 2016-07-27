@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+
+using Random = UnityEngine.Random;
 
 /// <summary>
 /// A base class for every 'entity' game object
@@ -41,12 +44,24 @@ public abstract class entity : QuakeBehaviour
         OnStart();
     }
 
+    protected void Update()
+    {
+        OnUpdate(Time.deltaTime);
+    }
+    
+    protected virtual void OnDestroy()
+    {
+    }
+
     protected virtual void OnAwake()
     {
-
     }
 
     protected virtual void OnStart()
+    {
+    }
+
+    protected virtual void OnUpdate(float deltaTime)
     {
     }
 
@@ -131,14 +146,23 @@ public abstract class entity : QuakeBehaviour
         if (this.health > 0)
         {
             this.health -= damage;
-            if (health <= 0)
+            if (health > 0)
             {
-                OnKill();
+                OnHurt(damage);
+            }
+            else
+            {
+                health = 0.0f;
+                OnKill(damage);
             }
         }
     }
 
-    protected virtual void OnKill()
+    protected virtual void OnHurt(int damage)
+    {
+    }
+
+    protected virtual void OnKill(int damage)
     {
     }
 

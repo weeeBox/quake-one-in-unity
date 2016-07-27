@@ -4,71 +4,301 @@ using System;
 using System.Collections;
 
 using Random = UnityEngine.Random;
+using StateUpdateCallback = System.Action<float>;
 
+[RequireComponent(typeof(MDLAnimator))]
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(AudioSource))]
 public abstract class monster_entity : entity
 {
-    [SerializeField]
-    int m_health = 100;
+    enum MonsterState
+    {
+        Sleeping,   // not activated
+        Standing,   // standing still
+        Patrolling, // patrolling the area
+        Sighting,   // spotted the player
+        Chasing,    // chasing the player
+        Leaping,    // jumping attack
+        Shooting,   // shooting attack
+        Loading,    // reloading
+        Hurt,       // taking damage
+        Dead        // dead
+    }
 
     [SerializeField]
-    AudioClip[] m_hurtSounds;
+    MonsterData m_data;
 
     [SerializeField]
-    AudioClip[] m_deathSounds;
+    LayerMask m_visionRaycastMask;
 
+    NavMeshAgent m_navMeshAgent;
     MDLAnimator m_animator;
+
+    TimerManager m_timerManager;
+    CharacterController m_character;
+
+    MonsterState m_state;
+    Action<float> m_stateUpdateCallback;
+    float m_stateUpdateElapsed;
+    float m_stateUpdateDelay;
+
+    bool m_playerVisible;
+    float m_lastAttackElapsed;
+
+    #region Life cycle
 
     protected override void OnAwake()
     {
         base.OnAwake();
+
+        CheckAssigned(m_data, "data");
+        
+        m_timerManager = new TimerManager();
+
+        m_navMeshAgent = GetRequiredComponent<NavMeshAgent>();
         m_animator = GetRequiredComponent<MDLAnimator>();
     }
 
-    #region Damage
-
-    public override void TakeDamage(int damage)
+    protected override void OnStart()
     {
-        base.TakeDamage(damage);
+        base.OnStart();
 
-        m_health -= damage;
-        if (m_health < 0)
-        {
-            Kill();
-        }
-        else
-        {
-            Hurt();
-        }
-    }
+        SetState(MonsterState.Standing);
 
-    protected virtual void Kill()
-    {   
-        PlayRandomAnimation(DeathAnimations);
-        PlayRandomAudioClip(m_deathSounds);
+        m_character = FindObjectOfType<CharacterController>();
+        if (m_character == null)
+        {
+            Debug.LogError("Can't find character controller");
+        }
+
+        StartUpdateVision();
     }
     
-    protected virtual void Hurt()
+    protected override void OnUpdate(float deltaTime)
     {
-        PlayRandomAnimation(PainAnimations);
-        PlayRandomAudioClip(m_hurtSounds);
+        if (m_stateUpdateCallback != null)
+        {
+            m_stateUpdateElapsed += deltaTime;
+            if (m_stateUpdateElapsed > m_stateUpdateDelay)
+            {   
+                m_stateUpdateCallback(m_stateUpdateElapsed);
+                m_stateUpdateElapsed = 0.0f;
+            }
+        }
+
+        m_timerManager.Update(deltaTime);
     }
-    
-    protected abstract string[] PainAnimations { get; }
-    protected abstract string[] DeathAnimations { get; }
 
     #endregion
 
-    #region Animations
+    #region Player
 
-    void PlayRandomAnimation(string[] names)
+    private bool IsPlayerInCloseRange()
     {
-        int animationIndex = Random.Range(0, names.Length);
-        PlayAnimation(names[animationIndex]);
+        var distance = m_character.transform.position - transform.position;
+        return distance.sqrMagnitude < m_data.closeCombatRangeSqr;
     }
 
-    protected void PlayAnimation(string name)
+    #endregion
+
+    #region Damage
+
+    protected override void OnHurt(int damage)
     {
-        m_animator.PlayAnimation(name);
+        base.OnHurt(damage);
+
+        SetState(MonsterState.Hurt);
+
+        m_navMeshAgent.Stop();
+        PlayRandomAudioClip(m_data.audio.pain);
+        PlayRandomAnimation(m_data.animations.pain, HurtAnimationFinished);
+    }
+
+    protected override void OnKill(int damage)
+    {
+        base.OnKill(damage);
+
+        SetState(MonsterState.Dead);
+        m_navMeshAgent.Stop();
+        PlayRandomAudioClip(m_data.audio.death);
+        PlayRandomAnimation(m_data.animations.death);
+    }
+
+    private void HurtAnimationFinished()
+    {
+        StartChasing();
+    }
+
+    #endregion
+
+    #region States
+
+    private void SetState(MonsterState state)
+    {
+        m_state = state;
+        m_stateUpdateElapsed = 0.0f;
+
+        switch (state)
+        {
+            case MonsterState.Chasing:
+                m_stateUpdateCallback = UpdateChasing;
+                m_stateUpdateDelay = 0.5f;
+                break;
+            default:
+                m_stateUpdateCallback = null;
+                m_stateUpdateDelay = 0.0f;
+                break;
+        }
+    }
+
+    #endregion
+
+    #region Vision
+
+    private void StartUpdateVision()
+    {
+        ScheduleTimer(UpdateVision, 1.0f / m_data.visionRate, 0);
+    }
+
+    private void UpdateVision()
+    {
+        Vector3 distance = m_character.transform.position - transform.position;
+        bool playerInRange = distance.sqrMagnitude < m_data.sightDistanceSqr;
+        if (playerInRange)
+        {
+            bool playerWasVisible = m_playerVisible;
+
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, distance, out hit, m_data.sightDistance, m_visionRaycastMask))
+            {
+                m_playerVisible = hit.collider.tag == "Player";
+            }
+            else
+            {
+                m_playerVisible = false;
+            }
+
+            if (m_playerVisible && !playerWasVisible)
+            {
+                PlayerBecomeVisible();
+            }
+            else if (!m_playerVisible && playerWasVisible)
+            {
+                PlayerBecomeInvisible();
+            }
+        }
+    }
+
+    private void PlayerBecomeVisible()
+    {
+        if (m_state == MonsterState.Standing ||
+            m_state == MonsterState.Patrolling ||
+            m_state == MonsterState.Sleeping)
+        {
+            Sight();
+        }
+    }
+
+    private void PlayerBecomeInvisible()
+    {
+    }
+
+    #endregion
+
+    #region Sight
+
+    private void Sight()
+    {
+        m_state = MonsterState.Sighting;
+        PlayRandomAudioClip(m_data.audio.sight);
+
+        StartChasing();
+    }
+
+    #endregion
+
+    #region Chase
+
+    void StartChasing()
+    {
+        SetState(MonsterState.Chasing);
+        PlayRandomAnimation(m_data.animations.chase);
+
+        MoveToPlayer();
+    }
+
+    void UpdateChasing(float deltaTime)
+    {
+        if (IsPlayerInCloseRange())
+        {
+            m_navMeshAgent.Stop();
+        }
+        else
+        {
+            MoveToPlayer();
+        }
+    }
+
+    void MoveToPlayer()
+    {
+        m_navMeshAgent.destination = m_character.transform.position;
+        m_navMeshAgent.stoppingDistance = m_data.closeCombatRange;
+        m_navMeshAgent.Resume();
+    }
+    
+    #endregion
+
+    #region Attack
+
+    //void TryAttack()
+    //{
+    //    if (m_vision.playerVisible)
+    //    {
+    //        // stop moving towards the player
+    //        m_navMeshAgent.Stop();
+
+    //        m_state = MonsterState.Attacking;
+    //        PlayRandomAnimation(m_data.animations.attack, AttackAnimationFinished);
+    //        PlayRandomAudioClip(m_data.audio.attack);
+    //    }
+    //}
+
+    #endregion
+
+    #region Animation
+
+    void PlayRandomAnimation(MDLAnimation[] animations, Action finishCallback = null)
+    {
+        if (animations != null && animations.Length > 0)
+        {
+            var index = Random.Range(0, animations.Length);
+            m_animator.PlayAnimation(animations[index], finishCallback);
+        }
+    }
+
+    #endregion
+
+    #region Timers
+
+    Timer ScheduleTimer(Action callback, float delay = 0.0f, int numRepeats = 1)
+    {
+        return m_timerManager.Schedule(callback, delay, numRepeats);
+    }
+
+    Timer RescheduleTimer(Action callback, float delay = 0.0f, int numRepeats = 1)
+    {
+        CancelTimer(callback);
+        return ScheduleTimer(callback, delay, numRepeats);
+    }
+
+    void CancelTimer(Action callback)
+    {
+        m_timerManager.Cancel(callback);
+    }
+
+    void CancelAllTimers()
+    {
+        m_timerManager.CancelAll();
     }
 
     #endregion

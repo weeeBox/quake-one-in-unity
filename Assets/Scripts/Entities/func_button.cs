@@ -17,7 +17,7 @@ public class func_button : entity
 
     #region Damage
 
-    protected override void OnKill()
+    protected override void OnKill(int damage)
     {
         Trigger();
     }

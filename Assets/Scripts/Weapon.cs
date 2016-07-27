@@ -68,7 +68,7 @@ public class Weapon : MonoBehaviour
             var target = hit.collider.GetComponent<QuakeBehaviour>();
             if (target != null)
             {
-                target.TakeDamage(100);
+                target.TakeDamage(20);
             }
 
             Instantiate(m_hit, hit.point, Quaternion.LookRotation(-ray.direction));

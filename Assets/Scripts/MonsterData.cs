@@ -55,4 +55,29 @@ public class MonsterData : ScriptableObject
 
     [SerializeField]
     public MonsterDataAudio audio;
+
+    [SerializeField]
+    public float sightDistance = 20;
+
+    [SerializeField]
+    public float fov = 90;
+
+    [SerializeField]
+    public float closeCombatRange = 1.2f;
+
+    [SerializeField]
+    public float leapRange;
+
+    [SerializeField]
+    public int visionRate = 2;
+
+    public float sightDistanceSqr
+    {
+        get { return sightDistance * sightDistance; }
+    }
+
+    public float closeCombatRangeSqr
+    {
+        get { return closeCombatRange * closeCombatRange; }
+    }
 }
