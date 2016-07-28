@@ -13,16 +13,17 @@ public abstract class monster_entity : entity
 {
     enum MonsterState
     {
-        Sleeping,   // not activated
-        Standing,   // standing still
-        Patrolling, // patrolling the area
-        Sighting,   // spotted the player
-        Chasing,    // chasing the player
-        Leaping,    // jumping attack
-        Shooting,   // shooting attack
-        Loading,    // reloading
-        Hurt,       // taking damage
-        Dead        // dead
+        Sleep,              // not activated
+        Stand,              // standing still
+        Patrol,             // patrolling the area
+        Sight,              // spotted the player
+        Chase,              // chasing the player
+        Leap,               // jumping attack
+        LongRangeAttack,    // attack from long range (shooting, etc)
+        CloseRangeAttack,   // attack from close range (melee, smash, etc)
+        Reload,             // reloading
+        Hurt,               // taking damage
+        Dead                // dead
     }
 
     [SerializeField]
@@ -63,7 +64,7 @@ public abstract class monster_entity : entity
     {
         base.OnStart();
 
-        SetState(MonsterState.Standing);
+        SetState(MonsterState.Stand);
 
         m_character = FindObjectOfType<CharacterController>();
         if (m_character == null)
@@ -140,7 +141,7 @@ public abstract class monster_entity : entity
 
         switch (state)
         {
-            case MonsterState.Chasing:
+            case MonsterState.Chase:
                 m_stateUpdateCallback = UpdateChasing;
                 m_stateUpdateDelay = 0.5f;
                 break;
@@ -191,9 +192,9 @@ public abstract class monster_entity : entity
 
     private void PlayerBecomeVisible()
     {
-        if (m_state == MonsterState.Standing ||
-            m_state == MonsterState.Patrolling ||
-            m_state == MonsterState.Sleeping)
+        if (m_state == MonsterState.Stand ||
+            m_state == MonsterState.Patrol ||
+            m_state == MonsterState.Sleep)
         {
             Sight();
         }
@@ -209,7 +210,7 @@ public abstract class monster_entity : entity
 
     private void Sight()
     {
-        m_state = MonsterState.Sighting;
+        m_state = MonsterState.Sight;
         PlayRandomAudioClip(m_data.audio.sight);
 
         StartChasing();
@@ -221,7 +222,7 @@ public abstract class monster_entity : entity
 
     void StartChasing()
     {
-        SetState(MonsterState.Chasing);
+        SetState(MonsterState.Chase);
         PlayRandomAnimation(m_data.animations.chase);
 
         MoveToPlayer();

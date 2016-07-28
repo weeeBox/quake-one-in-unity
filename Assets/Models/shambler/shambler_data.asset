@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16eab90008619184a9ce6be29d588551, type: 3}
+  m_Name: shambler_data
+  m_EditorClassIdentifier: 
+  animations:
+    stand:
+    - {fileID: 11400000, guid: 80d8f0e1b629a694192891081d5d18e9, type: 2}
+    patrol:
+    - {fileID: 11400000, guid: a248f3aea139bf54ea4ed763e3f33669, type: 2}
+    chase:
+    - {fileID: 11400000, guid: d74d06f2b1b4bcc4f91a8b21f3599295, type: 2}
+    leap: []
+    attack:
+    - {fileID: 11400000, guid: d3b6b6a47c98e754999e3549e66ecadd, type: 2}
+    pain:
+    - {fileID: 11400000, guid: 7625535189e32964ba8dfdcc68e47897, type: 2}
+    death:
+    - {fileID: 11400000, guid: d1641c0c7a0739c4a860b560ea4164e1, type: 2}
+  audio:
+    idle: []
+    sight: []
+    attack: []
+    pain: []
+    death: []
+  sightDistance: 20
+  fov: 90
+  closeCombatRange: 2
+  leapRange: 0
+  visionRate: 2

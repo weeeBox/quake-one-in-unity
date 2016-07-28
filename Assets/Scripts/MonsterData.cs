@@ -40,6 +40,12 @@ public class MonsterDataAudio
     public AudioClip[] attack;
 
     [SerializeField]
+    public AudioClip[] smash;
+
+    [SerializeField]
+    public AudioClip[] swing;
+
+    [SerializeField]
     public AudioClip[] pain;
 
     [SerializeField]

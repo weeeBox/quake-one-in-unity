@@ -8,11 +8,13 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 430496}
-  - 114: {fileID: 11414132}
   - 54: {fileID: 5474502}
   - 23: {fileID: 2326942}
   - 33: {fileID: 3398958}
   - 114: {fileID: 11413182}
+  - 195: {fileID: 19513428}
+  - 136: {fileID: 13624688}
+  - 114: {fileID: 11430442}
   m_Layer: 12
   m_Name: monster_shambler
   m_TagString: Untagged
@@ -43,7 +45,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: cdd1b20d0b83e2f44a69301d443062bb, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 1
@@ -65,7 +67,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129872}
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 4300000, guid: 6a87a6d204adddd4186f08bc6786e6f6, type: 2}
 --- !u!54 &5474502
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -77,7 +79,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -92,9 +94,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ecf83a470a293540a064f5d82a07fa3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_model: {fileID: 0}
-  m_animation: {fileID: 0}
---- !u!114 &11414132
+  m_model: {fileID: 11400000, guid: 3b7b5d4c62e928848b05e6a40966f123, type: 2}
+  m_animation: {fileID: 11400000, guid: 80d8f0e1b629a694192891081d5d18e9, type: 2}
+--- !u!114 &11430442
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -106,7 +108,45 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: 
-  health: 0
+  spawnflags: 0
+  health: 100
+  m_data: {fileID: 11400000, guid: b85f260bbc7740d4d8ca83ee0e418f7d, type: 2}
+  m_visionRaycastMask:
+    serializedVersion: 2
+    m_Bits: 768
+--- !u!136 &13624688
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 129872}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.49
+  m_Height: 1.7325782
+  m_Direction: 1
+  m_Center: {x: 0.10717863, y: 0.38159674, z: 0.34188688}
+--- !u!195 &19513428
+NavMeshAgent:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 129872}
+  m_Enabled: 1
+  m_Radius: 0.62
+  m_Speed: 3.5
+  m_Acceleration: 1000
+  avoidancePriority: 50
+  m_AngularSpeed: 500
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1.53
+  m_BaseOffset: 0.49
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
