@@ -4,7 +4,6 @@ using System;
 using System.Collections;
 
 using Random = UnityEngine.Random;
-using StateUpdateCallback = System.Action<float>;
 
 [RequireComponent(typeof(MDLAnimator))]
 [RequireComponent(typeof(NavMeshAgent))]
@@ -26,6 +25,8 @@ public abstract class monster_entity : entity
         Dead                // dead
     }
 
+    static readonly string kStateTimerTag = "State";
+
     [SerializeField]
     MonsterData m_data;
 
@@ -40,11 +41,10 @@ public abstract class monster_entity : entity
 
     MonsterState m_state;
     Action<float> m_stateUpdateCallback;
-    float m_stateUpdateElapsed;
-    float m_stateUpdateDelay;
-
+    
     bool m_playerVisible;
-    float m_lastAttackElapsed;
+
+    const float kUpdateChasePathDelay = 1.0f / 2; // 2 times/second
 
     #region Life cycle
 
@@ -57,6 +57,7 @@ public abstract class monster_entity : entity
         m_timerManager = new TimerManager();
 
         m_navMeshAgent = GetRequiredComponent<NavMeshAgent>();
+        m_navMeshAgent.stoppingDistance = m_data.closeCombatRange;
         m_animator = GetRequiredComponent<MDLAnimator>();
     }
 
@@ -79,12 +80,7 @@ public abstract class monster_entity : entity
     {
         if (m_stateUpdateCallback != null)
         {
-            m_stateUpdateElapsed += deltaTime;
-            if (m_stateUpdateElapsed > m_stateUpdateDelay)
-            {   
-                m_stateUpdateCallback(m_stateUpdateElapsed);
-                m_stateUpdateElapsed = 0.0f;
-            }
+            m_stateUpdateCallback(deltaTime);
         }
 
         m_timerManager.Update(deltaTime);
@@ -96,8 +92,9 @@ public abstract class monster_entity : entity
 
     private bool IsPlayerInCloseRange()
     {
-        var distance = m_character.transform.position - transform.position;
-        return distance.sqrMagnitude < m_data.closeCombatRangeSqr;
+        return !m_navMeshAgent.pathPending &&
+            m_navMeshAgent.remainingDistance <= m_navMeshAgent.stoppingDistance &&
+            (!m_navMeshAgent.hasPath || m_navMeshAgent.velocity.sqrMagnitude < 0.0001f);
     }
 
     #endregion
@@ -110,7 +107,6 @@ public abstract class monster_entity : entity
 
         SetState(MonsterState.Hurt);
 
-        m_navMeshAgent.Stop();
         PlayRandomAudioClip(m_data.audio.pain);
         PlayRandomAnimation(m_data.animations.pain, HurtAnimationFinished);
     }
@@ -120,7 +116,7 @@ public abstract class monster_entity : entity
         base.OnKill(damage);
 
         SetState(MonsterState.Dead);
-        m_navMeshAgent.Stop();
+
         PlayRandomAudioClip(m_data.audio.death);
         PlayRandomAnimation(m_data.animations.death);
     }
@@ -136,20 +132,10 @@ public abstract class monster_entity : entity
 
     private void SetState(MonsterState state)
     {
-        m_state = state;
-        m_stateUpdateElapsed = 0.0f;
+        CancelAllTimers(kStateTimerTag);
 
-        switch (state)
-        {
-            case MonsterState.Chase:
-                m_stateUpdateCallback = UpdateChasing;
-                m_stateUpdateDelay = 0.5f;
-                break;
-            default:
-                m_stateUpdateCallback = null;
-                m_stateUpdateDelay = 0.0f;
-                break;
-        }
+        m_state = state;
+        m_navMeshAgent.Stop();
     }
 
     #endregion
@@ -158,7 +144,7 @@ public abstract class monster_entity : entity
 
     private void StartUpdateVision()
     {
-        ScheduleTimer(UpdateVision, 1.0f / m_data.visionRate, 0);
+        ScheduleTimer(UpdateVision, 1.0f / m_data.visionRate, true);
     }
 
     private void UpdateVision()
@@ -224,45 +210,57 @@ public abstract class monster_entity : entity
     {
         SetState(MonsterState.Chase);
         PlayRandomAnimation(m_data.animations.chase);
+        
+        UpdateChasePath();
 
-        MoveToPlayer();
+        ScheduleTimer(UpdateChase, 0.0f, true, kStateTimerTag);
+        ScheduleTimer(UpdateChasePath, kUpdateChasePathDelay, true, kStateTimerTag);
+
+        if (m_data.canAttackLongRange)
+        {
+            ScheduleTimer(AttackLongRange, Random.Range(1.0f, 1.5f), false, kStateTimerTag); // TODO: configure attack range
+        }
     }
 
-    void UpdateChasing(float deltaTime)
+    void UpdateChase()
     {
         if (IsPlayerInCloseRange())
         {
-            m_navMeshAgent.Stop();
-        }
-        else
-        {
-            MoveToPlayer();
-        }
-    }
+            m_navMeshAgent.Stop(); 
 
-    void MoveToPlayer()
-    {
-        m_navMeshAgent.destination = m_character.transform.position;
-        m_navMeshAgent.stoppingDistance = m_data.closeCombatRange;
-        m_navMeshAgent.Resume();
+            if (m_data.canAttackCloseRange)
+            {
+                AttackCloseRange();
+            }
+        }
     }
     
+    void UpdateChasePath()
+    {
+        m_navMeshAgent.destination = m_character.transform.position;
+        m_navMeshAgent.Resume();
+    }
+
     #endregion
 
     #region Attack
 
-    //void TryAttack()
-    //{
-    //    if (m_vision.playerVisible)
-    //    {
-    //        // stop moving towards the player
-    //        m_navMeshAgent.Stop();
+    private void AttackCloseRange()
+    {
+        SetState(MonsterState.CloseRangeAttack);
+        PlayRandomAnimation(m_data.animations.attackShortRangeLight, AttackAnimationFinished);
+    }
 
-    //        m_state = MonsterState.Attacking;
-    //        PlayRandomAnimation(m_data.animations.attack, AttackAnimationFinished);
-    //        PlayRandomAudioClip(m_data.audio.attack);
-    //    }
-    //}
+    private void AttackLongRange()
+    {
+        SetState(MonsterState.LongRangeAttack);
+        PlayRandomAnimation(m_data.animations.attackLongRange, AttackAnimationFinished);
+    }
+
+    private void AttackAnimationFinished()
+    {
+        StartChasing();
+    }
 
     #endregion
 
@@ -281,20 +279,19 @@ public abstract class monster_entity : entity
 
     #region Timers
 
-    Timer ScheduleTimer(Action callback, float delay = 0.0f, int numRepeats = 1)
+    Timer ScheduleTimer(Action callback, float delay = 0.0f, bool repeated = false, string tag = null)
     {
-        return m_timerManager.Schedule(callback, delay, numRepeats);
-    }
-
-    Timer RescheduleTimer(Action callback, float delay = 0.0f, int numRepeats = 1)
-    {
-        CancelTimer(callback);
-        return ScheduleTimer(callback, delay, numRepeats);
+        return m_timerManager.Schedule(callback, delay, repeated ? 0 : 1, tag);
     }
 
     void CancelTimer(Action callback)
     {
         m_timerManager.Cancel(callback);
+    }
+
+    void CancelAllTimers(string tag)
+    {
+        m_timerManager.Cancel(tag);
     }
 
     void CancelAllTimers()

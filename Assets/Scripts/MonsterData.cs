@@ -18,7 +18,13 @@ public class MonsterDataAnimations
     public MDLAnimation[] leap;
 
     [SerializeField]
-    public MDLAnimation[] attack;
+    public MDLAnimation[] attackLongRange;
+
+    [SerializeField]
+    public MDLAnimation[] attackShortRangeLight;
+
+    [SerializeField]
+    public MDLAnimation[] attackShortRangeHard;
 
     [SerializeField]
     public MDLAnimation[] pain;
@@ -77,6 +83,16 @@ public class MonsterData : ScriptableObject
     [SerializeField]
     public int visionRate = 2;
 
+    public bool canAttackLongRange
+    {
+        get { return HasAnimations(animations.attackLongRange); }
+    }
+
+    public bool canAttackCloseRange
+    {
+        get { return HasAnimations(animations.attackShortRangeLight) || HasAnimations(animations.attackShortRangeHard); }
+    }
+
     public float sightDistanceSqr
     {
         get { return sightDistance * sightDistance; }
@@ -85,5 +101,10 @@ public class MonsterData : ScriptableObject
     public float closeCombatRangeSqr
     {
         get { return closeCombatRange * closeCombatRange; }
+    }
+
+    bool HasAnimations(MDLAnimation[] animations)
+    {
+        return animations != null && animations.Length > 0;
     }
 }
