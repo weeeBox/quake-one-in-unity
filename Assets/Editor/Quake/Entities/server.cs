@@ -8,6 +8,7 @@ public abstract class monster_entity_t : entity_t
     public monster_entity_t()
     {
         this.movable = true;
+        this.health = 40; // TODO: use a real value
     }
 
     public override void SetupInstance(BSPFile bsp, entity entity, SceneEntities entities)

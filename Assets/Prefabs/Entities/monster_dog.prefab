@@ -15,6 +15,7 @@ GameObject:
   - 114: {fileID: 11437318}
   - 136: {fileID: 13609044}
   - 82: {fileID: 8234840}
+  - 195: {fileID: 19572456}
   m_Layer: 12
   m_Name: monster_dog
   m_TagString: Untagged
@@ -183,12 +184,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: "\"classname\" \"monster_dog\"\r\n\"origin\" \"88 1520 -200\"\r\n\"angle\"
     \"270\"\r\n"
+  spawnflags: 0
   health: 0
-  m_health: 100
-  m_hurtSounds:
-  - {fileID: 8300000, guid: 768c4fd0b4997c64298e835596711f89, type: 3}
-  m_deathSounds:
-  - {fileID: 8300000, guid: 0a558f44fb20cc849884713c41ea088b, type: 3}
+  m_data: {fileID: 11400000, guid: 07f49bd27ceca94468f059630310e119, type: 2}
+  m_visionRaycastMask:
+    serializedVersion: 2
+    m_Bits: 768
 --- !u!136 &13609044
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -202,6 +203,26 @@ CapsuleCollider:
   m_Height: 0.89
   m_Direction: 2
   m_Center: {x: 0.005203791, y: -0.17747356, z: 0.09}
+--- !u!195 &19572456
+NavMeshAgent:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 172986}
+  m_Enabled: 1
+  m_Radius: 0.34
+  m_Speed: 6
+  m_Acceleration: 10000
+  avoidancePriority: 50
+  m_AngularSpeed: 1000
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 0
+  m_AutoRepath: 1
+  m_Height: 0.54
+  m_BaseOffset: 0.48
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

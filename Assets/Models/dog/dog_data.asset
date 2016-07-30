@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16eab90008619184a9ce6be29d588551, type: 3}
+  m_Name: dog_data
+  m_EditorClassIdentifier: 
+  animations:
+    stand:
+    - {fileID: 11400000, guid: 381abd53ea933c0418d66338bf7359b6, type: 2}
+    patrol:
+    - {fileID: 11400000, guid: 61778dbc987d9ac459f37a73cd426845, type: 2}
+    chase:
+    - {fileID: 11400000, guid: 56e9574886e01884c874a27587cfbb39, type: 2}
+    leap:
+    - {fileID: 11400000, guid: 8f107e6c12e472f4f871f5fe285a775a, type: 2}
+    attackLongRange: []
+    attackShortRangeLight:
+    - {fileID: 11400000, guid: 14d3c3142e895a249b676f8440cd205e, type: 2}
+    attackShortRangeHard: []
+    pain:
+    - {fileID: 11400000, guid: 43433b1b7993a784594709757bcf12df, type: 2}
+    - {fileID: 11400000, guid: c1b4cdfc717efcf40ac45e0bb51d0b22, type: 2}
+    death:
+    - {fileID: 11400000, guid: 84149bc79a459cd4892f1b3a953ce4a8, type: 2}
+    - {fileID: 11400000, guid: 602da13cd1590a549b5c7edec3cb4f73, type: 2}
+  audio:
+    idle:
+    - {fileID: 8300000, guid: 26d588a117e9fa64caf691f7028d33f0, type: 3}
+    sight:
+    - {fileID: 8300000, guid: 3c504df4f25ee5143b0cd5e839257280, type: 3}
+    attack:
+    - {fileID: 8300000, guid: 953698d8c9acf2c4ab974fbd6dd7820d, type: 3}
+    smash: []
+    swing: []
+    pain:
+    - {fileID: 8300000, guid: 768c4fd0b4997c64298e835596711f89, type: 3}
+    death:
+    - {fileID: 8300000, guid: 0a558f44fb20cc849884713c41ea088b, type: 3}
+  sightDistance: 20
+  fov: 90
+  closeCombatRange: 1.2
+  leapRange: 0
+  visionRate: 2
