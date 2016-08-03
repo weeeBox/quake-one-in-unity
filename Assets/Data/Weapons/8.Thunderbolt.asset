@@ -11,6 +11,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b99db203e83c746a15a638499e14b9, type: 3}
   m_Name: 8.Thunderbolt
   m_EditorClassIdentifier: 
-  m_model: {fileID: 11400000, guid: f03382d6ffacee4458de1b678a9b8993, type: 2}
-  m_damage: 30
-  m_shotsPerMinute: 600
+  model: {fileID: 11400000, guid: f03382d6ffacee4458de1b678a9b8993, type: 2}
+  shotAnimation: {fileID: 11400000, guid: b694d429c8d4e034c90e9da44d8df197, type: 2}
+  shotStartSound: {fileID: 8300000, guid: 76754d1ead200f04596baf0d737f6360, type: 3}
+  shotSound: {fileID: 8300000, guid: 4ce7cf06cfbd703499a81d825b1393e9, type: 3}
+  damage: 30
+  shotsPerMinute: 600
+  maxAmmo: 100

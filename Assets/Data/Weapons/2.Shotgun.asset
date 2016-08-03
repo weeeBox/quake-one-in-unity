@@ -11,6 +11,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b99db203e83c746a15a638499e14b9, type: 3}
   m_Name: 2.Shotgun
   m_EditorClassIdentifier: 
-  m_model: {fileID: 11400000, guid: 7cf59ea049092974e9a0f49ca52a7292, type: 2}
-  m_damage: 24
-  m_shotsPerMinute: 120
+  model: {fileID: 11400000, guid: 7cf59ea049092974e9a0f49ca52a7292, type: 2}
+  shotAnimation: {fileID: 11400000, guid: 51acc3c94294d4c4885252d6324ab8c8, type: 2}
+  shotStartSound: {fileID: 0}
+  shotSound: {fileID: 8300000, guid: 5f7d59dc294e25d4789f933585db6c4c, type: 3}
+  damage: 24
+  shotsPerMinute: 120
+  maxAmmo: 100

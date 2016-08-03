@@ -11,6 +11,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b99db203e83c746a15a638499e14b9, type: 3}
   m_Name: 4.Nailgun
   m_EditorClassIdentifier: 
-  m_model: {fileID: 11400000, guid: 188f8dabff3fafc4a98294b10408dbc8, type: 2}
-  m_damage: 9
-  m_shotsPerMinute: 600
+  model: {fileID: 11400000, guid: 188f8dabff3fafc4a98294b10408dbc8, type: 2}
+  shotAnimation: {fileID: 11400000, guid: 3d4e003ca9d94204e92e762b8dc22522, type: 2}
+  shotStartSound: {fileID: 0}
+  shotSound: {fileID: 8300000, guid: 7bd037f54213d1340ac75d29d2fe81d9, type: 3}
+  damage: 9
+  shotsPerMinute: 600
+  maxAmmo: 200

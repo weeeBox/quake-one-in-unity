@@ -11,6 +11,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b99db203e83c746a15a638499e14b9, type: 3}
   m_Name: 3.SuperShotgun
   m_EditorClassIdentifier: 
-  m_model: {fileID: 11400000, guid: 5babcdb40901c834fa478d72ac9597be, type: 2}
-  m_damage: 56
-  m_shotsPerMinute: 85
+  model: {fileID: 11400000, guid: 5babcdb40901c834fa478d72ac9597be, type: 2}
+  shotAnimation: {fileID: 11400000, guid: 5a810b633ece78b43944d4f192d1efa8, type: 2}
+  shotStartSound: {fileID: 0}
+  shotSound: {fileID: 8300000, guid: fbe94bf7005c2434786c1a5fee4195f3, type: 3}
+  damage: 56
+  shotsPerMinute: 85
+  maxAmmo: 100

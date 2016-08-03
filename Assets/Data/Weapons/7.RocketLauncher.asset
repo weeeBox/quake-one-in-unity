@@ -11,6 +11,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b99db203e83c746a15a638499e14b9, type: 3}
   m_Name: 7.RocketLauncher
   m_EditorClassIdentifier: 
-  m_model: {fileID: 11400000, guid: 1caba34b40e0a5b4a8f9f21d456e82a6, type: 2}
-  m_damage: 120
-  m_shotsPerMinute: 75
+  model: {fileID: 11400000, guid: 1caba34b40e0a5b4a8f9f21d456e82a6, type: 2}
+  shotAnimation: {fileID: 11400000, guid: e5ea7b7688a6d2642aee38442e6359f3, type: 2}
+  shotStartSound: {fileID: 0}
+  shotSound: {fileID: 8300000, guid: a247b620d8c8082478f6f3a3933f608e, type: 3}
+  damage: 120
+  shotsPerMinute: 75
+  maxAmmo: 100

@@ -5,26 +5,23 @@ using System.Collections;
 public class WeaponInfo : ScriptableObject
 {
     [SerializeField]
-    MDL m_model;
+    public MDL model;
 
     [SerializeField]
-    int m_damage;
+    public MDLAnimation shotAnimation;
 
     [SerializeField]
-    int m_shotsPerMinute;
+    public AudioClip shotStartSound;
 
-    public MDL model
-    {
-        get { return m_model; }
-    }
+    [SerializeField]
+    public AudioClip shotSound;
 
-    public int damage
-    {
-        get { return m_damage; }
-    }
+    [SerializeField]
+    public int damage;
 
-    public int shotsPerMinute
-    {
-        get { return m_shotsPerMinute; }
-    }
+    [SerializeField]
+    public int shotsPerMinute;
+
+    [SerializeField]
+    public int maxAmmo;
 }

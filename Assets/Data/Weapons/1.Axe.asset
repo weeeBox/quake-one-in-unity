@@ -11,6 +11,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b99db203e83c746a15a638499e14b9, type: 3}
   m_Name: 1.Axe
   m_EditorClassIdentifier: 
-  m_model: {fileID: 11400000, guid: 287555661db5d1b4491f2c27b4d60815, type: 2}
-  m_damage: 20
-  m_shotsPerMinute: 120
+  model: {fileID: 11400000, guid: 287555661db5d1b4491f2c27b4d60815, type: 2}
+  shotAnimation: {fileID: 11400000, guid: d041b15c29430cb449d0378cc17e8fff, type: 2}
+  shotStartSound: {fileID: 0}
+  shotSound: {fileID: 8300000, guid: 7a2731b952af1364ebace628b2129199, type: 3}
+  damage: 20
+  shotsPerMinute: 120
+  maxAmmo: 0

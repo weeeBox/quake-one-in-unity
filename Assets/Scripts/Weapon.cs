@@ -55,7 +55,7 @@ public class Weapon : MonoBehaviour
     public void Shoot()
     {
         // animation
-        // m_animator.PlayAnimation("shot_animation");
+        m_animator.PlayAnimation(weaponInfo.shotAnimation);
 
         // sound
         m_audioSource.Play();
@@ -73,6 +73,11 @@ public class Weapon : MonoBehaviour
 
             Instantiate(m_hit, hit.point, Quaternion.LookRotation(-ray.direction));
         }
+    }
+
+    public WeaponInfo weaponInfo
+    {
+        get { return m_weapons[(int)m_weaponType]; }
     }
 
     public WeaponType weaponType

@@ -11,6 +11,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b99db203e83c746a15a638499e14b9, type: 3}
   m_Name: 5.SuperNailgun
   m_EditorClassIdentifier: 
-  m_model: {fileID: 11400000, guid: cc7b3e15c3f7f0245984406530d6eff1, type: 2}
-  m_damage: 18
-  m_shotsPerMinute: 600
+  model: {fileID: 11400000, guid: cc7b3e15c3f7f0245984406530d6eff1, type: 2}
+  shotAnimation: {fileID: 11400000, guid: 24046191999fde04283ea7495b6bc3e8, type: 2}
+  shotStartSound: {fileID: 0}
+  shotSound: {fileID: 8300000, guid: 6f23c5b0edf49d048b268f0d35f0badc, type: 3}
+  damage: 18
+  shotsPerMinute: 600
+  maxAmmo: 200
