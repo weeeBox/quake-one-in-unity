@@ -533,7 +533,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_model: {fileID: 11400000, guid: 7cf59ea049092974e9a0f49ca52a7292, type: 2}
-  m_animation: {fileID: 0}
+  m_animation: {fileID: 11400000, guid: 51acc3c94294d4c4885252d6324ab8c8, type: 2}
 --- !u!114 &11493488
 MonoBehaviour:
   m_ObjectHideFlags: 1

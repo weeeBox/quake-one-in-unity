@@ -54,7 +54,7 @@ public class MDLAnimatorEditor : Editor
 
         if (animator.model != oldModel)
         {
-            animator.RefreshModel();
+            animator.sharedModel = animator.model;
         }
     }
 }

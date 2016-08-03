@@ -15,6 +15,8 @@ public enum WeaponType
     Lightning
 }
 
+[RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(MDLAnimator))]
 public class Weapon : MonoBehaviour
 {
     [SerializeField]
@@ -22,6 +24,8 @@ public class Weapon : MonoBehaviour
 
     [SerializeField]
     WeaponType m_weaponType;
+
+    WeaponInfo m_weaponInfo;
 
     [SerializeField]
     Camera m_weaponCamera;
@@ -38,24 +42,34 @@ public class Weapon : MonoBehaviour
     AudioSource m_audioSource;
     MDLAnimator m_animator;
 
+    float m_shootElapsed;
+    float m_shootDelayed;
+
     void Awake()
     {
         m_animator = GetComponent<MDLAnimator>();
         m_audioSource = GetComponent<AudioSource>();
+
+        ChangeWeapon(m_weaponType);
     }
 
     void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButton("Fire1"))
         {
-            Shoot();
+            m_shootElapsed += Time.deltaTime;
+            if (m_shootElapsed > m_shootDelayed)
+            {
+                m_shootElapsed = 0.0f;
+                Shoot();
+            }
         }   
     }
 
     public void Shoot()
     {
         // animation
-        m_animator.PlayAnimation(weaponInfo.shotAnimation);
+        m_animator.PlayAnimation(m_weaponInfo.shotAnimation);
 
         // sound
         m_audioSource.Play();
@@ -75,13 +89,26 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    public WeaponInfo weaponInfo
+    public void ChangeWeapon(WeaponType weaponType)
     {
-        get { return m_weapons[(int)m_weaponType]; }
+        m_weaponType = weaponType;
+        m_weaponInfo = m_weapons[(int) weaponType];
+
+        #if UNITY_EDITOR
+        m_animator = GetComponent<MDLAnimator>();
+        #endif
+
+        m_animator.model = m_weaponInfo.model;
+        m_shootDelayed = 60.0f / m_weaponInfo.shotsPerMinute;
     }
 
     public WeaponType weaponType
     {
         get { return m_weaponType; }
+    }
+
+    public WeaponInfo[] weapons
+    {
+        get { return m_weapons; }
     }
 }
