@@ -3,7 +3,26 @@ using System;
 using System.Collections;
 
 [Serializable]
-public class MonsterDataAnimations
+public class MonsterAI
+{
+    [SerializeField]
+    public float sightDistance = 20;
+
+    [SerializeField]
+    public float fov = 90;
+
+    [SerializeField]
+    public float closeCombatRange = 1.2f;
+
+    [SerializeField]
+    public float leapRange;
+
+    [SerializeField]
+    public int visionRate = 2;
+}
+
+[Serializable]
+public class MonsterAnimations
 {
     [SerializeField]
     public MDLAnimation[] stand;
@@ -34,7 +53,7 @@ public class MonsterDataAnimations
 }
 
 [Serializable]
-public class MonsterDataAudio
+public class MonsterAudio
 {
     [SerializeField]
     public AudioClip[] idle;
@@ -63,25 +82,16 @@ public class MonsterDataAudio
 public class MonsterData : ScriptableObject
 {
     [SerializeField]
-    public MonsterDataAnimations animations;
+    public MDL model;
 
     [SerializeField]
-    public MonsterDataAudio audio;
+    public MonsterAI ai;
 
     [SerializeField]
-    public float sightDistance = 20;
+    public MonsterAnimations animations;
 
     [SerializeField]
-    public float fov = 90;
-
-    [SerializeField]
-    public float closeCombatRange = 1.2f;
-
-    [SerializeField]
-    public float leapRange;
-
-    [SerializeField]
-    public int visionRate = 2;
+    public MonsterAudio audio;
 
     public bool canAttackLongRange
     {
@@ -95,12 +105,12 @@ public class MonsterData : ScriptableObject
 
     public float sightDistanceSqr
     {
-        get { return sightDistance * sightDistance; }
+        get { return ai.sightDistance * ai.sightDistance; }
     }
 
     public float closeCombatRangeSqr
     {
-        get { return closeCombatRange * closeCombatRange; }
+        get { return ai.closeCombatRange * ai.closeCombatRange; }
     }
 
     bool HasAnimations(MDLAnimation[] animations)

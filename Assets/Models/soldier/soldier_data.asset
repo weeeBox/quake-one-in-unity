@@ -11,6 +11,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16eab90008619184a9ce6be29d588551, type: 3}
   m_Name: soldier_data
   m_EditorClassIdentifier: 
+  model: {fileID: 11400000, guid: ab2367cfe2b65a9429772404bd0bce81, type: 2}
+  ai:
+    sightDistance: 20
+    fov: 90
+    closeCombatRange: 1.2
+    leapRange: 0
+    visionRate: 2
   animations:
     stand:
     - {fileID: 11400000, guid: d5d307487c5a0744aab5192c9a45eb8f, type: 2}
@@ -19,8 +26,9 @@ MonoBehaviour:
     chase:
     - {fileID: 11400000, guid: 05e607aa7b9ead142a330a0eab577a0a, type: 2}
     leap: []
-    attack:
-    - {fileID: 11400000, guid: 01316592d234d4a4f8fa9d9116e0d53d, type: 2}
+    attackLongRange: []
+    attackShortRangeLight: []
+    attackShortRangeHard: []
     pain:
     - {fileID: 11400000, guid: 93a5fb188204bf64485bebc017e2dd6a, type: 2}
     - {fileID: 11400000, guid: d94bf3cbd98fc6b4891d80f897bcafe3, type: 2}
@@ -35,6 +43,8 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 9bc4913a33ad97c4daff0f73e4f186e7, type: 3}
     attack:
     - {fileID: 8300000, guid: 0d314f8cf2f4d2c44b9609a5d09b0f68, type: 3}
+    smash: []
+    swing: []
     pain:
     - {fileID: 8300000, guid: a33ad48caf305af4197b28f377a580a9, type: 3}
     - {fileID: 8300000, guid: 92e55e4d3465acd4cb35c855e20a383a, type: 3}

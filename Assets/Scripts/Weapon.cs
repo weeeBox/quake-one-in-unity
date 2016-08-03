@@ -55,7 +55,7 @@ public class Weapon : MonoBehaviour
     public void Shoot()
     {
         // animation
-        m_animator.PlayAnimation("shot_animation");
+        // m_animator.PlayAnimation("shot_animation");
 
         // sound
         m_audioSource.Play();

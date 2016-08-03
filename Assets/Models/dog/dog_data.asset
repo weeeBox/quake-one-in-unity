@@ -11,6 +11,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16eab90008619184a9ce6be29d588551, type: 3}
   m_Name: dog_data
   m_EditorClassIdentifier: 
+  model: {fileID: 11400000, guid: c83a04158ac3e404f87133fcac3a011a, type: 2}
+  ai:
+    sightDistance: 20
+    fov: 90
+    closeCombatRange: 1.2
+    leapRange: 0
+    visionRate: 2
   animations:
     stand:
     - {fileID: 11400000, guid: 381abd53ea933c0418d66338bf7359b6, type: 2}
@@ -43,8 +50,3 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 768c4fd0b4997c64298e835596711f89, type: 3}
     death:
     - {fileID: 8300000, guid: 0a558f44fb20cc849884713c41ea088b, type: 3}
-  sightDistance: 20
-  fov: 90
-  closeCombatRange: 1.2
-  leapRange: 0
-  visionRate: 2

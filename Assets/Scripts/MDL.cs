@@ -9,29 +9,6 @@ public class MDL : ScriptableObject
     [SerializeField]
     Material[] m_materials;
 
-    [SerializeField]
-    MDLAnimation[] m_animations;
-
-    #region Animations
-
-    public MDLAnimation FindAnimation(string name)
-    {
-        if (m_animations != null)
-        {
-            foreach (var animation in m_animations)
-            {
-                if (animation.name == name)
-                {
-                    return animation;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    #endregion
-
     #region Properties
 
     public Mesh mesh
@@ -54,22 +31,6 @@ public class MDL : ScriptableObject
     public int materialCount
     {
         get { return m_materials != null ? m_materials.Length : 0; }
-    }
-
-    public MDLAnimation[] animations
-    {
-        get { return m_animations; }
-        set { m_animations = value; }
-    }
-
-    public MDLAnimation animation
-    {
-        get{ return this.animationCount > 0 ? m_animations[0] : null; }
-    }
-
-    public int animationCount
-    {
-        get { return m_animations != null ? m_animations.Length : 0; }
     }
 
     #endregion

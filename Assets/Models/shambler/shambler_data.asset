@@ -11,6 +11,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16eab90008619184a9ce6be29d588551, type: 3}
   m_Name: shambler_data
   m_EditorClassIdentifier: 
+  model: {fileID: 11400000, guid: 3b7b5d4c62e928848b05e6a40966f123, type: 2}
+  ai:
+    sightDistance: 20
+    fov: 90
+    closeCombatRange: 1.2
+    leapRange: 0
+    visionRate: 2
   animations:
     stand:
     - {fileID: 11400000, guid: 80d8f0e1b629a694192891081d5d18e9, type: 2}
@@ -42,8 +49,3 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 52a24c269fc78c3438b327a619723496, type: 3}
     death:
     - {fileID: 8300000, guid: b3c6b106baf34ce40b9adea7233957b2, type: 3}
-  sightDistance: 20
-  fov: 90
-  closeCombatRange: 2
-  leapRange: 0
-  visionRate: 2

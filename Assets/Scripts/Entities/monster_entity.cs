@@ -57,7 +57,7 @@ public abstract class monster_entity : entity
         m_timerManager = new TimerManager();
 
         m_navMeshAgent = GetRequiredComponent<NavMeshAgent>();
-        m_navMeshAgent.stoppingDistance = m_data.closeCombatRange;
+        m_navMeshAgent.stoppingDistance = m_data.ai.closeCombatRange;
         m_animator = GetRequiredComponent<MDLAnimator>();
     }
 
@@ -144,7 +144,7 @@ public abstract class monster_entity : entity
 
     private void StartUpdateVision()
     {
-        ScheduleTimer(UpdateVision, 1.0f / m_data.visionRate, true);
+        ScheduleTimer(UpdateVision, 1.0f / m_data.ai.visionRate, true);
     }
 
     private void UpdateVision()
@@ -156,7 +156,7 @@ public abstract class monster_entity : entity
             bool playerWasVisible = m_playerVisible;
 
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, distance, out hit, m_data.sightDistance, m_visionRaycastMask))
+            if (Physics.Raycast(transform.position, distance, out hit, m_data.ai.sightDistance, m_visionRaycastMask))
             {
                 m_playerVisible = hit.collider.tag == "Player";
             }

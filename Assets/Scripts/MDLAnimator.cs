@@ -11,12 +11,9 @@ public class MDLAnimator : MonoBehaviour
     MDL m_model;
 
     [SerializeField]
-    [HideInInspector]
     MDLAnimation m_animation;
 
     float m_frameTime = 1.0f / 10;
-
-    Dictionary<string, MDLAnimation> m_animationLookup;
 
     MeshRenderer m_meshRenderer;
     Mesh m_mesh;
@@ -128,20 +125,7 @@ public class MDLAnimator : MonoBehaviour
     #endregion
 
     #region Animations
-
-    [Obsolete]
-    public void PlayAnimation(string name)
-    {
-        var animation = FindAnimation(name);
-        if (animation == null)
-        {
-            Debug.LogError("Can't find animation: " + name);
-            return;
-        }
-
-        PlayAnimation(animation);
-    }
-
+    
     public void StopAnimation()
     {
         m_animation = null;
@@ -155,27 +139,7 @@ public class MDLAnimator : MonoBehaviour
         m_finishCallback = finishCallback;
         SetFrameIndex(0);
     }
-
-    MDLAnimation FindAnimation(string name)
-    {
-        if (m_animationLookup == null)
-        {
-            m_animationLookup = new Dictionary<string, MDLAnimation>(m_model.animationCount);
-            foreach (var anim in m_model.animations)
-            {
-                m_animationLookup[anim.name] = anim;
-            }
-        }
-
-        MDLAnimation animation;
-        if (m_animationLookup.TryGetValue(name, out animation))
-        {
-            return animation;
-        }
-
-        return null;
-    }
-
+    
     #endregion
 
     #region Editor helpers
@@ -187,7 +151,6 @@ public class MDLAnimator : MonoBehaviour
         if (m_model != null)
         {
             m_mesh = m_model.mesh;
-            m_animation = m_model.animation;
 
             var meshFilter = GetComponent<MeshFilter>();
             meshFilter.sharedMesh = m_model.mesh;
@@ -206,12 +169,6 @@ public class MDLAnimator : MonoBehaviour
             var meshRenderer = GetComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = null;
         }
-    }
-
-    public MDLAnimation sharedAnimation
-    {
-        get { return this.animation; }
-        set { m_animation = value; }
     }
 
     public Material sharedSkin

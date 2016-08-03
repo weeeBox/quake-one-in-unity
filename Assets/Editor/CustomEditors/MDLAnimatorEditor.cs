@@ -14,52 +14,6 @@ public class MDLAnimatorEditor : Editor
         base.OnInspectorGUI();
 
         var model = animator.model;
-        if (model != null && model.animationCount > 0)
-        {
-            string[] names = new string[1 + model.animationCount];
-            names[0] = "None";
-            for (int i = 0; i < model.animationCount; ++i)
-            {
-                names[i + 1] = model.animations[i].name;
-            }
-
-            int currentIndex = 0;
-            if (animator.animationName != null)
-            {
-                int index = 0;
-                foreach (var animation in model.animations)
-                {
-                    if (animation.name == animator.animationName)
-                    {
-                        currentIndex = index + 1;
-                        break;
-                    }
-
-                    ++index;
-                }
-            }
-
-            int newIndex = EditorGUILayout.Popup("Animation", currentIndex, names);
-            if (currentIndex != newIndex)
-            {
-                var animation = newIndex > 0 ? model.animations[newIndex - 1] : null;
-                if (Application.isPlaying)
-                {
-                    if (animation != null)
-                    {
-                        animator.PlayAnimation(animation.name);
-                    }
-                    else
-                    {
-                        animator.StopAnimation();
-                    }
-                }
-                else
-                {
-                    animator.sharedAnimation = animation;
-                }
-            }
-        }
 
         if (model != null && model.materials.Length > 1)
         {

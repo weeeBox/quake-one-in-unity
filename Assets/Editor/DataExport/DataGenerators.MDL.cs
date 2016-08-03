@@ -117,14 +117,13 @@ static partial class DataGenerators
 
         var mesh = GenerateMesh(mdl, destPath);
         var skins = GenerateSkins(mdl, destPath);
-        var animations = GenerateAnimations(mdl, destPath);
+        GenerateAnimations(mdl, destPath);
 
         var asset = ScriptableObject.CreateInstance<MDL>();
 
         asset.name = name;
         asset.mesh = mesh;
         asset.materials = skins;
-        asset.animations = animations;
         return asset;
     }
     
