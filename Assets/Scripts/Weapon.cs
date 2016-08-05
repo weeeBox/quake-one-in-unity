@@ -19,6 +19,17 @@ public enum WeaponType
 [RequireComponent(typeof(MDLAnimator))]
 public class Weapon : MonoBehaviour
 {
+    static readonly KeyCode[] kWeaponKeys = {
+        KeyCode.Alpha1,
+        KeyCode.Alpha2,
+        KeyCode.Alpha3,
+        KeyCode.Alpha4,
+        KeyCode.Alpha5,
+        KeyCode.Alpha6,
+        KeyCode.Alpha7,
+        KeyCode.Alpha8
+    };
+
     [SerializeField]
     WeaponInfo[] m_weapons;
 
@@ -44,20 +55,36 @@ public class Weapon : MonoBehaviour
 
     float m_shootElapsed;
     float m_shootDelayed;
+    bool m_fire;
 
     void Awake()
     {
         m_animator = GetComponent<MDLAnimator>();
         m_audioSource = GetComponent<AudioSource>();
+    }
 
+    void Start()
+    {
         ChangeWeapon(m_weaponType);
     }
 
     void Update()
     {
-        if (Input.GetButton("Fire1"))
+        m_shootElapsed += Time.deltaTime;
+
+        for (int i = 0; i < kWeaponKeys.Length; ++i)
         {
-            m_shootElapsed += Time.deltaTime;
+            if (Input.GetKeyDown(kWeaponKeys[i]))
+            {
+                ChangeWeapon((WeaponType) i);
+            }
+        }
+
+        bool oldFile = m_fire;
+        m_fire = Input.GetButton("Fire1");
+
+        if (m_fire)
+        {   
             if (m_shootElapsed > m_shootDelayed)
             {
                 m_shootElapsed = 0.0f;
@@ -69,7 +96,10 @@ public class Weapon : MonoBehaviour
     public void Shoot()
     {
         // animation
-        m_animator.PlayAnimation(m_weaponInfo.shotAnimation);
+        if (!m_animator.isAnimationPlaying)
+        {
+            m_animator.PlayAnimation(m_weaponInfo.shotAnimation, ShootAnimationFinished);
+        }
 
         // sound
         m_audioSource.Play();
@@ -89,6 +119,14 @@ public class Weapon : MonoBehaviour
         }
     }
 
+    void ShootAnimationFinished()
+    {
+        if (m_fire)
+        {
+            m_animator.PlayAnimation(m_weaponInfo.shotAnimation, ShootAnimationFinished);
+        }
+    }
+
     public void ChangeWeapon(WeaponType weaponType)
     {
         m_weaponType = weaponType;
@@ -99,6 +137,7 @@ public class Weapon : MonoBehaviour
         #endif
 
         m_animator.model = m_weaponInfo.model;
+        m_audioSource.clip = m_weaponInfo.shotSound;
         m_shootDelayed = 60.0f / m_weaponInfo.shotsPerMinute;
     }
 

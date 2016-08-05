@@ -27,7 +27,7 @@ public class MDLAnimator : MonoBehaviour
     int m_frameIndex;
     bool m_animationFinished;
 
-    Action m_finishCallback;
+    Action m_animationFinishCallback;
 
     void Awake()
     {
@@ -39,15 +39,16 @@ public class MDLAnimator : MonoBehaviour
     {
         this.model = m_model;
 
+        m_animationFinished = true;
         if (m_animation != null)
-        {
+        {   
             SetFrameIndex(0); // rewind to the first frame
         }
     }
 
     void Update()
     {
-        if (m_animation != null && !m_animationFinished)
+        if (isAnimationPlaying)
         {
             m_elaspedTime += Time.deltaTime;
             if (m_elaspedTime > m_frameTime)
@@ -71,10 +72,10 @@ public class MDLAnimator : MonoBehaviour
                         }
 
                         m_animationFinished = true;
-                        if (m_finishCallback != null)
+                        if (m_animationFinishCallback != null)
                         {
-                            var callback = m_finishCallback;
-                            m_finishCallback = null;
+                            var callback = m_animationFinishCallback;
+                            m_animationFinishCallback = null;
                             callback();
                         }
                     }
@@ -129,6 +130,7 @@ public class MDLAnimator : MonoBehaviour
     public void StopAnimation()
     {
         m_animation = null;
+        m_animationFinishCallback = null;
         m_mesh.vertices = m_initialVertices;
     }
 
@@ -136,7 +138,7 @@ public class MDLAnimator : MonoBehaviour
     {
         m_animation = animation;
         m_animationFinished = false;
-        m_finishCallback = finishCallback;
+        m_animationFinishCallback = finishCallback;
         SetFrameIndex(0);
     }
     
@@ -184,13 +186,16 @@ public class MDLAnimator : MonoBehaviour
         set
         {
             m_model = value;
+            m_animation = null;
+            m_animationFinishCallback = null;
+
             if (m_model != null)
             {
-                m_mesh = m_model.mesh;
-                m_mesh.MarkDynamic();
+                m_meshFilter.mesh = m_model.mesh;
+                m_meshFilter.mesh.MarkDynamic();
+                m_mesh = m_meshFilter.mesh;
                 m_initialVertices = m_mesh.vertices;
 
-                m_meshFilter.mesh = m_mesh;
                 m_meshRenderer.material = m_model.material;
             }
         }
@@ -228,6 +233,11 @@ public class MDLAnimator : MonoBehaviour
     {
         get { return m_animation; }
         set { m_animation = value; }
+    }
+
+    public bool isAnimationPlaying
+    {
+        get { return m_animation != null && !m_animationFinished; }
     }
 
     public string animationName
