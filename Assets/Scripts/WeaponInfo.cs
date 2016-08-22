@@ -24,4 +24,7 @@ public class WeaponInfo : ScriptableObject
 
     [SerializeField]
     public int maxAmmo;
+
+    [SerializeField]
+    public Projectile projectile;
 }

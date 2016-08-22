@@ -106,16 +106,24 @@ public class Weapon : MonoBehaviour
 
         // physics
         Ray ray = m_weaponCamera.ViewportPointToRay(new Vector2(0.5f, 0.5f));
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100.0f, m_shootingMask))
+        if (m_weaponInfo.projectile != null)
         {
-            var target = hit.collider.GetComponent<QuakeBehaviour>();
-            if (target != null)
+            var rotation = Quaternion.LookRotation(ray.direction);
+            Instantiate(m_weaponInfo.projectile, m_shootingOrigin.transform.position, rotation);
+        }
+        else
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 100.0f, m_shootingMask))
             {
-                target.TakeDamage(20);
-            }
+                var target = hit.collider.GetComponent<QuakeBehaviour>();
+                if (target != null)
+                {
+                    target.TakeDamage(20);
+                }
 
-            Instantiate(m_hit, hit.point, Quaternion.LookRotation(-ray.direction));
+                Instantiate(m_hit, hit.point, Quaternion.LookRotation(-ray.direction));
+            }
         }
     }
 

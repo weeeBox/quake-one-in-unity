@@ -18,3 +18,4 @@ MonoBehaviour:
   damage: 120
   shotsPerMinute: 75
   maxAmmo: 100
+  projectile: {fileID: 11482752, guid: 16b0a107dad19304bb3850ef7fcac843, type: 2}
