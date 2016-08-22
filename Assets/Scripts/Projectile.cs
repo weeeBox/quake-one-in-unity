@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class Projectile : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class Projectile : MonoBehaviour
     [SerializeField]
     ParticleSystem m_trailParticles;
 
+    [SerializeField]
+    Explosion m_explosion;
+
 	void Start()
     {
         var rigidbody = GetComponent<Rigidbody>();
@@ -23,5 +27,16 @@ public class Projectile : MonoBehaviour
 
         var trailParticles = Instantiate(m_trailParticles, m_trailParticlesOrigin.position, Quaternion.identity) as ParticleSystem;
         trailParticles.transform.parent = transform;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        Explode();
+    }
+
+    private void Explode()
+    {
+        Instantiate(m_explosion, transform.position, Quaternion.identity);
+        Destroy(gameObject);
     }
 }

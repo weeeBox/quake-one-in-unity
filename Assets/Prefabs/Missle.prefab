@@ -109,7 +109,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &11482752
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -125,6 +125,7 @@ MonoBehaviour:
   m_velocity: 38.4
   m_trailParticlesOrigin: {fileID: 446104}
   m_trailParticles: {fileID: 19858242, guid: 0a1086ccef1730549a3623e17a3dfda8, type: 2}
+  m_explosion: {fileID: 11430780, guid: 88ccc608f1505d248862a96e937e86f7, type: 2}
 --- !u!136 &13633436
 CapsuleCollider:
   m_ObjectHideFlags: 1
