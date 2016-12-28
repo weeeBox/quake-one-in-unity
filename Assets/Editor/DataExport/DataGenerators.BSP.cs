@@ -107,7 +107,7 @@ static partial class DataGenerators
             if (!AssetUtils.AssetPathExists(materialPath))
             {
                 TextureImporter importer = TextureImporter.GetAtPath(texture) as TextureImporter;
-                importer.textureType = TextureImporterType.Image;
+                importer.textureType = TextureImporterType.Default;
                 importer.wrapMode = TextureWrapMode.Repeat;
                 importer.filterMode = FilterMode.Point;
                 importer.maxTextureSize = 2048;

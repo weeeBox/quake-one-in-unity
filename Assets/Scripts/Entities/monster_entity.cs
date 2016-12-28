@@ -6,7 +6,7 @@ using System.Collections;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(MDLAnimator))]
-[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(UnityEngine.AI.NavMeshAgent))]
 [RequireComponent(typeof(AudioSource))]
 public abstract class monster_entity : entity
 {
@@ -33,7 +33,7 @@ public abstract class monster_entity : entity
     [SerializeField]
     LayerMask m_visionRaycastMask;
 
-    NavMeshAgent m_navMeshAgent;
+    UnityEngine.AI.NavMeshAgent m_navMeshAgent;
     MDLAnimator m_animator;
 
     TimerManager m_timerManager;
@@ -56,7 +56,7 @@ public abstract class monster_entity : entity
         
         m_timerManager = new TimerManager();
 
-        m_navMeshAgent = GetRequiredComponent<NavMeshAgent>();
+        m_navMeshAgent = GetRequiredComponent<UnityEngine.AI.NavMeshAgent>();
         m_navMeshAgent.stoppingDistance = m_data.ai.closeCombatRange;
         m_animator = GetRequiredComponent<MDLAnimator>();
     }
