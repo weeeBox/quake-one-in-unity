@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(ParticleSystem))]
 public class Explosion : MonoBehaviour
 {
-    [SerializeField]
-    float m_lifeTime = 1.5f;
-
-	void Start ()
+    void Start ()
     {
-        Destroy(gameObject, m_lifeTime);
+        var particleSystem = GetComponent<ParticleSystem>();
+        Destroy(gameObject, particleSystem.duration);
 	}
 }
