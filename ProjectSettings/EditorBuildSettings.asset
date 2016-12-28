@@ -7,5 +7,3 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/Maps/e1m1/e1m1.unity
-  - enabled: 1
-    path: Assets/Scenes/Test/AI/monster_army_test.unity
